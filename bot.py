@@ -6,8 +6,7 @@ import requests
 import mysql.connector as mysql
 from datetime import datetime, timedelta
 import asyncio
-
-
+import time
 
 #db config
 class database:
@@ -46,19 +45,22 @@ class database:
 
 #Custom loop
 async def check_database():
-	while True:
-		await asyncio.sleep(20)
-		print('Searching for new channels in database')
+    print('Initiating loop. Waiting 30 seconds\n')
+    await asyncio.sleep(30)
+    print('Starting check loop\n')
+    while True:
+        await asyncio.sleep(16)
+        print('Searching for new channels in database')
 
-		db_channels = db.get_channels()
-		unjoined_channels = []
-		for i in db_channels:
-			if not i in channels:
-				unjoined_channels.append(i)
-				channels.append(i)
+        db_channels = db.get_channels()
+        unjoined_channels = []
+        for i in db_channels:
+            if not i in channels:
+                unjoined_channels.append(i)
+                channels.append(i)
 
-		print('Joining new channels: {}\n'.format(str(unjoined_channels)))
-		otp = await bot.join_channels(unjoined_channels)
+        print('Joining new channels: {}\n'.format(str(unjoined_channels)))
+        otp = await bot.join_channels(unjoined_channels)
 
 def check_cooldown(name, cooldown_obj):
 	cooldown = db.get_cd(name)
@@ -84,14 +86,23 @@ bot = commands.Bot(
 	client_secret=settings.client_secret,
 	nick=settings.nick,
 	prefix=settings.prefix,
-	initial_channels=channels
+	initial_channels=channels[:99]
 )
 
 
 
 @bot.event
 async def event_ready():
-	print("I am online!")
+    print("I am online!\n")
+    ws = bot._ws
+    if len(channels) > 100:
+        pack = 1
+        while len(channels) > pack * 100:
+                time.sleep(16)
+                pack += 1
+                print(f'Joining pack #{pack}\n')
+                await bot.join_channels(channels[pack*100-101:pack*100-1])
+    
 
 @bot.command(name="price")
 async def price(ctx, *req):
