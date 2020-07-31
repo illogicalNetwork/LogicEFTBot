@@ -17,6 +17,7 @@ The bot has very basic and has only one moderation command which you can find be
 | !medical | `cooldown`| Retrieves medical item use time. Ex: `!medical surv` |
 | !price | `cooldown`| Retrieves flea market price. Ex: `!price Slick` |
 | !slot  | `cooldown`| Retrieves price per slot of item based off the flea market. Ex: `!slot Slick`|
+| !trader  | `cooldown`| Retrieves best trader to sell to and sell price. Ex: `!trader magnet`|
 | !wiki  | `cooldown` | Retrieves EFT Wiki Link of item requested. Ex: `!wiki slick` |
 | !help  | `information`| Display this help message. |
 | !eftbot| `information`| Display this help message. |                
@@ -30,6 +31,7 @@ Note - All `cooldown` commands do not require exact search entries. Some example
  - !medical surv >> `The usage time of Surv12 is: 20 seconds.`
  - !price slick >> `The price of LBT 6094A Slick Plate Carrier (80/80) is: 390,000 roubles.`
  - !slot slick >> `The price per slot of LBT 6094A Slick Plate Carrier (80/80) is: 43333 rubles.`
+ - !trader magnet >> `The price of Magnet is: 11,500 roubles from Therapist`
  - !wiki slick >> `The link to the wiki is https://escapefromtarkov.gamepedia.com/LBT_6094A_Slick_Plate_Carrier`
 
 API Calls are redacted or else my bot would be useless - big thanks to both https://tarkov-market.com/ and https://tarkov-database.com/ for their API's that power this project!
