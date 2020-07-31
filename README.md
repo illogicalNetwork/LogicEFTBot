@@ -27,9 +27,9 @@ Note - All `cooldown` commands do not require exact search entries. Some example
 
  - !astat 995 >> `The flesh damage of 5.56x45 M995 is: 40 and the armor penetration is: 53.`
  - !astat 545x39 BS >> `The flesh damage of 545x39 BS is: 40 and the armor penetration is: 51.`
- - !medical prop >> `The usage time of Surv12 is: 20 seconds.`
+ - !medical surv >> `The usage time of Surv12 is: 20 seconds.`
  - !price slick >> `The price of LBT 6094A Slick Plate Carrier (80/80) is: 390,000 roubles.`
  - !slot slick >> `The price per slot of LBT 6094A Slick Plate Carrier (80/80) is: 43333 rubles.`
- - !wiki >> `The link to the wiki is https://escapefromtarkov.gamepedia.com/LBT_6094A_Slick_Plate_Carrier`
+ - !wiki slick >> `The link to the wiki is https://escapefromtarkov.gamepedia.com/LBT_6094A_Slick_Plate_Carrier`
 
 API Calls are redacted or else my bot would be useless - big thanks to both https://tarkov-market.com/ and https://tarkov-database.com/ for their API's that power this project!
