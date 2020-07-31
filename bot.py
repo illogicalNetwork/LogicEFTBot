@@ -18,7 +18,7 @@ class database:
 			database = settings.database_config["database"]
 		)
 
-		sql = db.cursor()
+		sql = db.cursor(buffered=True)
 		db.commit()
 		self.db = db
 		self.sql = sql
@@ -40,7 +40,7 @@ class database:
 
 	def get_channels(self):
 		self.db.commit()
-		self.sql.execute("SELECT username from users")
+		self.sql.execute("SELECT display_name from users")
 		return [i[0] for i in self.sql.fetchall()]
 
 #Custom loop
@@ -74,8 +74,8 @@ def check_cooldown(name, cooldown_obj):
 cooldowns = []
 db = database()
 channels = list(dict.fromkeys(db.get_channels()+settings.initial_channels))
-print("Found channels: " + str(channels))
-
+#print("Found channels: " + str(channels))
+#print(channels[:99])
 loop = asyncio.get_event_loop()
 asyncio.ensure_future(check_database())
 
@@ -159,6 +159,34 @@ async def slot(ctx, *req):
 	print('Searching for %s\n' % req)
 	response = requests.get(url=settings.slot_link+'{}'.format(req)).text
 	await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
+
+@bot.command(name="trader")
+async def trader(ctx, *req):
+	#Look for cooldown object in cooldowns global variable
+	cd = None
+	for i in cooldowns:
+		if i['name'] == ctx.channel.name:
+			cd = check_cooldown(ctx.channel.name, i) #Check if cooldown is over
+			cd_obj = i
+			break
+
+	if cd or ctx.author.name.lower() == settings.nick:
+		return
+
+	if len(req) == 0:
+		await ctx.channel.send('@{} - You must input a valid item name. EX: Slick'.format(ctx.author.name))
+		return
+
+	#Check if cooldown object for channel is in cooldowns list and update last usage
+	if cd is None:
+		cooldowns.append({'name': ctx.channel.name, 'last_usage': datetime.utcnow()})
+	else:
+		cd_obj['last_usage'] = datetime.utcnow()
+	
+	req = ' '.join(req)
+	print('Searching for %s\n' % req)
+	response = requests.get(url=settings.trader_link+'{}'.format(req)).text
+	await ctx.channel.send('@{} {}'.format(ctx.author.name, response))	
 
 @bot.command(name="wiki")
 async def wiki(ctx, *req):
@@ -244,20 +272,21 @@ async def medical(ctx, *req):
 	response = requests.get(url=settings.medical_link+'{}'.format(req)).text
 	await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
 
+
 @bot.command(name="eftbot")
 async def eftbot(ctx, req=None):
-	await ctx.channel.send("@" + ctx.author.name + " - Commands available: !astat , !medical , !price , !slot , and !wiki ~ More commands coming soon!")
+	await ctx.channel.send("@" + ctx.author.name + " - Commands available: !astat , !price , !medical , !slot , !trader , and !wiki ~ More commands coming soon!")
 	return
 
 @bot.command(name="help")
 async def help(ctx, req=None):
-	await ctx.channel.send("@" + ctx.author.name + " - Commands available: !astat , !medical , !price , !slot , and !wiki ~ More commands coming soon!")
+	await ctx.channel.send("@" + ctx.author.name + " - Commands available: !astat  , !price , !medical , !slot , !trader , and !wiki ~ More commands coming soon!")
 	return
 
 
 @bot.command(name="addbot")
 async def addbot(ctx, req=None): #Later change this to invite link
-	await ctx.channel.send("@" + ctx.author.name + " - If you want the bot in your channel, DM 'Logical Solutions#1337' on Discord.")
+	await ctx.channel.send("@" + ctx.author.name + " - If you want the bot in your channel, head to https://illogical.network/ and click 'EFT Bot' to add the bot!.")
 	return
 
 @bot.command(name="setCD")
