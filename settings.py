@@ -10,6 +10,7 @@ ammo_link = ''
 price_link = ''
 wiki_link = ''
 medical_link = ''
+trader_link = ''
 database_config = {
     'host': 'localhost',
     'user': '',
