@@ -37,6 +37,15 @@ class database:
 		else:
 			return cd[0]
 
+	#tic
+	def get_lang(self, name):
+		self.sql.execute("SELECT lang FROM channels WHERE name = %s", (name,))
+		lang = self.sql.fetchone()
+		if lang is None:
+			return lang
+		else:
+			return lang[0]
+
 
 	def get_channels(self):
 		self.db.commit()
@@ -68,6 +77,10 @@ def check_cooldown(name, cooldown_obj):
 		cooldown = settings.default_cooldown
 	return not datetime.utcnow() - cooldown_obj['last_usage'] > timedelta(seconds=cooldown)
 
+#tic
+def check_lang(name):
+	return db.get_lang(name)
+
 
 
 #global variables/objects
@@ -78,6 +91,10 @@ channels = list(dict.fromkeys(db.get_channels()+settings.initial_channels))
 #print(channels[:99])
 loop = asyncio.get_event_loop()
 asyncio.ensure_future(check_database())
+#tic
+locale = []
+with open("localizations.json", "r") as read_file:
+    locale = json.load(read_file)
 
 bot = commands.Bot(
 	loop=loop,
@@ -88,7 +105,6 @@ bot = commands.Bot(
 	prefix=settings.prefix,
 	initial_channels=channels[:99]
 )
-
 
 
 @bot.event
@@ -118,7 +134,9 @@ async def price(ctx, *req):
 		return
 
 	if len(req) == 0:
-		await ctx.channel.send('@{} - You must input a valid item name. EX: Slick'.format(ctx.author.name))
+		#tic
+		await ctx.channel.send('@{} - {}'.format(ctx.author.name, locale[check_lang(ctx.channel.name)]["1"]))
+		#await ctx.channel.send('@{} - You must input a valid item name. EX: Slick'.format(ctx.author.name))
 		return
 
 	#Check if cooldown object for channel is in cooldowns list and update last usage
