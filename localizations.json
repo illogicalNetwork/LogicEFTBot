@@ -1,0 +1,23 @@
+{
+   "en": {
+      "validItem":"You must input a valid item name. EX: paracord",
+      "validAmmo":"You must input a valid ammo name. EX: 9x19mm PST Gzh",
+      "validMed":"You must input a valid medical item name",
+      "botHelp":"Commands available: !astat , !price , !medical , !slot , !trader , and !wiki ~ More commands coming soon!",
+      "addBot":"If you want the bot in yor channel, head to https://illogical.network/ and click 'EFT Bot' to add the bot!"
+   },
+   "es": {
+      "validItem":"Debes entrar un nombre de artículo válido. EX: Slick",
+      "validAmmo":"Debes entrar un nombre de munición válido. EX: 9x19mm PST Gzh",
+      "validMed":"Debes entrar un nombre de algún medicamento válido. EX: Surv12",
+      "botHelp":"Comandos disponibles: !astat , !price , !medical , !slot , !trader , and !wiki ~ Mas comandos se añadirán pronto!",
+      "addBot":"Si quieres el bot en tu canal, dirígete a https://illogical.network/ y has click en 'EFT Bot' para añadir el bot!"
+   },
+   "de": {
+      "validItem": "Sie müssen ein gültigen Elementnamen eingeben. EX: Slick",
+      "validAmmo": "Sie müssen ein gültigen Munitionsnamen eingeben. EX: 9x19mm PST Gzh",
+      "validMed": "Sie müssen ein gültigen Namen für medizinische Artikel eingeben",
+      "botHelp": "Verfügbare Befehle : !astat , !price , !medical , !slot , !trader und !wiki ~ Weitere Befehle folgen in Kürze!",
+      "addBot": "Wenn Sie den Bot in Ihrem Kanal haben möchten, gehen Sie zu https://illogical.network/ und klicken Sie auf 'EFT Bot', um den Bot hinzuzufügen!" 
+   }
+}
