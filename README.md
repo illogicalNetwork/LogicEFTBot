@@ -22,6 +22,7 @@ The bot has very basic and has only one moderation command which you can find be
 | !help  | `information`| Display this help message. |
 | !eftbot| `information`| Display this help message. |                
 | !setCD** | `information`| Sets the cooldown for the bot in seconds. |
+| !setLang** | `information`| Changes the localization of the bot to the desired language. |
 > Commands denoted with `**` are reserved to "Moderators" and the "Streamer" of the channel the bot is in.
 
 Note - All `cooldown` commands do not require exact search entries. Some examples can be found below:
