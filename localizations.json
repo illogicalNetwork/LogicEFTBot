@@ -19,5 +19,19 @@
       "validMed": "Sie müssen ein gültigen Namen für medizinische Artikel eingeben",
       "botHelp": "Verfügbare Befehle : !astat , !price , !medical , !slot , !trader und !wiki ~ Weitere Befehle folgen in Kürze!",
       "addBot": "Wenn Sie den Bot in Ihrem Kanal haben möchten, gehen Sie zu https://illogical.network/ und klicken Sie auf 'EFT Bot', um den Bot hinzuzufügen!" 
+   },
+   "nl": {
+      "validItem":"Geef een geldig voorwerp in. EX: Slick",
+      "validAmmo":"Geef een geldig munitie type in. EX: 9x19mm PST Gzh",
+      "validMed":"Geef een geldig medisch voorwerp in. EX: Surv12",
+      "botHelp":"Commando's beschikbaar: !astat , !price , !medical , !slot , !trader , and !wiki ~ Binnekort meer commando's!",
+      "addBot": "Als je de bot in de kanaal wilt hebben, ga naar https://illogical.network/ en click op 'EFT Bot' om de bot toe te voegen!"
+   },
+   "tr": {
+      "validItem":"Geçerli bir ürün ismi girmelisiniz. Örnek: Slick",
+      "validAmmo":"Geçerli bir cephane tipi girmelisiniz. Örnek: 9x19mm PST Gzh",
+      "validMed":"Geçerli bir sağlık malzemesi tipi girmelisiniz. Örnek: 9x19mm PST Gzh",
+      "botHelp":"Mevcut komutlar: !astat, !price , !medical , !slot , !trader , ve !wiki ~ Yakında daha fazla komut ekleyeceğiz!",
+      "addBot": "Eğer sizde bu botun kanalınızda hizmet vermesini istiyorsanız, https://illogical.network/ sitesine gidip 'EFT Bot' seçeneğine tıklayabilirsiniz!"
    }
 }
