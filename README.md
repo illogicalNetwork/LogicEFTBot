@@ -1,7 +1,7 @@
 
 <p align="center"><img src="https://illogical.network/strim/BrainOnly.png" alt="Logo" width=40% height=40%" /></p><h1 align="center">Logic's EFT Bot</h1>
 <p align="center">
-  <b>To have the bot join your channel, please click head to https://illogical.network/' </b><br />
+  <b>To have the bot join your channel, please head to https://illogical.network/' </b><br />
   To make sure the bot can bypass any URL restrictions, please make sure you type <br />
   <code>/mod LogicEFTBot</code> <br />in your chat after authorizing. Once you 'authorize' the bot should join your channel!
 </p>
