@@ -29,6 +29,7 @@ class database:
         self.db.commit()
 
     def update_lang(self, name, lang, uname):
+        #self.sql.execute("UPDATE users SELECT username, lang VALUES (%s, %s)", (name, lang))
         self.sql.execute("UPDATE users SET username=%s, lang=%s WHERE username=%s", (name,lang, uname))
         self.db.commit()
 
@@ -60,12 +61,16 @@ async def check_database():
     print('Starting check loop\n')
     while True:
         await asyncio.sleep(10)
+        #print('Searching for new channels in database')
+
         db_channels = db.get_channels()
         unjoined_channels = []
         for i in db_channels:
             if not i in channels:
                 unjoined_channels.append(i)
                 channels.append(i)
+
+        #print('Joining new channels: {}\n'.format(str(unjoined_channels)))
         otp = await bot.join_channels(unjoined_channels)
 
 def check_cooldown(name, cooldown_obj):
@@ -85,7 +90,7 @@ loop = asyncio.get_event_loop()
 asyncio.ensure_future(check_database())
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger()
-logger.addHandler(logging.FileHandler('twitchBot.log', 'a'))
+logger.addHandler(logging.FileHandler('test.log', 'a'))
 print = logger.info
 
 locale = []
@@ -185,7 +190,7 @@ async def slot(ctx, *req):
     req = ' '.join(req)
     print(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
-    price_link = None
+    slot_link = None
     if lang == "en":
         slot_link = settings.slot_link_en
     elif lang == "de":
@@ -226,7 +231,7 @@ async def wiki(ctx, *req):
     req = ' '.join(req)
     print(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
-    price_link = None
+    wiki_link = None
     if lang == "en":
         wiki_link = settings.wiki_link_en
     elif lang == "de":
@@ -267,7 +272,7 @@ async def astat(ctx, *req):
     req = ' '.join(req)
     print(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
-    price_link = None
+    ammo_link = None
     if lang == "en":
         ammo_link = settings.ammo_link_en
     elif lang == "de":
@@ -308,7 +313,7 @@ async def medical(ctx, *req):
     req = ' '.join(req)
     print(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
-    price_link = None
+    medical_link = None
     if lang == "en":
         medical_link = settings.medical_link_en
     elif lang == "de":
@@ -334,7 +339,7 @@ async def help(ctx, req=None):
     return
 
 @bot.command(name="addbot")
-async def addbot(ctx, req=None):
+async def addbot(ctx, req=None): #Later change this to invite link
     await ctx.channel.send('@{} - {}'.format(ctx.author.name, locale[check_lang(ctx.channel.name)]["addBot"]))
     return
 
