@@ -24,6 +24,18 @@ price_link_de = ''
 wiki_link_de = ''
 medical_link_de = ''
 trader_link_de  = ''
+slot_link_tr = ''
+ammo_link_tr = ''
+price_link_tr = ''
+wiki_link_tr = ''
+medical_link_tr = ''
+trader_link_tr  = ''
+slot_link_ru = ''
+ammo_link_ru = ''
+price_link_ru = ''
+wiki_link_ru = ''
+medical_link_ru = ''
+trader_link_ru  = ''
 database_config = {
     'host': 'localhost',
     'user': 'root',
