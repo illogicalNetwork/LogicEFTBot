@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import asyncio
 import time
 import logging
+import logging.handlers as handlers
 
 #db config
 class database:
@@ -70,7 +71,7 @@ async def check_database():
                 unjoined_channels.append(i)
                 channels.append(i)
 
-        #print('Joining new channels: {}\n'.format(str(unjoined_channels)))
+        print('Joining new channels: {}\n'.format(str(unjoined_channels)))
         otp = await bot.join_channels(unjoined_channels)
 
 def check_cooldown(name, cooldown_obj):
@@ -88,10 +89,18 @@ db = database()
 channels = list(dict.fromkeys(db.get_channels()+settings.initial_channels))
 loop = asyncio.get_event_loop()
 asyncio.ensure_future(check_database())
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger()
-logger.addHandler(logging.FileHandler('test.log', 'a'))
-print = logger.info
+
+log = logging.getLogger("the_bot")
+log.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)-15s | %(message)s")
+log_handler = handlers.RotatingFileHandler(
+    "bot.log",
+    maxBytes=5000000,
+    backupCount=3
+)
+log_handler.setLevel(logging.DEBUG)
+log_handler.setFormatter(formatter)
+log.addHandler(log_handler)
 
 locale = []
 with open("localizations.json", "r") as read_file:
@@ -145,7 +154,7 @@ async def price(ctx, *req):
         cd_obj['last_usage'] = datetime.utcnow()
     
     req = ' '.join(req)
-    print(ctx.channel.name + ' - searching for %s\n' % req)
+    log.info(ctx.channel.name + ' - searching for %s\n' % req)
     ###NEW
     lang = check_lang(ctx.channel.name)
     price_link = None
@@ -159,6 +168,8 @@ async def price(ctx, *req):
         price_link = settings.price_link_tr
     elif lang == "nl":
         price_link = settings.price_link_nl
+    elif lang == "ru":
+        price_link = settings.price_link_ru   
     crafted_url = price_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
     ###NEW
@@ -188,7 +199,7 @@ async def slot(ctx, *req):
         cd_obj['last_usage'] = datetime.utcnow()
     
     req = ' '.join(req)
-    print(ctx.channel.name + ' - searching for %s\n' % req)
+    log.info(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
     slot_link = None
     if lang == "en":
@@ -200,7 +211,9 @@ async def slot(ctx, *req):
     elif lang == "tr":
         slot_link = settings.slot_link_tr
     elif lang == "nl":
-        slot_link = settings.slot_link_nl 
+        slot_link = settings.slot_link_nl
+    elif lang == "ru":
+        slot_link = settings.slot_link_ru         
     crafted_url = slot_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
@@ -229,7 +242,7 @@ async def wiki(ctx, *req):
         cd_obj['last_usage'] = datetime.utcnow()
     
     req = ' '.join(req)
-    print(ctx.channel.name + ' - searching for %s\n' % req)
+    log.info(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
     wiki_link = None
     if lang == "en":
@@ -242,6 +255,8 @@ async def wiki(ctx, *req):
         wiki_link = settings.wiki_link_tr
     elif lang == "nl":
         wiki_link = settings.wiki_link_nl
+    elif lang == "ru":
+        wiki_link = settings.wiki_link_ru          
     crafted_url = wiki_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
@@ -270,7 +285,7 @@ async def astat(ctx, *req):
         cd_obj['last_usage'] = datetime.utcnow()
     
     req = ' '.join(req)
-    print(ctx.channel.name + ' - searching for %s\n' % req)
+    log.info(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
     ammo_link = None
     if lang == "en":
@@ -282,7 +297,9 @@ async def astat(ctx, *req):
     elif lang == "tr":
         ammo_link = settings.ammo_link_tr
     elif lang == "nl":
-        ammo_link = settings.ammo_link_nl  
+        ammo_link = settings.ammo_link_nl
+    elif lang == "ru":
+        ammo_link = settings.ammo_link_ru          
     crafted_url = ammo_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
@@ -311,7 +328,7 @@ async def medical(ctx, *req):
         cd_obj['last_usage'] = datetime.utcnow()
     
     req = ' '.join(req)
-    print(ctx.channel.name + ' - searching for %s\n' % req)
+    log.info(ctx.channel.name + ' - searching for %s\n' % req)
     lang = check_lang(ctx.channel.name)
     medical_link = None
     if lang == "en":
@@ -323,7 +340,9 @@ async def medical(ctx, *req):
     elif lang == "tr":
         medical_link = settings.medical_link_tr
     elif lang == "nl":
-        medical_link = settings.medical_link_nl  
+        medical_link = settings.medical_link_nl
+    elif lang == "ru":
+        medical_link = settings.medical_link_ru        
     crafted_url = medical_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
