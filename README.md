@@ -22,7 +22,7 @@ The bot has very basic and has only one moderation command which you can find be
 | !help  | `information`| Display this help message. |
 | !eftbot| `information`| Display this help message. |                
 | !setCD | `moderator**`| Sets the cooldown for the bot in seconds. |
-| !setLang | `moderator**`| Changes the localization of the bot to the desired language. |
+| !setLang | `moderator**`| Changes the bot localization for your channel. Options are en , es , de , nl , tr, and ru. |
 > Commands denoted with `**` are reserved to "Moderators" and the "Streamer" of the channel the bot is in.
 
 Note - All `cooldown` commands do not require exact search entries. Some examples can be found below:
@@ -35,6 +35,6 @@ Note - All `cooldown` commands do not require exact search entries. Some example
  - !trader magnet >> `The price of Magnet is: 11,500 roubles from Therapist`
  - !wiki slick >> `The link to the wiki is https://escapefromtarkov.gamepedia.com/LBT_6094A_Slick_Plate_Carrier`
  - !setCD 5 >> `Sets the cooldown for the bot to 5 seconds`
- - !setLang en >> `Sets the bots language to English. Valid codes: en , es , de , nl , tr`
+ - !setLang en >> `Sets the bots language to English. Valid codes: en , es , de , nl , tr , ru`
 
 API Calls are redacted or else my bot would be useless - big thanks to both https://tarkov-market.com/ and https://tarkov-database.com/ for their API's that power this project!
