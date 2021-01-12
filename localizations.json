@@ -3,12 +3,14 @@
       "validItem":"You must input a valid item name. EX: paracord",
       "validAmmo":"You must input a valid ammo name. EX: 9x19mm PST Gzh",
       "validMed":"You must input a valid medical item name",
+      "validArmor":"You must input a valid armor item",
       "botHelp":"Commands available: !astat , !price , !medical , !slot , and !wiki ~ More commands coming soon!",
       "addBot":"If you want the bot in yor channel, head to https://illogical.network/ and click 'EFT Bot' to add the bot!"
    },
    "es": {
       "validItem":"Debes entrar un nombre de artículo válido. EX: Slick",
       "validAmmo":"Debes entrar un nombre de munición válido. EX: 9x19mm PST Gzh",
+      "validArmor":"You must input a valid armor item",
       "validMed":"Debes entrar un nombre de algún medicamento válido. EX: Surv12",
       "botHelp":"Comandos disponibles: !astat , !price , !medical , !slot , and !wiki ~ Mas comandos se añadirán pronto!",
       "addBot":"Si quieres el bot en tu canal, dirígete a https://illogical.network/ y has click en 'EFT Bot' para añadir el bot!"
@@ -16,6 +18,7 @@
    "de": {
       "validItem": "Sie müssen ein gültigen Elementnamen eingeben. EX: Slick",
       "validAmmo": "Sie müssen ein gültigen Munitionsnamen eingeben. EX: 9x19mm PST Gzh",
+      "validArmor":"You must input a valid armor item",
       "validMed": "Sie müssen ein gültigen Namen für medizinische Artikel eingeben",
       "botHelp": "Verfügbare Befehle : !astat , !price , !medical , !slot , !trader und !wiki ~ Weitere Befehle folgen in Kürze!",
       "addBot": "Wenn Sie den Bot in Ihrem Kanal haben möchten, gehen Sie zu https://illogical.network/ und klicken Sie auf 'EFT Bot', um den Bot hinzuzufügen!" 
@@ -23,6 +26,7 @@
    "nl": {
       "validItem":"Geef een geldig voorwerp in. EX: Slick",
       "validAmmo":"Geef een geldig munitie type in. EX: 9x19mm PST Gzh",
+      "validArmor":"You must input a valid armor item",
       "validMed":"Geef een geldig medisch voorwerp in. EX: Surv12",
       "botHelp":"Commando's beschikbaar: !astat , !price , !medical , !slot , and !wiki ~ Binnekort meer commando's!",
       "addBot": "Als je de bot in de kanaal wilt hebben, ga naar https://illogical.network/ en click op 'EFT Bot' om de bot toe te voegen!"
@@ -30,6 +34,7 @@
    "tr": {
       "validItem":"Geçerli bir ürün ismi girmelisiniz. Örnek: Slick",
       "validAmmo":"Geçerli bir cephane tipi girmelisiniz. Örnek: 9x19mm PST Gzh",
+      "validArmor":"You must input a valid armor item",
       "validMed":"Geçerli bir sağlık malzemesi tipi girmelisiniz. Örnek: Salewa",
       "botHelp":"Mevcut komutlar: !astat , !price , !medical , !slot , ve !wiki ~ Yakında daha fazla komut ekleyeceğiz!",
       "addBot": "Eğer sizde bu botun kanalınızda hizmet vermesini istiyorsanız, https://illogical.network/ sitesine gidip 'EFT Bot' seçeneğine tıklayabilirsiniz!"
@@ -37,6 +42,7 @@
     "ru": {
       "validItem":"Укажите корректное название. EX: Slick",
       "validAmmo":"Укажите корректное название патрона. EX: 9x19mm PST Gzh",
+      "validArmor":"You must input a valid armor item",
       "validMed":"Укажите корректное название медицины. EX: Surv12",
       "botHelp":"Доступные команды: !astat , !price , !medical , !slot , !trader , and !wiki ~ В ближайшее время будет доступно больше команд!",
       "addBot":"Если вы хотите добавить бота на свой канал, проходите по ссылке https://illogical.network/ и нажмите на 'EFT Bot' чтобы добавить бота на свой канал!" 
