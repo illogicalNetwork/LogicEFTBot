@@ -57,11 +57,11 @@ class database:
 
 #Custom loop
 async def check_database():
-    print('Initiating loop. Waiting 15 seconds\n')
-    await asyncio.sleep(15)
+    print('Initiating loop. Waiting 2 minutes\n')
+    await asyncio.sleep(120)
     print('Starting check loop\n')
     while True:
-        await asyncio.sleep(10)
+        await asyncio.sleep(30)
         #print('Searching for new channels in database')
 
         db_channels = db.get_channels()
@@ -124,7 +124,7 @@ async def event_ready():
     if len(channels) > 100:
         pack = 1
         while len(channels) > pack * 100:
-                time.sleep(16)
+                time.sleep(20)
                 pack += 1
                 print(f'Joining pack #{pack}\n')
                 await bot.join_channels(channels[pack*100-101:pack*100-1])
@@ -174,6 +174,7 @@ async def price(ctx, *req):
     response = requests.get(url = crafted_url).text
     ###NEW
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
+    
 
 @bot.command(name="slot")
 async def slot(ctx, *req):
@@ -217,6 +218,7 @@ async def slot(ctx, *req):
     crafted_url = slot_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
+    
 
 @bot.command(name="wiki")
 async def wiki(ctx, *req):
@@ -345,6 +347,52 @@ async def medical(ctx, *req):
         medical_link = settings.medical_link_ru        
     crafted_url = medical_link + "{}".format(req)
     response = requests.get(url = crafted_url).text
+    await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
+
+@bot.command(name="armor")
+async def armor(ctx, *req):
+    #Look for cooldown object in cooldowns global variable
+    cd = None
+    for i in cooldowns:
+        if i['name'] == ctx.channel.name:
+            cd = check_cooldown(ctx.channel.name, i) #Check if cooldown is over
+            cd_obj = i
+            break
+
+    if cd or ctx.author.name.lower() == settings.nick:
+        return
+
+    if len(req) == 0:
+        #tic
+        await ctx.channel.send('@{} - {}'.format(ctx.author.name, locale[check_lang(ctx.channel.name)]["validArmor"]))
+        return
+
+    #Check if cooldown object for channel is in cooldowns list and update last usage
+    if cd is None:
+        cooldowns.append({'name': ctx.channel.name, 'last_usage': datetime.utcnow()})
+    else:
+        cd_obj['last_usage'] = datetime.utcnow()
+    
+    req = ' '.join(req)
+    log.info(ctx.channel.name + ' - searching for %s\n' % req)
+    ###NEW
+    lang = check_lang(ctx.channel.name)
+    armor_link = None
+    if lang == "en":
+        armor_link = settings.armor_link_en
+    elif lang == "de":
+        armor_link = settings.armor_link_de
+    elif lang == "es":
+        armor_link = settings.armor_link_es
+    elif lang == "tr":
+        armor_link = settings.armor_link_tr
+    elif lang == "nl":
+        armor_link = settings.armor_link_nl
+    elif lang == "ru":
+        armor_link = settings.armor_link_ru   
+    crafted_url = armor_link + "{}".format(req)
+    response = requests.get(url = crafted_url).text
+    ###NEW
     await ctx.channel.send('@{} {}'.format(ctx.author.name, response))
 
 @bot.command(name="eftbot")
