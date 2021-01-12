@@ -17,7 +17,7 @@ The bot has very basic and has only one moderation command which you can find be
 | !medical | `cooldown`| Retrieves medical item use time. Ex: `!medical surv` |
 | !price | `cooldown`| Retrieves flea market price. Ex: `!price Slick` |
 | !slot  | `cooldown`| Retrieves price per slot of item based off the flea market. Ex: `!slot Slick`|
-| !trader  | `cooldown`| Retrieves best trader to sell to and sell price. Ex: `!trader magnet`|
+| !armor  | `cooldown`| Retrieves the class, durability, and protection zones of an armor. Ex: `!armor slick`|
 | !wiki  | `cooldown` | Retrieves EFT Wiki Link of item requested. Ex: `!wiki slick` |
 | !help  | `information`| Display this help message. |
 | !eftbot| `information`| Display this help message. |                
