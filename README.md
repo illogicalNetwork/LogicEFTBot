@@ -32,7 +32,7 @@ Note - All `cooldown` commands do not require exact search entries. Some example
  - !medical surv >> `The usage time of Surv12 is: 20 seconds.`
  - !price slick >> `The price of LBT 6094A Slick Plate Carrier (80/80) is: 390,000 roubles.`
  - !slot slick >> `The price per slot of LBT 6094A Slick Plate Carrier (80/80) is: 43333 rubles.`
- - !trader magnet >> `The price of Magnet is: 11,500 roubles from Therapist`
+ - !armor slick >> `LBT 6094A Slick Plate Carrier is a level 6 armor with a max durablity of 80 and protects the Thorax.`
  - !wiki slick >> `The link to the wiki is https://escapefromtarkov.gamepedia.com/LBT_6094A_Slick_Plate_Carrier`
  - !setCD 5 >> `Sets the cooldown for the bot to 5 seconds`
  - !setLang en >> `Sets the bots language to English. Valid codes: en , es , de , nl , tr , ru`
