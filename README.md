@@ -3,7 +3,7 @@
 <p align="center">
   <b>To have the bot join your channel, please head to https://illogical.network/' </b><br />
   To make sure the bot can bypass any URL restrictions, please make sure you type <br />
-  <code>/mod LogicEFTBot</code> <br />in your chat after authorizing. Once you 'authorize' the bot should join your channel!
+  <code>/mod LogicEFTBot</code> <br />in your chat after authorizing (or /VIP the bot). Once you 'authorize' the bot should join your channel within 1-2 minutes!
 </p>
 
 ### Usage
@@ -13,11 +13,14 @@ The bot has very basic and has only one moderation command which you can find be
 
 | Command| Type                                             | Usage |
 |-----------------------|--------------------------------------------------|--------------------------------------------------|
+| !armor  | `cooldown`| Retrieves the class, durability, and protection zones of an armor. Ex: `!armor slick`|
+| !armorstats  | `cooldown`| Retrieves the effective durablity, move speed, turn speed, and ergonomic penalties. Ex: `!armorstats slick`|
 | !astat   | `cooldown`| Retrieves in-game ammo `flesh` and `penetration` values. Ex: `!astat 9x19 RIP` |
+| !helmet  | `cooldown`| Retrieves the class, durability, ricochet chance, and protection zones of an helmet. Ex: `!helmet altyn`|
+| !helmstats  | `cooldown`| Retrieves the move speed, turn speed, and ergonomic penalties. Ex: `!helmetstats altyn`|
 | !medical | `cooldown`| Retrieves medical item use time. Ex: `!medical surv` |
 | !price | `cooldown`| Retrieves flea market price. Ex: `!price Slick` |
 | !slot  | `cooldown`| Retrieves price per slot of item based off the flea market. Ex: `!slot Slick`|
-| !armor  | `cooldown`| Retrieves the class, durability, and protection zones of an armor. Ex: `!armor slick`|
 | !wiki  | `cooldown` | Retrieves EFT Wiki Link of item requested. Ex: `!wiki slick` |
 | !help  | `information`| Display this help message. |
 | !eftbot| `information`| Display this help message. |                
