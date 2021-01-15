@@ -17,7 +17,7 @@ The bot has very basic and has only one moderation command which you can find be
 | !armorstats  | `cooldown`| Retrieves the effective durablity, move speed, turn speed, and ergonomic penalties. Ex: `!armorstats slick`|
 | !astat   | `cooldown`| Retrieves in-game ammo `flesh` and `penetration` values. Ex: `!astat 9x19 RIP` |
 | !helmet  | `cooldown`| Retrieves the class, durability, ricochet chance, and protection zones of an helmet. Ex: `!helmet altyn`|
-| !helmstats  | `cooldown`| Retrieves the move speed, turn speed, and ergonomic penalties. Ex: `!helmetstats altyn`|
+| !helmstats  | `cooldown`| Retrieves the move speed, turn speed, and ergonomic penalties. Ex: `!helmstats altyn`|
 | !medical | `cooldown`| Retrieves medical item use time. Ex: `!medical surv` |
 | !price | `cooldown`| Retrieves flea market price. Ex: `!price Slick` |
 | !slot  | `cooldown`| Retrieves price per slot of item based off the flea market. Ex: `!slot Slick`|
