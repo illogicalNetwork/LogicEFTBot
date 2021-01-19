@@ -16,11 +16,11 @@
       "addBot":"Si quieres el bot en tu canal, dirígete a https://illogical.network/ y has click en 'EFT Bot' para añadir el bot!"
    },
    "de": {
-      "validItem": "Sie müssen ein gültigen Elementnamen eingeben. EX: Slick",
-      "validAmmo": "Sie müssen ein gültigen Munitionsnamen eingeben. EX: 9x19mm PST Gzh",
-      "validArmor":"You must input a valid armor item",
-      "validMed": "Sie müssen ein gültigen Namen für medizinische Artikel eingeben",
-      "botHelp": "Verfügbare Befehle : !astat , !price , !medical , !slot , !trader und !wiki ~ Weitere Befehle folgen in Kürze!",
+      "validItem": "Sie müssen ein gültigen Elementnamen eingeben. Bsp.: Paracord",
+      "validAmmo": "Sie müssen ein gültigen Munitionsnamen eingeben. Bsp.: 9x19mm PST Gzh",
+      "validArmor":"Sie müssen ein gültigen Rüstungsnamen eingeben. Bsp.: Slick",
+      "validMed": "Sie müssen ein gültigen Namen für medizinische Artikel eingeben. Bsp.: Surv12",
+      "botHelp": "Verfügbare Befehle: !astat, !price, !medical, !slot, !trader und !wiki ~ Weitere Befehle folgen in Kürze!",
       "addBot": "Wenn Sie den Bot in Ihrem Kanal haben möchten, gehen Sie zu https://illogical.network/ und klicken Sie auf 'EFT Bot', um den Bot hinzuzufügen!" 
    },
    "nl": {
