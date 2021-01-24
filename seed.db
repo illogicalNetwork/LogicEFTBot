@@ -1,0 +1,23 @@
+-- Initialize the db with all of the tables needed to run the app.
+
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS channels;
+
+CREATE TABLE `users` (
+  `twitch_id` varchar(255) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `display_name` varchar(255) NOT NULL,
+  `access_token` varchar(255) NOT NULL,
+  `refresh_token` varchar(255) NOT NULL,
+  `created_on` varchar(255) NOT NULL,
+  `lang` varchar(255) NOT NULL DEFAULT 'en'
+) DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `channels` (
+  `name` varchar(255) NOT NULL,
+  `cooldown` int(11) NOT NULL DEFAULT '10',
+  `lang` varchar(255) NOT NULL DEFAULT 'en'
+) DEFAULT CHARSET=utf8mb4;
+
+-- some sample data
+INSERT INTO channels VALUES ("#pawn_star", 10, "en");
