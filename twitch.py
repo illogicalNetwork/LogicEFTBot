@@ -23,7 +23,7 @@ def check_lang(channel_name: str) -> str:
 
 channels = list(dict.fromkeys(db.get_channels() + settings["initial_channels"]))
 IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_token"])
-log.info(f"Connecting to server: {IRC_SPEC}")
+log.info(f"Connecting to server: {settings["irc_server"]}:{int(settings["irc_port"])}")
 
 class TwitchIrcBot(SingleServerIRCBot):
     def __init__(self):
