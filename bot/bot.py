@@ -11,6 +11,13 @@ from .config import settings, locale
 # TODO: Move most of the actual API calls to eft.py (or move them all back into here)
 class LogicEFTBot(LogicEFTBotBase):
 
+    @command("astat")
+    def bot_astat(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        astat = EFT.check_astat(lang, data)
+        return '@{} {}'.format(ctx.author.name, astat)
+
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
         log.info('%s - searching for %s\n', ctx.channel, data)
@@ -38,13 +45,6 @@ class LogicEFTBot(LogicEFTBotBase):
         lang = db.get_lang(ctx.channel)
         helmetstats = EFT.check_helmetstats(lang, data)
         return '@{} {}'.format(ctx.author.name, helmetstats)
-
-    @command("astat")
-    def bot_astat(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
-        lang = db.get_lang(ctx.channel)
-        astat = EFT.check_astat(lang, data)
-        return '@{} {}'.format(ctx.author.name, astat)
 
     @command("medical")
     def bot_medical(self, ctx: CommandContext, data: str) -> str:
