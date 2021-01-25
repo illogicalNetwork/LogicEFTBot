@@ -1,0 +1,77 @@
+{
+  "irc_token": "",
+  "irc_server": "irc.chat.twitch.tv",
+  "irc_port": "6667",
+  "client_id": "",
+  "init_pack_size": 100,
+  "init_pack_wait_s" : 5,
+  "client_secret": "",
+  "nick": "logiceftbot",
+  "prefix": "!",
+  "initial_channels": ["lvndmark", "willerz", "logicalsolutions"],
+  "default_cooldown" : 10,
+  "default_lang" : "en",
+  "db_observe_frequency": 60,
+  "ammo_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "armor_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "medical_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "price_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "slot_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "trader_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "wiki_link": {
+    "de": "",
+    "en": "",
+    "es": "",
+    "nl": "",
+    "ru": "",
+    "tr": ""
+  },
+  "database_config" : {
+      "host": "",
+      "user": "",
+      "passwd": "",
+      "database": ""
+  }
+}
