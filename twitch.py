@@ -101,7 +101,12 @@ class TwitchIrcBot(SingleServerIRCBot):
         c = self.connection
         if msg:
             if msg[:1] == settings["prefix"]:
-                parts = event.arguments[0].split()
+                parts = event.arguments[0].lower()
+                if "mule" in parts:
+                    parts = parts.replace("mule", "stimulator")
+                if "m.u.l.e." in parts:
+                    parts = parts.replace("m.u.l.e.", "stimulator")
+                parts = parts.split()
                 cmd = parts[0][1:]
                 if not self.logic.has_command(cmd):
                     # ignore commands we don't support.
