@@ -103,6 +103,9 @@ class TwitchIrcBot(SingleServerIRCBot):
             if msg[:1] == settings["prefix"]:
                 parts = event.arguments[0].split()
                 cmd = parts[0][1:]
+                if not self.logic.has_command(cmd):
+                    # ignore commands we don't support.
+                    return
                 content = ' '.join(parts[1:] or [])
                 context = self.get_command_context(event)
                 if check_cooldown(db, context.channel):

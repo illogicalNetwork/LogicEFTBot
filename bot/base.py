@@ -46,6 +46,8 @@ class LogicEFTBotBase:
     A base class for implementing the EFT bot.
     Provides the logic for automatically registering commands.
     """
+    def has_command(self, cmd: str):
+        return cmd in self.commands
 
     def __init__(self):
         # read all methods on this object and cache them.
