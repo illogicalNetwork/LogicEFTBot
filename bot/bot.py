@@ -98,5 +98,7 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_set_lang(self, ctx: CommandContext, lang : str = settings["default_lang"]) -> str:
         if not ctx.author.is_mod:
             return "@" + ctx.author.name + " You ain't a mod you dingus!"
+        if lang not in locale.keys():
+            return "@" + ctx.author.name + " Not a valid option, try " + locale.keys()
         db.update_lang(ctx.channel, lang, ctx.channel)
         return "@" + ctx.author.name + ' - Language has been set to {}'.format(lang)
