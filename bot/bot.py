@@ -1,6 +1,7 @@
 
 from typing import Optional, Any
 import requests
+import re
 from inspect import signature
 from .base import LogicEFTBotBase, command, CommandContext, AuthorInfo
 from .eft import EFT
@@ -99,6 +100,7 @@ class LogicEFTBot(LogicEFTBotBase):
         if not ctx.author.is_mod:
             return "@" + ctx.author.name + " You ain't a mod you dingus!"
         if lang not in locale.keys():
-            return "@" + ctx.author.name + " Not a valid option, try " + str(locale.keys())
+            lang = re.sub(r'[\[\]\']', '', str(list(locale.keys())))
+            return "@" + ctx.author.name + " Not a valid option, try " + lang
         db.update_lang(ctx.channel, lang, ctx.channel)
         return "@" + ctx.author.name + ' - Language has been set to {}'.format(lang)
