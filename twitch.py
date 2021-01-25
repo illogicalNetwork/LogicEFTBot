@@ -8,6 +8,7 @@ import time
 import requests
 from bot.database import db
 from bot.config import settings, locale
+from bot.base import CommandNotFoundException
 from cooldown import check_cooldown, reset_cooldown
 from typing import Optional
 from bot.base import CommandContext, AuthorInfo
@@ -122,7 +123,11 @@ class TwitchIrcBot(SingleServerIRCBot):
             resp = self.logic.exec(context, command, content)
             if resp:
                 self.do_send_msg(context.channel, resp)
+        except CommandNotFoundException:
+            # just be silent if we don't know the command.
+            pass
         except Exception as e:
+            # Log all other exceptions.
             log.error(f"Exception processing command ({command}) for channel ({context.channel}) -")
             log.error(e)
             traceback.print_exc()
