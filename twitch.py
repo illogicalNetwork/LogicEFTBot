@@ -3,7 +3,7 @@ import asyncio
 import os
 import threading
 import irc
-from irc.bot import SingleServerIRCBot, SingleServerIRCBot
+from irc.bot import SingleServerIRCBot
 import time
 import requests
 from bot.database import db
@@ -72,6 +72,26 @@ class TwitchIrcBot(SingleServerIRCBot):
             ),
             channel=channel
         )
+
+    def _connect(self):
+        """
+        Establish a connection to the server at the front of the server_list.
+        """
+        server = self.servers.peek()
+        try:
+            self.connect(
+                server.host,
+                server.port,
+                self._nickname,
+                server.password,
+                ircname=self._realname,
+            )
+        except Exception as e:
+            log.error("Error connecting to the server: %s", str(e))
+            pass
+
+    def on_error(self, connection, event):
+        log.info("Got error: %s", str(event))
 
     def on_pubmsg(self, connection, event):
         msg = event.arguments[0]
