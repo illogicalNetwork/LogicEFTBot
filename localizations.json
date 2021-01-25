@@ -4,8 +4,8 @@
       "validAmmo":"You must input a valid ammo name. EX: 9x19mm PST Gzh",
       "validMed":"You must input a valid medical item name",
       "validArmor":"You must input a valid armor item",
-      "botHelp":"Commands available: !astat , !price , !medical , !slot , and !wiki ~ More commands coming soon!",
-      "addBot":"If you want the bot in yor channel, head to https://illogical.network/ and click 'EFT Bot' to add the bot!"
+      "botHelp":"Commands available: !astat , !armor , !armorstats , !helmet , !helmetstats , !medical , !price, !slot , and !wiki ",
+      "addBot":"If you want the bot in your channel, head to https://illogical.network/ and click 'EFT Bot' to add the bot!"
    },
    "es": {
       "validItem":"Debes entrar un nombre de artículo válido. EX: Slick",
