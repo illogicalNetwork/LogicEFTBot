@@ -10,54 +10,69 @@ from .config import settings, locale
 
 # TODO: Move most of the actual API calls to eft.py (or move them all back into here)
 class LogicEFTBot(LogicEFTBotBase):
+
+    @command("armor")
+    def bot_armor(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        armor = EFT.check_armor(lang, data)
+        return '@{} {}'.format(ctx.author.name, armor)
+
+    @command("armorstats")
+    def bot_armorstats(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        armorstats = EFT.check_armorstats(lang, data)
+        return '@{} {}'.format(ctx.author.name, armorstats)
+
+    @command("helmet")
+    def bot_helmet(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        helmet = EFT.check_helmets(lang, data)
+        return '@{} {}'.format(ctx.author.name, helmet)
+
+    @command("helmetstats")
+    def bot_helmetstats(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        helmetstats = EFT.check_helmetstats(lang, data)
+        return '@{} {}'.format(ctx.author.name, helmetstats)
+
+    @command("astat")
+    def bot_astat(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        astat = EFT.check_astat(lang, data)
+        return '@{} {}'.format(ctx.author.name, astat)
+
+    @command("medical")
+    def bot_medical(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = db.get_lang(ctx.channel)
+        medical = EFT.check_medical(lang, data)
+        return '@{} {}'.format(ctx.author.name, medical)
+
     @command("price")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
         log.info('%s - searching for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         price = EFT.check_price(lang, data)
-        log.info("Got price: %s", price)
         return '@{} {}'.format(ctx.author.name, price)
 
     @command("slot")
     def bot_slot(self, ctx: CommandContext, data: str) -> str:
         log.info('%s - searching for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
-        slot_link = settings["slot_link"][lang] if lang in settings["slot_link"] else None
-        # TODO(security): Using user inputs in URL building like this is.. bad.
-        # this needs to be sanitized.
-        crafted_url = slot_link.format(data)
-        response = requests.get(url = crafted_url).text
-        return '@{} {}'.format(ctx.author.name, response)
+        slot = EFT.check_slot(lang, data)
+        return '@{} {}'.format(ctx.author.name, slot)
 
     @command("wiki")
     def bot_wiki(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         wiki = EFT.check_wiki(lang, data)
         return '@{} {}'.format(ctx.author.name, wiki)
-
-    @command("astat")
-    def bot_astat(self, ctx: CommandContext, data: str) -> str:
-        lang = db.get_lang(ctx.channel)
-        ammo_link = settings["ammo_link"][lang] if lang in settings["ammo_link"] else None
-        crafted_url = ammo_link.format(data)
-        response = requests.get(crafted_url).text
-        return '@{} {}'.format(ctx.author.name, response)
-
-    @command("medical")
-    def bot_medical(self, ctx: CommandContext, data: str) -> str:
-        lang = db.get_lang(ctx.channel)
-        medical_link = settings["medical_link"][lang] if lang in settings["medical_link"] else None
-        crafted_url = medical_link.format("{}".format(data))
-        response = requests.get(crafted_url).text
-        return '@{} {}'.format(ctx.author.name, response)
-
-    @command("armor")
-    def bot_armor(self, ctx: CommandContext, data: str) -> str:
-        lang = db.get_lang(ctx.channel)
-        armor_link = settings["armor_link"][lang] if lang in settings["armor_link"] else None
-        crafted_url = armor_link.format(data)
-        response = requests.get(crafted_url).text
-        return '@{} {}'.format(ctx.author.name, response)
 
     @command("eftbot")
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
