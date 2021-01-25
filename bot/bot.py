@@ -86,7 +86,7 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_add_bot(self, ctx: CommandContext, _=None) -> str: #Later change this to invite link
         return '@{} - {}'.format(ctx.author.name, locale[db.get_lang(ctx.channel)]["addBot"])
 
-    @command("setCD")
+    @command("setcd")
     def bot_set_cd(self, ctx: CommandContext, cooldown_time=settings["default_cooldown"]) -> str:
         if not ctx.author.is_mod:
             # TODO: unlocalized string.
@@ -94,7 +94,7 @@ class LogicEFTBot(LogicEFTBotBase):
         db.update_cooldown(ctx.channel, cooldown_time)
         return "@" + ctx.author.name + ' - Cooldown has been set to {}'.format(cooldown_time)
 
-    @command("setLang")
+    @command("setlang")
     def bot_set_lang(self, ctx: CommandContext, lang : str = settings["default_lang"]) -> str:
         if not ctx.author.is_mod:
             return "@" + ctx.author.name + " You ain't a mod you dingus!"
