@@ -63,7 +63,9 @@ class TwitchIrcBot(SingleServerIRCBot):
             if tag["key"] == "display-name":
                 display_name = tag["value"]
             elif tag["key"] == "mod":
-                is_mod = tag["value"] == '1'
+                is_mod = is_mod or tag["value"] == '1'
+            elif tag["key"] == "badges":
+                is_mod = is_mod or (tag["value"] and "broadcaster/1" in tag["value"])
         channel = event.target[1:] if event.target[0] == "#" else event.target
         return CommandContext(
             author=AuthorInfo(
