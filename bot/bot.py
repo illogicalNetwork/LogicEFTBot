@@ -14,63 +14,63 @@ class LogicEFTBot(LogicEFTBotBase):
 
     @command("astat")
     def bot_astat(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - ammo search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         astat = EFT.check_astat(lang, data)
         return '@{} {}'.format(ctx.author.name, astat)
 
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - armor search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         armor = EFT.check_armor(lang, data)
         return '@{} {}'.format(ctx.author.name, armor)
 
     @command("armorstats")
     def bot_armorstats(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - armorstats search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         armorstats = EFT.check_armorstats(lang, data)
         return '@{} {}'.format(ctx.author.name, armorstats)
 
     @command("helmet")
     def bot_helmet(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - helmet search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         helmet = EFT.check_helmets(lang, data)
         return '@{} {}'.format(ctx.author.name, helmet)
 
     @command("helmetstats")
     def bot_helmetstats(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - helmetstats search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         helmetstats = EFT.check_helmetstats(lang, data)
         return '@{} {}'.format(ctx.author.name, helmetstats)
 
     @command("medical")
     def bot_medical(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - meds search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         medical = EFT.check_medical(lang, data)
         return '@{} {}'.format(ctx.author.name, medical)
 
     @command("price")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - price search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         price = EFT.check_price(lang, data)
         return '@{} {}'.format(ctx.author.name, price)
 
     @command("slot")
     def bot_slot(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - slot search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         slot = EFT.check_slot(lang, data)
         return '@{} {}'.format(ctx.author.name, slot)
 
     @command("wiki")
     def bot_wiki(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
+        log.info('%s - wiki search for %s\n', ctx.channel, data)
         lang = db.get_lang(ctx.channel)
         wiki = EFT.check_wiki(lang, data)
         return '@{} {}'.format(ctx.author.name, wiki)
