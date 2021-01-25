@@ -6,7 +6,7 @@
   "init_pack_size": 100,
   "init_pack_wait_s" : 5,
   "client_secret": "",
-  "nick": "LogicEFTBot",
+  "nick": "logiceftbot",
   "prefix": "!",
   "initial_channels": ["lvndmark", "willerz", "logicalsolutions"],
   "default_cooldown" : 10,
