@@ -106,7 +106,7 @@ class TwitchIrcBot(SingleServerIRCBot):
                 content = ' '.join(parts[1:] or [])
                 context = self.get_command_context(event)
                 if check_cooldown(db, context.channel):
-                    log.info("Cooldown enforced on channel: %s", context.channel)
+                    #log.info("Cooldown enforced on channel: %s", context.channel)
                     return
                 if context.author.name.lower() == settings["nick"]:
                     # ignoring own message.
