@@ -143,7 +143,7 @@ def observe_db():
     """
     while DB_OBSERVER_THREAD_LIVE:
         time.sleep(4) # wait a few seconds.
-        log.info("[observe_db] Scanning for new channels in DB.\n")
+        #log.info("[observe_db] Scanning for new channels in DB.\n")
         # load all channels from db.
         all_channels = db.get_channels()
         for channel in all_channels:
