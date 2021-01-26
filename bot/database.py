@@ -2,6 +2,7 @@
 import mysql.connector as mysql
 from .config import settings
 from typing import List
+import datetime
 
 class Database:
     def __init__(self) -> None:
@@ -40,6 +41,11 @@ class Database:
         self.db.commit()
         self.sql.execute("SELECT username from users")
         return [i[0] for i in self.sql.fetchall()]
+
+    def sql_log(self, sourcetype: str, source: str, cmd: str, query: str) -> None:
+        ts = datetime.datetime.utcnow()
+        self.sql.execute("INSERT INTO bot_logging VALUES timestamp=%s, source=%s, channel=%s, search_type=%s, query=%s", (ts, sourcetype, source, cmd, query))
+        self.db.commit()
 
 #exported global variables/objects
 db = Database()

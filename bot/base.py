@@ -1,6 +1,7 @@
 from typing import Optional, Any
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
+from .database import db
 from .log import log
 
 """
@@ -77,4 +78,6 @@ class LogicEFTBotBase:
         if not command in self.commands:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
+        # TODO needs to be made compatible with other front ends ex: discord
+        db.sql_log("Twitch", ctx.channel, command, data)
         return fn(ctx, data)
