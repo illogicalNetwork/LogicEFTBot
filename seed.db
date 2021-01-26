@@ -19,5 +19,15 @@ CREATE TABLE `channels` (
   `lang` varchar(255) NOT NULL DEFAULT 'en'
 ) DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE `bot_logging` (
+	`id` ENUM(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+	`timestamp` TIMESTAMP,
+	`source` TEXT(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+	`channel` TEXT(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+	`search_type` TEXT(11) CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+	`query` TEXT(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci,
+	PRIMARY KEY (`enum`)
+);
+
 -- some sample data
 INSERT INTO channels VALUES ("#pawn_star", 10, "en");
