@@ -44,7 +44,7 @@ class Database:
 
     def sql_log(self, sourcetype: str, source: str, cmd: str, query: str) -> None:
         ts = datetime.datetime.utcnow()
-        self.sql.execute("INSERT INTO bot_logging VALUES timestamp=%s, source=%s, channel=%s, search_type=%s, query=%s", (ts, sourcetype, source, cmd, query))
+        self.sql.execute("INSERT INTO bot_logging (timestamp, source, channel, search_type, query) VALUES (%s, %s, %s, %s, %s)", (ts, sourcetype, source, cmd, query))
         self.db.commit()
 
 #exported global variables/objects
