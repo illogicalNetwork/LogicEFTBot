@@ -101,14 +101,6 @@ class TwitchIrcBot(SingleServerIRCBot):
         if msg:
             if msg[:1] == settings["prefix"]:
                 parts = event.arguments[0].lower()
-                if "thicc items" in parts:
-                    parts = parts.replace("thicc items", "t.h.i.c.c items")
-                if "thicc" in parts:
-                    parts = parts.replace("thicc", "t.h.i.c.c items")                    
-                if "thicc weapons" in parts:
-                    parts = parts.replace("thicc weapons", "t.h.i.c.c weapon case")
-                if "thicc weapon" in parts:
-                    parts = parts.replace("thicc weapon", "t.h.i.c.c weapon case")
                 parts = parts.split()
                 cmd = parts[0][1:]
                 if not self.logic.has_command(cmd):
