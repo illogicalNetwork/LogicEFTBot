@@ -8,7 +8,7 @@
   "client_secret": "",
   "nick": "logiceftbot",
   "prefix": "!",
-  "initial_channels": ["lvndmark", "willerz", "logicalsolutions"],
+  "initial_channels": ["lvndmark", "willerz",  "logicalsolutions"],
   "default_cooldown" : 10,
   "default_lang" : "en",
   "db_observe_frequency": 60,

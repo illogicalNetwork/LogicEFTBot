@@ -7,6 +7,9 @@ settings : Dict[str, Any] = {}
 with open("settings.json", "r") as f:
     settings = json.load(f)
 
-locale = []
+locale: Dict[str, Dict[str, str]] = {}
 with io.open("localizations.json", "r", encoding="utf-8") as f:
     locale = json.load(f)
+
+def localized_string(lang: str, string: str) -> str:
+    return str(locale[lang][string])

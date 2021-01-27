@@ -6,8 +6,8 @@ import irc
 from irc.bot import SingleServerIRCBot
 import time
 import requests
-from bot.database import db
-from bot.config import settings, locale
+from bot.database import Database, check_lang
+from bot.config import settings
 from bot.base import CommandNotFoundException
 from cooldown import check_cooldown, reset_cooldown
 from typing import Optional
@@ -18,11 +18,12 @@ from typing import Any
 import signal
 import traceback
 
-def check_lang(channel_name: str) -> str:
-    return db.get_lang(channel_name)
-
+################ Globals
+# TODO: use TwitchIrcBot.channels instead of this channels dict.
+db = Database.get()
 channels = list(dict.fromkeys(db.get_channels() + settings["initial_channels"]))
 IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_token"])
+################
 
 class TwitchIrcBot(SingleServerIRCBot):
     def __init__(self):
@@ -81,6 +82,7 @@ class TwitchIrcBot(SingleServerIRCBot):
         """
         server = self.servers.peek()
         try:
+            log.info(f"Connecting to server: {IRC_SPEC}")
             self.connect(
                 server.host,
                 server.port,
@@ -100,8 +102,7 @@ class TwitchIrcBot(SingleServerIRCBot):
         c = self.connection
         if msg:
             if msg[:1] == settings["prefix"]:
-                parts = event.arguments[0].lower()
-                parts = parts.split()
+                parts = event.arguments[0].split()
                 cmd = parts[0][1:]
                 if not self.logic.has_command(cmd):
                     # ignore commands we don't support.
@@ -114,7 +115,6 @@ class TwitchIrcBot(SingleServerIRCBot):
                 if context.author.name.lower() == settings["nick"]:
                     # ignoring own message.
                     return
-                reset_cooldown(context.channel)
                 self.do_command(context, event, cmd, content)
 
     def do_send_msg(self, channel: str, message: str) -> None:
@@ -126,6 +126,7 @@ class TwitchIrcBot(SingleServerIRCBot):
             resp = self.logic.exec(context, command, content)
             if resp:
                 self.do_send_msg(context.channel, resp)
+                reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
             pass
@@ -143,7 +144,6 @@ def observe_db():
     """
     while DB_OBSERVER_THREAD_LIVE:
         time.sleep(4) # wait a few seconds.
-        #log.info("[observe_db] Scanning for new channels in DB.\n")
         # load all channels from db.
         all_channels = db.get_channels()
         for channel in all_channels:

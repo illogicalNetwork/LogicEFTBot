@@ -1,10 +1,18 @@
-
+from __future__ import annotations
 import mysql.connector as mysql
-from .config import settings
+from bot.config import settings
 from typing import List
-import datetime
 
 class Database:
+    singleton = None
+
+    @staticmethod
+    def get() -> Database:
+        if not Database.singleton:
+            #exported global variables/objects
+            Database.singleton = Database()
+        return Database.singleton
+
     def __init__(self) -> None:
         db = mysql.connect(
             host = settings["database_config"]["host"],
@@ -30,22 +38,18 @@ class Database:
     def get_cd(self, name: str) -> int:
         self.sql.execute("SELECT cooldown FROM channels WHERE name = %s", (name,))
         cd = self.sql.fetchone()
-        return cd[0] if cd else None
+        return int(cd[0]) if cd else int(settings["default_cooldown"])
 
     def get_lang(self, name: str) -> str:
         self.sql.execute("SELECT lang FROM users WHERE username = %s", (name,))
         lang = self.sql.fetchone()
-        return lang[0] if lang else settings["default_lang"]
+        return str(lang[0]) if lang else str(settings["default_lang"])
 
     def get_channels(self) -> List[str]:
         self.db.commit()
         self.sql.execute("SELECT username from users")
         return [i[0] for i in self.sql.fetchall()]
 
-    def sql_log(self, sourcetype: str, source: str, cmd: str, query: str) -> None:
-        ts = datetime.datetime.utcnow()
-        self.sql.execute("INSERT INTO bot_logging (timestamp, source, channel, search_type, query) VALUES (%s, %s, %s, %s, %s)", (ts, sourcetype, source, cmd, query))
-        self.db.commit()
 
-#exported global variables/objects
-db = Database()
+def check_lang(channel_name: str) -> str:
+    return Database.get().get_lang(channel_name)
