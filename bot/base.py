@@ -1,8 +1,7 @@
-from typing import Optional, Any
+from typing import Optional, Any, Callable, Dict
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
-from .database import db
-from .log import log
+from bot.log import log
 
 """
 This is the python implementation of the commands
@@ -26,10 +25,10 @@ def command(name: str):
         # i.e the (context, cmd, data) structure.
         if sig.return_annotation is not str or iscoroutinefunction(func):
             # def doesn't have correct signature
-            raise Error(f'Function {func.__name__} cannot be attached to command `{name}`. It must have the signature: (..) -> str.')
-        func._bot_command = name
+            raise Exception(f'Function {func.__name__} cannot be attached to command `{name}`. It must have the signature: (..) -> str.')
+        func._bot_command = name # type: ignore
         return func
-    decorator._bot_command = name
+    decorator._bot_command = name # type: ignore
     return decorator
 
 @dataclass(frozen=True)
@@ -42,6 +41,9 @@ class CommandContext:
     author: AuthorInfo
     channel: str
 
+CommandType = Callable[[CommandContext, Optional[str]], str]
+CommandCacheType = Dict[str, CommandType]
+
 class LogicEFTBotBase:
     """
     A base class for implementing the EFT bot.
@@ -52,7 +54,7 @@ class LogicEFTBotBase:
 
     def __init__(self):
         # read all methods on this object and cache them.
-        self.commands = {}
+        self.commands : CommandCacheType = {}
         log.info(f"Loading commands for bot...")
         for attr in dir(self):
             obj = getattr(self, attr)
@@ -78,7 +80,4 @@ class LogicEFTBotBase:
         if not command in self.commands:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
-        # TODO needs to be made compatible with other front ends ex: discord
-        if data is not None:
-            db.sql_log("Twitch", ctx.channel, command, data)
         return fn(ctx, data)

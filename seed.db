@@ -2,23 +2,6 @@
 
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS channels;
-DROP TABLE IF EXISTS bot_logging;
-
-CREATE TABLE `bot_logging` (
-  `id` int(11) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `source` text NOT NULL,
-  `channel` text NOT NULL,
-  `search_type` text NOT NULL,
-  `query` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
-
-CREATE TABLE `channels` (
-  `name` varchar(255) NOT NULL,
-  `cooldown` int(11) NOT NULL DEFAULT '10',
-  `lang` varchar(255) NOT NULL DEFAULT 'en'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `users` (
   `twitch_id` varchar(255) NOT NULL,
@@ -28,19 +11,13 @@ CREATE TABLE `users` (
   `refresh_token` varchar(255) NOT NULL,
   `created_on` varchar(255) NOT NULL,
   `lang` varchar(255) NOT NULL DEFAULT 'en'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) DEFAULT CHARSET=utf8mb4;
 
-ALTER TABLE `bot_logging`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `channels`
-  ADD PRIMARY KEY (`name`);
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`twitch_id`);
-
-ALTER TABLE `bot_logging`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+CREATE TABLE `channels` (
+  `name` varchar(255) NOT NULL,
+  `cooldown` int(11) NOT NULL DEFAULT '10',
+  `lang` varchar(255) NOT NULL DEFAULT 'en'
+) DEFAULT CHARSET=utf8mb4;
 
 -- some sample data
 INSERT INTO channels VALUES ("#pawn_star", 10, "en");

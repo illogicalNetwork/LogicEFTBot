@@ -1,10 +1,15 @@
 #!/usr/bin/python3
+from typing import Dict
 from bot.database import Database
 import datetime
 from datetime import timedelta
 from bot.config import settings
+from bot.log import log
 
-cooldowns = {}
+# A map of Channel Name => Cooldown counter.
+# The cooldown itself is the last-use timestamp from the
+# channel.
+cooldowns: Dict[str, datetime.datetime] = {}
 
 def check_cooldown(db: Database, channel_name: str) -> bool:
     """
