@@ -79,5 +79,6 @@ class LogicEFTBotBase:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
         # TODO needs to be made compatible with other front ends ex: discord
-        db.sql_log("Twitch", ctx.channel, command, data)
+        if data not "":
+            db.sql_log("Twitch", ctx.channel, command, data)
         return fn(ctx, data)
