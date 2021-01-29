@@ -36,7 +36,7 @@ class TwitchIrcBot(SingleServerIRCBot):
 
     def on_welcome(self, connection, event):
         log.info('Received welcome.')
-        #log.info('Joining (%s) channels.', len(channels))
+        log.info('Joining (%s) channels.', len(channels))
 
         # Request specific capabilities before you can use them
         connection.cap('REQ', ':twitch.tv/membership')
@@ -46,7 +46,7 @@ class TwitchIrcBot(SingleServerIRCBot):
         # Rejoin all the channels this bot should be in.
         for i, channel in enumerate(channels):
             self.do_join(channel)
-            log.info('Joining `#%s`', channel)
+            #log.info('Joining `#%s`', channel)
             if (i > 0) and (i % int(settings["init_pack_size"]) == 0):
                 # wait a bit before connecting more.
                 # twitch rate-limits bots from the amount of JOIN commands
