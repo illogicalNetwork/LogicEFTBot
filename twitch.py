@@ -36,7 +36,7 @@ class TwitchIrcBot(SingleServerIRCBot):
 
     def on_welcome(self, connection, event):
         log.info('Received welcome.')
-        log.info('Joining (%s) channels.', len(channels))
+        #log.info('Joining (%s) channels.', len(channels))
 
         # Request specific capabilities before you can use them
         connection.cap('REQ', ':twitch.tv/membership')
