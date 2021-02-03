@@ -46,7 +46,6 @@ class TwitchIrcBot(SingleServerIRCBot):
         # Rejoin all the channels this bot should be in.
         for i, channel in enumerate(channels):
             self.do_join(channel)
-            #log.info('Joining `#%s`', channel)
             if (i > 0) and (i % int(settings["init_pack_size"]) == 0):
                 # wait a bit before connecting more.
                 # twitch rate-limits bots from the amount of JOIN commands
@@ -110,7 +109,7 @@ class TwitchIrcBot(SingleServerIRCBot):
                 content = ' '.join(parts[1:] or [])
                 context = self.get_command_context(event)
                 if check_cooldown(db, context.channel):
-                    #log.info("Cooldown enforced on channel: %s", context.channel)
+                    # Cooldown enforced on channel
                     return
                 if context.author.name.lower() == settings["nick"]:
                     # ignoring own message.
@@ -133,7 +132,7 @@ class TwitchIrcBot(SingleServerIRCBot):
         except Exception as e:
             # Log all other exceptions.
             log.error(f"Exception processing command ({command}) for channel ({context.channel}) -")
-            log.error(e)
+            log.error(str(e))
             traceback.print_exc()
 
 def observe_db():

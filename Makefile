@@ -1,10 +1,14 @@
 typecheck: FORCE
 		mypy -m twitch --ignore-missing-imports
+		mypy -m discordbot --ignore-missing-imports
 		mypy -m tests.bot --ignore-missing-imports
 
 
 setup:
 	python3.7 -m pip install requests irc mysql-connector-python
+
+setup-discord:
+	python3.7 -m pip install discord requests mysql-connector-python
 
 test:
 	python3.7 -m unittest tests.bot
@@ -15,5 +19,8 @@ initdb:
 
 twitch: FORCE
 	python3.7 -m twitch
+
+discord: FORCE
+	python3.7 -m discordbot
 
 FORCE:

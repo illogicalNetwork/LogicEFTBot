@@ -1,4 +1,4 @@
-from __future__ import annotations
+from __future__ import annotations # type: ignore
 import mysql.connector as mysql
 from bot.config import settings
 from typing import List
