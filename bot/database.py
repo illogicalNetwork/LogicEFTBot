@@ -50,7 +50,7 @@ class Database:
 
     def get_channels(self) -> List[str]:
         self.db.commit()
-        self.sql.execute("SELECT username from users LIMIT 100")
+        self.sql.execute("SELECT username from users")
         return [i[0] for i in self.sql.fetchall()]
 
 

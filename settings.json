@@ -12,7 +12,7 @@
   "prefix": "!",
   "default_cooldown" : 10,
   "default_lang" : "en",
-  "db_observe_frequency": 5,
+  "db_observe_frequency": 60,
   "ammo_link": {
     "de": "",
     "en": "",

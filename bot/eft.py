@@ -9,7 +9,6 @@ class InvalidLocaleError(Exception):
     def __init__(self, locale):
         super().__init__(f"Unknown locale {locale}")
         self.locale = locale
-        
 # utility class for interfacing with EFT's data.
 class EFT:
 

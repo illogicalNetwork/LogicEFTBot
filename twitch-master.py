@@ -115,7 +115,6 @@ def observe_db():
             if (i % int(settings['init_pack_size'])) == 0 and i > 0:
                 # take a break!
                 time.sleep(int(settings['init_pack_wait_s']))
-
         time.sleep(int(settings["db_observe_frequency"]))
     log.info("Stopped DB observer.")
 
@@ -124,7 +123,8 @@ def signal_handler(sig, frame):
     global DB_OBSERVER_THREAD_LIVE
     global DB_OBSERVER_THREAD
     DB_OBSERVER_THREAD_LIVE = False
-    DB_OBSERVER_THREAD.join()
+    if DB_OBSERVER_THREAD:
+        DB_OBSERVER_THREAD.join()
     for i, shard in enumerate(ALL_SHARDS):
         shard.queue.put(END_OF_LIFE) # end-of-life signal.
         shard.process.join()

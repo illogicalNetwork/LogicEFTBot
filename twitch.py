@@ -56,11 +56,10 @@ class TwitchIrcBot(SingleServerIRCBot):
             if self.is_welcome:
                 log.info("ERROR: We've been rate limited. ------------------------------------")
                 return
-            log.info("Enqueued '#%s'", channel)
             self.enqueued_channels.append(channel)
         else:
             # join immediately
-            log.info("Immediate '#%s'", channel)
+            log.info("Joining '#%s'", channel)
             self.connection.join("#" + channel)
             self.joined_channels.add(channel)
 
