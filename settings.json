@@ -3,6 +3,7 @@
   "irc_server": "irc.chat.twitch.tv",
   "irc_port": "6667",
   "client_id": "",
+  "shard_size": 50,
   "init_pack_size": 100,
   "init_pack_wait_s" : 5,
   "client_secret": "",
