@@ -69,11 +69,16 @@ def run_bot(queue: Queue) -> None:
 ALL_SHARDS : List[Shard] = []
 
 def get_unsaturated_shards() -> List[Shard]:
+    """
+    Returns all of the subprocesses that can still join more channels.
+    If none exist, creates another one.
+    """
     unsaturated_shards = list(filter(lambda shard: not shard.is_saturated(), ALL_SHARDS))
     if not unsaturated_shards:
         # no free shards available, create one.
         shard = create_shard()
         ALL_SHARDS.append(shard)
+        shard.start()
         return [shard]
     return unsaturated_shards
 
@@ -118,7 +123,6 @@ def create_shard() -> Shard:
     return Shard(queue=queue, process=process)
 
 if __name__ == "__main__":
-    global ALL_SHARDS
     all_channels_count = len(DB.get_channels())
     suggested_shard_size = int(settings["shard_size"]) # note- this should be between 50-100 per the twitch documentation.
     proc_count = math.ceil(all_channels_count / suggested_shard_size)
@@ -126,11 +130,12 @@ if __name__ == "__main__":
     # note that if the DB grows, we'll only ever grow by one shard at a time.
     log.info("Sharding into %d processes.", proc_count)
     ALL_SHARDS = [create_shard() for _ in range(proc_count)]
-    map(lambda shard: shard.start(), ALL_SHARDS)
+    for shard in ALL_SHARDS:
+        shard.start()
+        log.info("Started shard with pid %d", shard.process.pid)
 
     # Start observing DB for changes.
     log.info("Listening for DB changes.")
-    global DB_OBSERVER_THREAD
     DB_OBSERVER_THREAD = threading.Thread(target=observe_db, args=())
     DB_OBSERVER_THREAD.start()
 
