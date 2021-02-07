@@ -14,47 +14,54 @@ from typing import Optional
 from bot.base import CommandContext, AuthorInfo
 from bot.bot import LogicEFTBot
 from bot.log import log
-from typing import Any
-import signal
+from typing import Any, Callable, List, Set
 import traceback
 
 ################ Globals
-# TODO: use TwitchIrcBot.channels instead of this channels dict.
-db = Database.get()
-channels = list(dict.fromkeys(db.get_channels() + settings["initial_channels"]))
 IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_token"])
 ################
 
 class TwitchIrcBot(SingleServerIRCBot):
-    def __init__(self):
+    def __init__(self, db: Database):
         super().__init__(
             [IRC_SPEC],
             settings["nick"],
             settings["nick"]
         )
+        self.db = db
         self.logic = LogicEFTBot()
+        self.enqueued_channels : List[str] = []
+        self.joined_channels : Set[str] = set()
+        self.is_welcome = False
 
     def on_welcome(self, connection, event):
-        log.info('Received welcome.')
-        log.info('Joining (%s) channels.', len(channels))
-
         # Request specific capabilities before you can use them
         connection.cap('REQ', ':twitch.tv/membership')
         connection.cap('REQ', ':twitch.tv/tags')
         connection.cap('REQ', ':twitch.tv/commands')
+        self.is_welcome = True # we've received welcome.
 
-        # Rejoin all the channels this bot should be in.
-        for i, channel in enumerate(channels):
-            self.do_join(channel)
-            #log.info('Joining `#%s`', channel)
-            if (i > 0) and (i % int(settings["init_pack_size"]) == 0):
-                # wait a bit before connecting more.
-                # twitch rate-limits bots from the amount of JOIN commands
-                # they can issue.
-                time.sleep(int(settings["init_pack_wait_s"]))
+        if self.enqueued_channels:
+            log.info("Joining %d channels", len(self.enqueued_channels))
+            for chan in self.enqueued_channels:
+                self.do_join(chan)
+        self.enqueued_channels = []
 
-    def do_join(self, channel: str):
-        self.connection.join("#" + channel)
+    def do_join(self, channel: str) -> None:
+        if channel in self.joined_channels:
+            # already joined
+            return
+        if not self.connection.connected:
+            # save this for later, when we actually connect
+            if self.is_welcome:
+                log.info("ERROR: We've been rate limited. ------------------------------------")
+                return
+            self.enqueued_channels.append(channel)
+        else:
+            # join immediately
+            log.info("Joining '#%s'", channel)
+            self.connection.join("#" + channel)
+            self.joined_channels.add(channel)
 
     def get_command_context(self, event):
         tags = event.tags
@@ -82,7 +89,6 @@ class TwitchIrcBot(SingleServerIRCBot):
         """
         server = self.servers.peek()
         try:
-            log.info(f"Connecting to server: {IRC_SPEC}")
             self.connect(
                 server.host,
                 server.port,
@@ -109,8 +115,8 @@ class TwitchIrcBot(SingleServerIRCBot):
                     return
                 content = ' '.join(parts[1:] or [])
                 context = self.get_command_context(event)
-                if check_cooldown(db, context.channel):
-                    #log.info("Cooldown enforced on channel: %s", context.channel)
+                if check_cooldown(self.db, context.channel):
+                    # Cooldown enforced on channel
                     return
                 if context.author.name.lower() == settings["nick"]:
                     # ignoring own message.
@@ -133,47 +139,11 @@ class TwitchIrcBot(SingleServerIRCBot):
         except Exception as e:
             # Log all other exceptions.
             log.error(f"Exception processing command ({command}) for channel ({context.channel}) -")
-            log.error(e)
+            log.error(str(e))
             traceback.print_exc()
 
-def observe_db():
-    """
-    A watchdog thread that checks for new channels being added to the DB.
-    If new channels are added, this thread asks the twitch bot to join
-    the channel and listen for messages.
-    """
-    while DB_OBSERVER_THREAD_LIVE:
-        time.sleep(4) # wait a few seconds.
-        # load all channels from db.
-        all_channels = db.get_channels()
-        for channel in all_channels:
-            if channel not in channels:
-                # join the channel + add to tracked channels.
-                # TODO: We should use the tracked channels by the IRC bot,
-                # and not the 'channels' list.
-                TWITCH_BOT.do_join(channel)
-                channels.append(channel)
-        # wait until next time.
-        time.sleep(int(settings["db_observe_frequency"]))
-    log.info("Stopped DB observer.")
-
-DB_OBSERVER_THREAD = None
-DB_OBSERVER_THREAD_LIVE = True
-TWITCH_BOT = None
-
-def signal_handler(sig, frame):
-    log.info("Received request to kill bot.")
-    os._exit(0)
-
-# Install Ctrl+C handler.
-signal.signal(signal.SIGINT, signal_handler)
-
-if __name__ == "__main__":
-    # Start observing DB for changes.
-    DB_OBSERVER_THREAD = threading.Thread(target=observe_db, args=())
-    DB_OBSERVER_THREAD.start()
-
-    # Start bot.
-    TWITCH_BOT = TwitchIrcBot()
-    log.info("Starting bot. (Ctrl + C to exit)")
-    TWITCH_BOT.start()
+    def set_periodic(self, fn: Callable, frequency_s: int):
+        """
+        Set a function to run every <n> seconds.
+        """
+        self.reactor.scheduler.execute_every(frequency_s, fn)

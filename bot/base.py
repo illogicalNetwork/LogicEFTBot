@@ -55,7 +55,6 @@ class LogicEFTBotBase:
     def __init__(self):
         # read all methods on this object and cache them.
         self.commands : CommandCacheType = {}
-        log.info(f"Loading commands for bot...")
         for attr in dir(self):
             obj = getattr(self, attr)
             if attr.startswith('__') or not callable(obj):
@@ -69,7 +68,6 @@ class LogicEFTBotBase:
                 # command already exists.
                 raise Error(f"LogicEFTBot has duplicate commands registered for ${cmd}")
             self.commands[cmd] = obj
-            log.info(f"Registered command `{cmd}` to fn `{attr}`")
 
     def exec(self, ctx: CommandContext, command: str, data: Optional[str]) -> str:
         """
