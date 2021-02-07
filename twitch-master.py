@@ -1,9 +1,12 @@
-from typing import Callable, List, Any
 import signal
+import time
 import threading
 import math
+import os
+from typing import Callable, List, Any
 from typing import List
 from dataclasses import dataclass
+from queue import Empty
 from multiprocessing import Queue, Process
 from twitch import TwitchIrcBot
 from bot.database import Database
@@ -32,7 +35,7 @@ class Shard:
         """
         Returns true if more channels can be joined on this connection.
         """
-        return self.saturation < int(settings['shard_size'])
+        return self.saturation >= int(settings['shard_size'])
 
     def start(self) -> None:
         return self.process.start()
@@ -47,22 +50,28 @@ def run_bot(queue: Queue) -> None:
     Represents one of the running bot connections.
     We also provide a periodic callback to listen to newly appearing channels.
     """
-    bot = TwitchIrcBot(DB)
+    # This is a fork. reset all copied signal handlers.
+    signal.signal(signal.SIGINT, signal.default_int_handler)
+    bot = TwitchIrcBot(Database.get(True)) # important to recreate the db conn, since it has been forked.
     def between_frames() -> None:
         # this is run when the twitch bot has free time, roughly every 5s.
-        channel = queue.get(timeout=.1) # block for no more than 100ms.
-        if channel:
-            if channel == END_OF_LIFE:
-                # exit command.
-                bot.disconnect()
-                # we need to be careful to empty the queue before exiting, so that
-                # there is not a deadlock.
-                # see: https://stackoverflow.com/questions/31665328/python-3-multiprocessing-queue-deadlock-when-calling-join-before-the-queue-is-em
-                while not queue.empty():
-                    queue.get()
-            else:
-                # issue a join command to the twitch bot.
-                bot.do_join(str(channel))
+        try:
+            channel = queue.get(timeout=.1) # block for no more than 100ms.
+            if channel:
+                if channel == END_OF_LIFE:
+                    # exit command.
+                    bot.disconnect()
+                    # we need to be careful to empty the queue before exiting, so that
+                    # there is not a deadlock.
+                    # see: https://stackoverflow.com/questions/31665328/python-3-multiprocessing-queue-deadlock-when-calling-join-before-the-queue-is-em
+                    while not queue.empty():
+                        queue.get()
+                else:
+                    # issue a join command to the twitch bot.
+                    bot.do_join(str(channel))
+        except Empty:
+            # nothing to do.
+            pass
     bot.set_periodic(between_frames, 3)
     bot.start() # note- this blocks + runs indefinitely.
 
@@ -78,7 +87,6 @@ def get_unsaturated_shards() -> List[Shard]:
         # no free shards available, create one.
         shard = create_shard()
         ALL_SHARDS.append(shard)
-        shard.start()
         return [shard]
     return unsaturated_shards
 
@@ -91,35 +99,49 @@ def observe_db():
 
     The db observer thread runs on the MAIN PROCESS. It's
     """
+    global DB_OBSERVER_THREAD_LIVE
     while DB_OBSERVER_THREAD_LIVE:
         time.sleep(4) # wait a few seconds.
-        all_channels = db.get_channels()
+        all_channels = DB.get_channels()
         for i, channel in enumerate(all_channels):
             # TODO: We should use the tracked channels by the IRC bot.
+            if not DB_OBSERVER_THREAD_LIVE:
+                break
             if channel not in joined_channels:
                 target_shards = get_unsaturated_shards()
                 target_shard = target_shards[i % len(target_shards)]
                 target_shard.join_channel(channel)
-                joined_channels.append(channel)
+                joined_channels.add(channel)
+            if (i % int(settings['init_pack_size'])) == 0 and i > 0:
+                # take a break!
+                time.sleep(int(settings['init_pack_wait_s']))
+
         time.sleep(int(settings["db_observe_frequency"]))
     log.info("Stopped DB observer.")
 
 def signal_handler(sig, frame):
     # Stop the DB Observer.
+    global DB_OBSERVER_THREAD_LIVE
+    global DB_OBSERVER_THREAD
     DB_OBSERVER_THREAD_LIVE = False
     DB_OBSERVER_THREAD.join()
-    for i, queue in enumerate(COMM_QUEUES):
-        queue.put(END_OF_LIFE) # end-of-life signal.
-        ALL_PROCESSES[i].join()
-    log.info("Received request to kill bot.")
+    for i, shard in enumerate(ALL_SHARDS):
+        shard.queue.put(END_OF_LIFE) # end-of-life signal.
+        shard.process.join()
     os._exit(0)
 
 # Install Ctrl+C handler.
 signal.signal(signal.SIGINT, signal_handler)
 
+TOTAL_SHARDS = 0
+
 def create_shard() -> Shard:
+    time.sleep(settings['init_shard_wait_s'])
+    global TOTAL_SHARDS
+    TOTAL_SHARDS = TOTAL_SHARDS + 1
     queue: Queue = Queue()
     process = Process(target=run_bot, args=(queue, ))
+    process.start()
     return Shard(queue=queue, process=process)
 
 if __name__ == "__main__":
@@ -128,14 +150,15 @@ if __name__ == "__main__":
     proc_count = math.ceil(all_channels_count / suggested_shard_size)
     # pre-create all the shards we'll need for the beginning.
     # note that if the DB grows, we'll only ever grow by one shard at a time.
+    log.info("%d channels loaded initially.", all_channels_count)
     log.info("Sharding into %d processes.", proc_count)
     ALL_SHARDS = [create_shard() for _ in range(proc_count)]
-    for shard in ALL_SHARDS:
-        shard.start()
-        log.info("Started shard with pid %d", shard.process.pid)
+    # for shard in ALL_SHARDS:
+    #    log.info("Started shard with pid %d", shard.process.pid)
+    log.info("Waiting for bots to join.")
 
     # Start observing DB for changes.
-    log.info("Listening for DB changes.")
+    # log.info("Listening for DB changes.")
     DB_OBSERVER_THREAD = threading.Thread(target=observe_db, args=())
     DB_OBSERVER_THREAD.start()
 

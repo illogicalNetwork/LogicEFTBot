@@ -14,7 +14,7 @@ from typing import Optional
 from bot.base import CommandContext, AuthorInfo
 from bot.bot import LogicEFTBot
 from bot.log import log
-from typing import Any, Callable
+from typing import Any, Callable, List, Set
 import traceback
 
 ################ Globals
@@ -30,19 +30,39 @@ class TwitchIrcBot(SingleServerIRCBot):
         )
         self.db = db
         self.logic = LogicEFTBot()
+        self.enqueued_channels : List[str] = []
+        self.joined_channels : Set[str] = set()
         self.is_welcome = False
 
     def on_welcome(self, connection, event):
-        log.info('Welcome.')
-
         # Request specific capabilities before you can use them
         connection.cap('REQ', ':twitch.tv/membership')
         connection.cap('REQ', ':twitch.tv/tags')
         connection.cap('REQ', ':twitch.tv/commands')
-        self.is_welcome = True
+        self.is_welcome = True # we've received welcome.
+
+        if self.enqueued_channels:
+            log.info("Joining %d channels", len(self.enqueued_channels))
+            for chan in self.enqueued_channels:
+                self.do_join(chan)
+        self.enqueued_channels = []
 
     def do_join(self, channel: str) -> None:
-        self.connection.join("#" + channel)
+        if channel in self.joined_channels:
+            # already joined
+            return
+        if not self.connection.connected:
+            # save this for later, when we actually connect
+            if self.is_welcome:
+                log.info("ERROR: We've been rate limited. ------------------------------------")
+                return
+            log.info("Enqueued '#%s'", channel)
+            self.enqueued_channels.append(channel)
+        else:
+            # join immediately
+            log.info("Immediate '#%s'", channel)
+            self.connection.join("#" + channel)
+            self.joined_channels.add(channel)
 
     def get_command_context(self, event):
         tags = event.tags
@@ -70,7 +90,6 @@ class TwitchIrcBot(SingleServerIRCBot):
         """
         server = self.servers.peek()
         try:
-            log.info(f"Connecting to server: {IRC_SPEC}")
             self.connect(
                 server.host,
                 server.port,
@@ -128,4 +147,4 @@ class TwitchIrcBot(SingleServerIRCBot):
         """
         Set a function to run every <n> seconds.
         """
-        self.scheduler.execute_every(self, frequency_s, fn)
+        self.reactor.scheduler.execute_every(frequency_s, fn)

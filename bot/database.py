@@ -1,26 +1,29 @@
 from __future__ import annotations # type: ignore
 import mysql.connector as mysql
+from mysql.connector import pooling
 from bot.config import settings
+from bot.log import log
 from typing import List
 
 class Database:
     singleton = None
 
     @staticmethod
-    def get() -> Database:
-        if not Database.singleton:
+    def get(recreate=False) -> Database:
+        if recreate or not Database.singleton:
             #exported global variables/objects
             Database.singleton = Database()
         return Database.singleton
 
     def __init__(self) -> None:
+        log.info("Connecting to MySQL...")
         db = mysql.connect(
             host = settings["database_config"]["host"],
             user = settings["database_config"]["user"],
             passwd = settings["database_config"]["passwd"],
             database = settings["database_config"]["database"]
         )
-
+        log.info("Connected.")
         sql = db.cursor(buffered=True)
         db.commit()
         self.db = db
@@ -47,7 +50,7 @@ class Database:
 
     def get_channels(self) -> List[str]:
         self.db.commit()
-        self.sql.execute("SELECT username from users")
+        self.sql.execute("SELECT username from users LIMIT 100")
         return [i[0] for i in self.sql.fetchall()]
 
 
