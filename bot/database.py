@@ -4,6 +4,7 @@ from mysql.connector import pooling
 from bot.config import settings
 from bot.log import log
 from typing import List
+import datetime
 
 class Database:
     singleton = None
@@ -52,6 +53,11 @@ class Database:
         self.db.commit()
         self.sql.execute("SELECT username from users")
         return [i[0] for i in self.sql.fetchall()]
+
+    def sql_log(self, sourcetype: str, source: str, cmd: str, query: str) -> None:
+        ts = datetime.datetime.utcnow()
+        self.sql.execute("INSERT INTO bot_logging (timestamp, source, channel, search_type, query) VALUES (%s, %s, %s, %s, %s)", (ts, sourcetype, source, cmd, query))
+        self.db.commit()
 
 
 def check_lang(channel_name: str) -> str:
