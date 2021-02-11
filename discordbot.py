@@ -5,8 +5,9 @@ import os
 from cooldown import check_cooldown, reset_cooldown
 from bot.config import settings
 from bot.bot import LogicEFTBot
-from bot.base import CommandContext, AuthorInfo
+from bot.base import CommandContext, AuthorInfo, CommandNotFoundException
 from bot.log import log
+from bot.database import Database
 from discord import Client
 import signal
 import traceback
@@ -39,7 +40,6 @@ class DiscordClient(Client):
         if not guild: return
         channel = str(guild.id) # this is a unique int representing this discord server.
         author = message.author
-        c = self.connection
         is_mod = author.guild_permissions.administrator if author.guild_permissions else False
         context = CommandContext(
             author=AuthorInfo(
@@ -48,21 +48,22 @@ class DiscordClient(Client):
             ),
             channel=channel
         )
+        db = Database.get()
         content = ' '.join(full_cmd[1:] or [])
-        if check_cooldown(context.channel):
+        if check_cooldown(db, context.channel):
             # Enforce cooldown for this channel.
             return
         try:
             resp = self.logic.exec(context, cmd, content)
             if resp:
-                await message.channel.send(f'{author.mention()}: {resp}')
+                await message.channel.send(f'{author.mention}: {resp}')
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
             pass
         except Exception as e:
             # Log all other exceptions.
-            log.error(f"Exception processing command ({command}) for channel '{guild.name}' (id={context.channel}) -")
+            log.error(f"Exception processing command ({cmd}) for channel '{guild.name}' (id={context.channel}) -")
             log.error(e)
             traceback.print_exc()
 

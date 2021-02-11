@@ -131,7 +131,7 @@ class TwitchIrcBot(SingleServerIRCBot):
         try:
             resp = self.logic.exec(context, command, content)
             if resp:
-                self.do_send_msg(context.channel, resp)
+                self.do_send_msg(context.channel, "{}: {}".format(context.author.name, resp))
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
