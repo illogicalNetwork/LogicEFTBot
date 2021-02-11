@@ -2,6 +2,7 @@ from typing import Optional, Any, Callable, Dict
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
 from bot.log import log
+from bot.database import Database
 
 """
 This is the python implementation of the commands
@@ -78,4 +79,5 @@ class LogicEFTBotBase:
         if not command in self.commands:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
+        Database.get().sql_log("Twitch", ctx.channel, command, data)
         return fn(ctx, data)
