@@ -59,6 +59,13 @@ class LogicEFTBot(LogicEFTBotBase):
         lang = Database.get().get_lang(ctx.channel)
         price = EFT.check_price(lang, data)
         return price
+    
+    @command("trader")
+    def bot_trader(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        trader = EFT.check_trader(lang, data)
+        return trader
 
     @command("slot")
     def bot_slot(self, ctx: CommandContext, data: str) -> str:
