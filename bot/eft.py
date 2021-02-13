@@ -13,15 +13,6 @@ class InvalidLocaleError(Exception):
 class EFT:
 
     @staticmethod
-    def check_astat(lang: str, query: str) -> str:
-        ammo_link = settings["ammo_link"][lang] if lang in settings["ammo_link"] else None
-        if not ammo_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = ammo_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
     def check_armor(lang: str, query: str) -> str:
         armor_link = settings["armor_link"][lang] if lang in settings["armor_link"] else None
         if not armor_link:
@@ -37,7 +28,16 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = armorstats_link.format(quote(query))
         response = requests.get(crafted_url).text
-        return response.strip()\
+        return response.strip()
+
+    @staticmethod
+    def check_astat(lang: str, query: str) -> str:
+        ammo_link = settings["ammo_link"][lang] if lang in settings["ammo_link"] else None
+        if not ammo_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = ammo_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
 
     @staticmethod
     def check_helmets(lang: str, query: str) -> str:
@@ -63,6 +63,15 @@ class EFT:
         if not medical_link:
             raise InvalidLocaleError(lang)
         crafted_url = medical_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_profit(lang: str, query: str) -> str:
+        profit_link = settings["profit_link"][lang] if lang in settings["profit_link"] else None
+        if not profit_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = profit_link.format(quote(query))
         response = requests.get(crafted_url).text
         return response.strip()
 

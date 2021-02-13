@@ -25,6 +25,13 @@ class LogicEFTBot(LogicEFTBotBase):
         armorstats = EFT.check_armorstats(lang, data)
         return armorstats
 
+    @command("astat")
+    def bot_astat(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        astat = EFT.check_astat(lang, data)
+        return astat
+
     @command("helmet")
     def bot_helmet(self, ctx: CommandContext, data: str) -> str:
         log.info('%s - searching for %s\n', ctx.channel, data)
@@ -39,19 +46,19 @@ class LogicEFTBot(LogicEFTBotBase):
         helmetstats = EFT.check_helmetstats(lang, data)
         return helmetstats
 
-    @command("astat")
-    def bot_astat(self, ctx: CommandContext, data: str) -> str:
-        log.info('%s - searching for %s\n', ctx.channel, data)
-        lang = Database.get().get_lang(ctx.channel)
-        astat = EFT.check_astat(lang, data)
-        return astat
-
     @command("medical")
     def bot_medical(self, ctx: CommandContext, data: str) -> str:
         log.info('%s - searching for %s\n', ctx.channel, data)
         lang = Database.get().get_lang(ctx.channel)
         medical = EFT.check_medical(lang, data)
         return medical
+
+    @command("profit")
+    def bot_profit(self, ctx: CommandContext, data: str) -> str:
+        log.info('%s - searching for %s\n', ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        profit = EFT.check_profit(lang, data)
+        return profit
 
     @command("price")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
