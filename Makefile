@@ -1,17 +1,16 @@
-typecheck: FORCE
-		mypy -m twitch-master --ignore-missing-imports
-		mypy -m discordbot --ignore-missing-imports
-		mypy -m tests.bot --ignore-missing-imports
-
-
 setup:
-	python3.7 -m pip install requests irc mysql-connector-python
+	python3.7 -m pip install requests irc mysql-connector-python black
 
 setup-discord:
-	python3.7 -m pip install discord requests mysql-connector-python
+	python3.7 -m pip install discord requests mysql-connector-python black
 
-test:
+test: FORCE
+	black *.py bot/*.py tests/*.py
+	mypy -m twitch-master --ignore-missing-imports
+	mypy -m discordbot --ignore-missing-imports
+	mypy -m tests.bot --ignore-missing-imports
 	python3.7 -m unittest tests.bot
+	black
 
 initdb:
 	# initialize the db with all tables needed. (for local dev)

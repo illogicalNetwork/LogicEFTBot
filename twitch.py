@@ -21,25 +21,22 @@ import traceback
 IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_token"])
 ################
 
+
 class TwitchIrcBot(SingleServerIRCBot):
     def __init__(self, db: Database):
-        super().__init__(
-            [IRC_SPEC],
-            settings["nick"],
-            settings["nick"]
-        )
+        super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
         self.db = db
-        self.logic = LogicEFTBot()
-        self.enqueued_channels : List[str] = []
-        self.joined_channels : Set[str] = set()
+        self.logic = LogicEFTBot(db)
+        self.enqueued_channels: List[str] = []
+        self.joined_channels: Set[str] = set()
         self.is_welcome = False
 
     def on_welcome(self, connection, event):
         # Request specific capabilities before you can use them
-        connection.cap('REQ', ':twitch.tv/membership')
-        connection.cap('REQ', ':twitch.tv/tags')
-        connection.cap('REQ', ':twitch.tv/commands')
-        self.is_welcome = True # we've received welcome.
+        connection.cap("REQ", ":twitch.tv/membership")
+        connection.cap("REQ", ":twitch.tv/tags")
+        connection.cap("REQ", ":twitch.tv/commands")
+        self.is_welcome = True  # we've received welcome.
 
         if self.enqueued_channels:
             log.info("Joining %d channels", len(self.enqueued_channels))
@@ -54,7 +51,9 @@ class TwitchIrcBot(SingleServerIRCBot):
         if not self.connection.connected:
             # save this for later, when we actually connect
             if self.is_welcome:
-                log.info("ERROR: We've been rate limited. ------------------------------------")
+                log.info(
+                    "ERROR: We've been rate limited. ------------------------------------"
+                )
                 return
             self.enqueued_channels.append(channel)
         else:
@@ -71,16 +70,14 @@ class TwitchIrcBot(SingleServerIRCBot):
             if tag["key"] == "display-name":
                 display_name = tag["value"]
             elif tag["key"] == "mod":
-                is_mod = is_mod or tag["value"] == '1'
+                is_mod = is_mod or tag["value"] == "1"
             elif tag["key"] == "badges":
                 is_mod = is_mod or (tag["value"] and "broadcaster/1" in tag["value"])
         channel = event.target[1:] if event.target[0] == "#" else event.target
         return CommandContext(
-            author=AuthorInfo(
-                name=display_name,
-                is_mod=is_mod
-            ),
-            channel=channel
+            author=AuthorInfo(name=display_name, is_mod=is_mod),
+            channel=channel,
+            platform="twitch",
         )
 
     def _connect(self):
@@ -109,14 +106,14 @@ class TwitchIrcBot(SingleServerIRCBot):
         if msg:
             if msg[:1] == settings["prefix"]:
                 parts = event.arguments[0].lower()
-                if "gpu" in parts: 
+                if "gpu" in parts:
                     parts = parts.replace("gpu", "graphics card")
                 parts = parts.split()
                 cmd = parts[0][1:]
                 if not self.logic.has_command(cmd):
                     # ignore commands we don't support.
                     return
-                content = ' '.join(parts[1:] or [])
+                content = " ".join(parts[1:] or [])
                 context = self.get_command_context(event)
                 if check_cooldown(self.db, context.channel):
                     # Cooldown enforced on channel
@@ -129,19 +126,25 @@ class TwitchIrcBot(SingleServerIRCBot):
     def do_send_msg(self, channel: str, message: str) -> None:
         self.connection.privmsg("#" + channel, message)
 
-    def do_command(self, context: CommandContext, event: Any, command: str, content: Optional[str]):
+    def do_command(
+        self, context: CommandContext, event: Any, command: str, content: Optional[str]
+    ):
         c = self.connection
         try:
             resp = self.logic.exec(context, command, content)
             if resp:
-                self.do_send_msg(context.channel, "{}: {}".format(context.author.name, resp))
+                self.do_send_msg(
+                    context.channel, "{}: {}".format(context.author.name, resp)
+                )
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
             pass
         except Exception as e:
             # Log all other exceptions.
-            log.error(f"Exception processing command ({command}) for channel ({context.channel}) -")
+            log.error(
+                f"Exception processing command ({command}) for channel ({context.channel}) -"
+            )
             log.error(str(e))
             traceback.print_exc()
 
