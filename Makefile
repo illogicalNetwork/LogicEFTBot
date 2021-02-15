@@ -10,7 +10,6 @@ test: FORCE
 	mypy -m discordbot --ignore-missing-imports
 	mypy -m tests.bot --ignore-missing-imports
 	python3.7 -m unittest tests.bot
-	black
 
 initdb:
 	# initialize the db with all tables needed. (for local dev)
