@@ -1,9 +1,11 @@
-from typing import List
+from typing import List, Optional
+
 
 class MockDatabase:
     """
     An in-memory not-so-correct implementation of the mysql db.
     """
+
     _cooldowns = {"#lvndmark": 10, "#logicalsolutions": 15}
     _lang = {"#lvndmark": "en", "#logicalsolutions": "ru"}
 
@@ -25,3 +27,6 @@ class MockDatabase:
 
     def get_channels(self) -> List[str]:
         return ["#lvndmark", "#logicalsolutions"]
+
+    def sql_log(self, sourcetype: str, source: str, cmd: str, query: Optional[str]):
+        pass

@@ -11,6 +11,7 @@ from bot.log import log
 # channel.
 cooldowns: Dict[str, datetime.datetime] = {}
 
+
 def check_cooldown(db: Database, channel_name: str) -> bool:
     """
     Returns true if the given channel is under cooldown.
@@ -21,11 +22,12 @@ def check_cooldown(db: Database, channel_name: str) -> bool:
         log.error("Someplace in the code is using channels with #.")
     cooldown_time = cooldowns[channel_name] if channel_name in cooldowns else None
     if cooldown_time is None:
-        return False # no cooldown found.
+        return False  # no cooldown found.
     cooldown = db.get_cd(channel_name)
     if cooldown is None:
         cooldown = int(settings["default_cooldown"])
     return not datetime.datetime.utcnow() - cooldown_time > timedelta(seconds=cooldown)
+
 
 def reset_cooldown(channel_name: str) -> None:
     """

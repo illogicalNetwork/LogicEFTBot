@@ -11,18 +11,24 @@ from tests.network import mocked_requests_get, mock_url_get, mock_url_reset
 from tests.dbutil import MockDatabase
 import requests
 
-@mock.patch('bot.bot.requests.get', side_effect=mocked_requests_get)
-@mock.patch('bot.eft.requests.get', side_effect=mocked_requests_get)
-@mock.patch('bot.bot.Database', MockDatabase)
+
+@mock.patch("bot.bot.requests.get", side_effect=mocked_requests_get)
+@mock.patch("bot.eft.requests.get", side_effect=mocked_requests_get)
+@mock.patch("bot.bot.Database", MockDatabase)
 class TestLogicEFTBot(unittest.TestCase):
     """
     A suite of tests verifying that the commands
     in the logic eft bot behave correctly.
     """
+
     def setUp(self):
-        log.setLevel(logging.WARNING) # ignore info.
-        self.bot = LogicEFTBot()
-        self.fake_context = CommandContext(author=AuthorInfo(name="me", is_mod=False), channel="#lvndmark")
+        log.setLevel(logging.WARNING)  # ignore info.
+        self.bot = LogicEFTBot(MockDatabase())
+        self.fake_context = CommandContext(
+            author=AuthorInfo(name="me", is_mod=False),
+            channel="#lvndmark",
+            platform="test",
+        )
 
     def tearDown(self):
         mock_url_reset()
@@ -87,5 +93,6 @@ class TestLogicEFTBot(unittest.TestCase):
     def test_set_lang(self, mock_one, mock_two):
         pass
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

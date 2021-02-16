@@ -29,58 +29,74 @@ class DiscordClient(Client):
 
     async def on_message(self, message):
         full_cmd = message.content.split()
-        if not full_cmd: return
+        if not full_cmd:
+            return
         cmd = full_cmd[0]
-        if not cmd: return
-        if not cmd[0] == settings['prefix']: return
-        cmd = cmd[len(settings['prefix']):] # skip past "!"
+        if not cmd:
+            return
+        if not cmd[0] == settings["prefix"]:
+            return
+        cmd = cmd[len(settings["prefix"]) :]  # skip past "!"
 
         # check cooldown for this channel.
         guild = message.guild
-        if not guild: return
-        channel = str(guild.id) # this is a unique int representing this discord server.
+        if not guild:
+            return
+        channel = str(
+            guild.id
+        )  # this is a unique int representing this discord server.
         author = message.author
-        is_mod = author.guild_permissions.administrator if author.guild_permissions else False
+        is_mod = (
+            author.guild_permissions.administrator
+            if author.guild_permissions
+            else False
+        )
         context = CommandContext(
-            author=AuthorInfo(
-                name=message.author.display_name,
-                is_mod=is_mod
-            ),
-            channel=channel
+            author=AuthorInfo(name=message.author.display_name, is_mod=is_mod),
+            channel=channel,
+            platform="discord",
         )
         db = Database.get()
-        content = ' '.join(full_cmd[1:] or [])
+        content = " ".join(full_cmd[1:] or [])
         if check_cooldown(db, context.channel):
             # Enforce cooldown for this channel.
             return
         try:
             resp = self.logic.exec(context, cmd, content)
             if resp:
-                await message.channel.send(f'{author.mention}: {resp}')
+                await message.channel.send(f"{author.mention}: {resp}")
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
             pass
         except Exception as e:
             # Log all other exceptions.
-            log.error(f"Exception processing command ({cmd}) for channel '{guild.name}' (id={context.channel}) -")
+            log.error(
+                f"Exception processing command ({cmd}) for channel '{guild.name}' (id={context.channel}) -"
+            )
             log.error(e)
             traceback.print_exc()
+
 
 def signal_handler(sig, frame):
     log.info("Received request to kill bot.")
     os._exit(0)
 
+
 # Install Ctrl+C handler.
 signal.signal(signal.SIGINT, signal_handler)
 
+
 def main():
-    token = os.environ.get('LOGIC_DISCORD_TOKEN')
+    token = os.environ.get("LOGIC_DISCORD_TOKEN")
     if not token:
-        print("Error: Please set `export LOGIC_DISCORD_TOKEN=<token>` and re-run the bot.\n")
+        print(
+            "Error: Please set `export LOGIC_DISCORD_TOKEN=<token>` and re-run the bot.\n"
+        )
         return
     client = DiscordClient()
     client.run(token)
+
 
 if __name__ == "__main__":
     main()
