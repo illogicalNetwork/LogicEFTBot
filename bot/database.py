@@ -32,13 +32,10 @@ class Database:
         self.sql = sql
 
     def update_cooldown(self, name: str, cooldown: int) -> None:
-        self.sql.execute(
-            "UPDATE users SET cooldown=%s WHERE username=%s", (int(cooldown), name)
-        )
+        self.sql.execute("UPDATE users SET cooldown=%s WHERE username=%s", (int(cooldown), name))
         self.db.commit()
 
     def update_lang(self, name: str, lang: str, uname: str) -> None:
-        # self.sql.execute("UPDATE users SELECT username, lang VALUES (%s, %s)", (name, lang))
         self.sql.execute("UPDATE users SET lang=%s WHERE username=%s", (lang, uname))
         self.db.commit()
 
