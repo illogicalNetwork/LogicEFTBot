@@ -22,7 +22,7 @@ class DiscordClient(Client):
 
     def __init__(self):
         super().__init__()
-        self.logic = LogicEFTBot()
+        self.logic = LogicEFTBot(Database.get())
 
     async def on_ready(self):
         print("Connected!")
@@ -64,7 +64,10 @@ class DiscordClient(Client):
         try:
             resp = self.logic.exec(context, cmd, content)
             if resp:
-                await message.channel.send(f"{author.mention}: {resp}")
+                embed=discord.Embed(title="LogicEFTBot", url="https://eft.bot", description="The Free Tarkov Bot", color=0x780a81)
+                #embed.set_thumbnail(url="") #Will be implimented soon
+                embed.add_field(name=cmd.capitalize() + " check", value=resp, inline=True)
+                await message.channel.send(embed=embed)
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
