@@ -63,8 +63,13 @@ class TwitchIrcBot(SingleServerIRCBot):
         else:
             # join immediately
             log.info("Joining '#%s'", channel)
+
+            self.status = ":rocket: Joining"
+            self.message = f"#{channel}"
             self.connection.join("#" + channel)
             self.joined_channels.add(channel)
+            self.status = ":white_heavy_check_mark: Healthy"
+            self.message = "Connected"
 
     def get_command_context(self, event):
         tags = event.tags
@@ -89,8 +94,8 @@ class TwitchIrcBot(SingleServerIRCBot):
         Establish a connection to the server at the front of the server_list.
         """
         server = self.servers.peek()
-        self.status = "Startup"
-        self.message = "Connecting"
+        self.status = ":mobile_phone_with_arrow: Connecting"
+        self.message = "Reaching twitch..."
         try:
             self.connect(
                 server.host,
@@ -99,7 +104,7 @@ class TwitchIrcBot(SingleServerIRCBot):
                 server.password,
                 ircname=self._realname,
             )
-            self.status = "Healthy"
+            self.status = ":white_heavy_check_mark: Healthy"
             self.message = "Connected"
         except Exception as e:
             log.error("Error connecting to the server: %s", str(e))

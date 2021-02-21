@@ -115,7 +115,9 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
                 else:
                     feedbackQueue.put(
                         ShardUpdate(
-                            status="Healthy", message=f"Joining #{channel}", RPM=volume
+                            status=":smiley: Healthy",
+                            message=f"Joining #{channel}",
+                            RPM=volume,
                         )
                     )
                     # issue a join command to the twitch bot.
