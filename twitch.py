@@ -27,9 +27,12 @@ class TwitchIrcBot(SingleServerIRCBot):
         super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
         self.db = db
         self.logic = LogicEFTBot(db)
+        self.status = "Startup"
+        self.message = "Initializing"
         self.enqueued_channels: List[str] = []
         self.joined_channels: Set[str] = set()
         self.is_welcome = False
+        self.processed_commands = 0
 
     def on_welcome(self, connection, event):
         # Request specific capabilities before you can use them
@@ -37,6 +40,7 @@ class TwitchIrcBot(SingleServerIRCBot):
         connection.cap("REQ", ":twitch.tv/tags")
         connection.cap("REQ", ":twitch.tv/commands")
         self.is_welcome = True  # we've received welcome.
+        self.message = "Running"
 
         if self.enqueued_channels:
             log.info("Joining %d channels", len(self.enqueued_channels))
@@ -85,6 +89,8 @@ class TwitchIrcBot(SingleServerIRCBot):
         Establish a connection to the server at the front of the server_list.
         """
         server = self.servers.peek()
+        self.status = "Startup"
+        self.message = "Connecting"
         try:
             self.connect(
                 server.host,
@@ -93,12 +99,16 @@ class TwitchIrcBot(SingleServerIRCBot):
                 server.password,
                 ircname=self._realname,
             )
+            self.status = "Healthy"
+            self.message = "Connected"
         except Exception as e:
             log.error("Error connecting to the server: %s", str(e))
             pass
 
     def on_error(self, connection, event):
         log.info("Got error: %s", str(event))
+        self.status = "Exception"
+        self.message = str(event)
 
     def on_pubmsg(self, connection, event):
         msg = event.arguments[0]
@@ -121,6 +131,7 @@ class TwitchIrcBot(SingleServerIRCBot):
                 if context.author.name.lower() == settings["nick"]:
                     # ignoring own message.
                     return
+                self.processed_commands = self.processed_commands + 1
                 self.do_command(context, event, cmd, content)
 
     def do_send_msg(self, channel: str, message: str) -> None:

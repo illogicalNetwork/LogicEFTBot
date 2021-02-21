@@ -64,9 +64,16 @@ class DiscordClient(Client):
         try:
             resp = self.logic.exec(context, cmd, content)
             if resp:
-                embed=discord.Embed(title="LogicEFTBot", url="https://eft.bot", description="The Free Tarkov Bot", color=0x780a81)
-                #embed.set_thumbnail(url="") #Will be implimented soon
-                embed.add_field(name=cmd.capitalize() + " check", value=resp, inline=True)
+                embed = discord.Embed(
+                    title="LogicEFTBot",
+                    url="https://eft.bot",
+                    description="The Free Tarkov Bot",
+                    color=0x780A81,
+                )
+                # embed.set_thumbnail(url="") #Will be implimented soon
+                embed.add_field(
+                    name=cmd.capitalize() + " check", value=resp, inline=True
+                )
                 await message.channel.send(embed=embed)
                 reset_cooldown(context.channel)
         except CommandNotFoundException:

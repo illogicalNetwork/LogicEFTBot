@@ -1,5 +1,5 @@
 setup:
-	python3.7 -m pip install requests irc mysql-connector-python black
+	python3.7 -m pip install requests irc mysql-connector-python black rich
 
 setup-discord:
 	python3.7 -m pip install discord requests mysql-connector-python black
