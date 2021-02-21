@@ -39,6 +39,9 @@ class TestLogicEFTBot(unittest.TestCase):
         settings["price_link"]["ru"] = "http://price.fakeapi.com"
         response = self.bot.exec(self.fake_context, "price", "anything")
         self.assertEqual(response, "fake_response")
+        # Test alias `p` works.
+        response = self.bot.exec(self.fake_context, "p", "anything")
+        self.assertEqual(response, "fake_response")
 
     def test_slot(self, mock_one, mock_two):
         mock_url_get("http://slot.fakeapi.com", "fake_response_slot")

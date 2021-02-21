@@ -58,7 +58,7 @@ class LogicEFTBot(LogicEFTBotBase):
         profit = EFT.check_profit(lang, data)
         return profit
 
-    @command("price")
+    @command("price", "p")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = Database.get().get_lang(ctx.channel)
@@ -115,6 +115,24 @@ class LogicEFTBot(LogicEFTBotBase):
         self, ctx: CommandContext, lang: str = settings["default_lang"]
     ) -> str:
         if not ctx.author.is_mod:
-            return "@" + ctx.author.name + " You ain't a mod you dingus!"
+            return "You ain't a mod you dingus!"
         Database.get().update_lang(ctx.channel, lang, ctx.channel)
         return "@" + ctx.author.name + " - Language has been set to {}".format(lang)
+
+    @command("alias")
+    def bot_alias(self, ctx: CommandContext, data: str) -> str:
+        if not ctx.author.is_mod:
+            return "You ain't a mod you dingus!"
+        parts = data.split() if data else None
+        if not parts or len(parts) != 2:
+            return "Usage: !alias <alias> <existingCommand>"
+        alias = parts[0].lower()
+        existingCommand = parts[1].lower()
+        if not existingCommand in self.commands:
+            return "Can't set an alias to a command which doesn't exist!"
+        try:
+            self.db.add_command_alias(ctx.channel, existingCommand, alias)
+            return f"Registered alias ({alias}) => ({existingCommand})"
+        except Exception as e:
+            log.error(str(e))
+            return "Failed to add alias."

@@ -3,8 +3,9 @@ import mysql.connector as mysql
 from mysql.connector import pooling
 from bot.config import settings
 from bot.log import log
-from typing import List, Optional
+from typing import List, Optional, Dict, cast
 import datetime
+import json
 
 
 class Database:
@@ -32,7 +33,9 @@ class Database:
         self.sql = sql
 
     def update_cooldown(self, name: str, cooldown: int) -> None:
-        self.sql.execute("UPDATE users SET cooldown=%s WHERE username=%s", (int(cooldown), name))
+        self.sql.execute(
+            "UPDATE users SET cooldown=%s WHERE username=%s", (int(cooldown), name)
+        )
         self.db.commit()
 
     def update_lang(self, name: str, lang: str, uname: str) -> None:
@@ -43,6 +46,41 @@ class Database:
         self.sql.execute("SELECT cooldown FROM users WHERE username=%s", (name,))
         cd = self.sql.fetchone()
         return int(cd[0]) if cd else int(settings["default_cooldown"])
+
+    def get_command_aliases(self, channel: str) -> Optional[Dict[str, str]]:
+        """
+        Returns all of the aliases set for this channel (or None.)
+        """
+        self.sql.execute("SELECT aliases FROM users WHERE username=%s", (channel,))
+        aliases = self.sql.fetchone()
+        if not aliases:
+            return None
+        try:
+            return cast(Dict[str, str], json.loads(aliases))
+        except json.decoder.JSONDecodeError:
+            log.error(
+                "Got invalid JSON while deserializing commands for channel %s", channel
+            )
+            return None
+
+    def add_command_alias(self, channel: str, command: str, alias: str) -> None:
+        """
+        Adds a new alias such that !alias will resolve to !command.
+        """
+        if not alias or not command:
+            return
+        alias = alias.lower()
+        command = command.lower()
+        # it's expected that `command` exists.
+        aliases = self.get_command_aliases(channel)
+        if not aliases:
+            aliases = {}
+        aliases[alias] = command
+        aliases_json = json.dumps(aliases)
+        self.sql.execute(
+            "UPDATE users SET aliases=%s WHERE username=%s", (aliases_json, channel)
+        )
+        self.db.commit()
 
     def get_lang(self, name: str) -> str:
         self.sql.execute("SELECT lang FROM users WHERE username = %s", (name,))
