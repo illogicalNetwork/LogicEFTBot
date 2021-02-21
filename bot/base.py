@@ -92,16 +92,16 @@ class LogicEFTBotBase:
         Execute a bot command given by `!command <data>`, where data is some
         optional string included after the command.
         """
-        # load aliases and attempt to resolve this command.
+        # attempt to resolve the alias
         aliases = self.db.get_command_aliases(ctx.channel)
         if aliases:
             command = command.lower()  # cmds are case-insensitive
             if command in aliases:
-                command = aliases[command]  # resolve in the dict.
+                command = aliases[command]  # resolve the alias
         # search for command
         if not command in self.commands:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
-        if data is not "":
+        if data:
             self.db.sql_log(ctx.platform, ctx.channel, command, data)
         return fn(ctx, data)

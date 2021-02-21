@@ -128,6 +128,8 @@ class LogicEFTBot(LogicEFTBotBase):
             return "Usage: !alias <alias> <existingCommand>"
         alias = parts[0].lower()
         existingCommand = parts[1].lower()
+        if alias in self.commands:
+            return f"Alias `{alias}` would overwrite an existing command. Please choose another alias."
         if not existingCommand in self.commands:
             return "Can't set an alias to a command which doesn't exist!"
         try:

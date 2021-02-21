@@ -110,9 +110,6 @@ class TwitchIrcBot(SingleServerIRCBot):
                     parts = parts.replace("gpu", "graphics card")
                 parts = parts.split()
                 cmd = parts[0][1:]
-                if not self.logic.has_command(cmd):
-                    # ignore commands we don't support.
-                    return
                 content = " ".join(parts[1:] or [])
                 context = self.get_command_context(event)
                 if check_cooldown(self.db, context.channel):

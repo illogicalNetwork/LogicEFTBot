@@ -53,6 +53,7 @@ class Database:
         """
         self.sql.execute("SELECT aliases FROM users WHERE username=%s", (channel,))
         aliases = self.sql.fetchone()
+        if aliases: aliases = aliases[0]
         if not aliases:
             return None
         try:
@@ -69,6 +70,7 @@ class Database:
         """
         if not alias or not command:
             return
+        # it's expected that "alias" isn't already a command.
         alias = alias.lower()
         command = command.lower()
         # it's expected that `command` exists.
