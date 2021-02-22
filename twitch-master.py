@@ -11,7 +11,7 @@ from queue import Empty
 from multiprocessing import Queue, Process
 from twitch import TwitchIrcBot
 from bot.database import Database
-from bot.config import settings
+from bot.config import settings, BOT_UI_ENABLED
 from bot.log import log
 from rich.table import Table
 from rich.live import Live
@@ -279,8 +279,13 @@ if __name__ == "__main__":
         log.info("Startup aborted.")
 
     # Run the UI
-    with Live(generate_ui(), refresh_per_second=1) as live:
-        while not SHUTDOWN_COMPLETE:
-            poll_status()
-            time.sleep(0.2)
-            live.update(generate_ui())
+    if BOT_UI_ENABLED:
+        log.info("Bot UI enabled, to disable `unset BOT_UI_ENABLED`")
+        with Live(generate_ui(), refresh_per_second=1) as live:
+            while not SHUTDOWN_COMPLETE:
+                poll_status()
+                time.sleep(0.2)
+                live.update(generate_ui())
+    else:
+        log.info("Bot UI disabled, to enable `export BOT_UI_ENABLED=true`")
+        log.info("Note: this requires unicode support in your terminal.")
