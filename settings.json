@@ -1,5 +1,5 @@
 {
-  "irc_token": "",
+  "irc_token": "jvihanp7u223q149vspeetz7jrlnqz",
   "irc_server": "irc.chat.twitch.tv",
   "irc_port": "6667",
   "client_id": "",
@@ -8,7 +8,7 @@
   "init_pack_wait_s" : 20,
   "init_shard_wait_s" : 1,
   "client_secret": "",
-  "nick": "logiceftbot",
+  "nick": "logiceftbottest",
   "prefix": "!",
   "default_cooldown" : 10,
   "default_lang" : "en",
@@ -70,9 +70,9 @@
     "tr": ""
   },
   "database_config" : {
-      "host": "",
-      "user": "",
-      "passwd": "",
-      "database": ""
+      "host": "localhost",
+      "user": "bot",
+      "passwd": "test123",
+      "database": "test"
   }
 }

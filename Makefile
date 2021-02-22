@@ -11,6 +11,9 @@ test: FORCE
 	mypy -m tests.bot --ignore-missing-imports
 	python3.7 -m unittest tests.bot
 
+integration: FORCE
+	python3.7 -m unittest tests.integration.twitch
+
 initdb:
 	# initialize the db with all tables needed. (for local dev)
 	mysql --user="$MYSQL_USER" --password="$MYSQL_PASSWORD" --database="$MYSQL_DB" --execute="source seed.db"
