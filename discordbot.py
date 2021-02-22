@@ -25,6 +25,7 @@ class DiscordClient(Client):
         self.logic = LogicEFTBot(Database.get())
 
     async def on_ready(self):
+        await self.change_presence(activity=discord.Streaming(name="!eftbot for help", url="https://twitch.tv/logiceftbot"))
         print("Connected!")
 
     async def on_message(self, message):
