@@ -102,6 +102,6 @@ class LogicEFTBotBase:
         if not command in self.commands:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
-        if data:
+        if data is not "":
             self.db.sql_log(ctx.platform, ctx.channel, command, data)
         return fn(ctx, data)
