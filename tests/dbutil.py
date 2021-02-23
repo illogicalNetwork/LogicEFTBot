@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 
 class MockDatabase:
@@ -30,3 +30,6 @@ class MockDatabase:
 
     def sql_log(self, sourcetype: str, source: str, cmd: str, query: Optional[str]):
         pass
+
+    def get_command_aliases(self, channel: str) -> Optional[Dict[str, str]]:
+        return None
