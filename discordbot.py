@@ -26,11 +26,11 @@ class DiscordClient(Client):
 
     async def on_ready(self):
         await self.change_presence(
-            activity=discord.Streaming(
-                name="!eftbot for help", url="https://twitch.tv/logiceftbot"
+            activity=discord.Game(
+                name="!eftbot - https://eft.bot"
             )
         )
-        print("Connected!")
+        print("Connected and Discord Status Set")
 
     async def on_message(self, message):
         full_cmd = message.content.split()
