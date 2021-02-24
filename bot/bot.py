@@ -134,7 +134,7 @@ class LogicEFTBot(LogicEFTBotBase):
             return "Can't set an alias to a command which doesn't exist!"
         try:
             self.db.add_command_alias(ctx.channel, existingCommand, alias)
-            return f"Registered alias ({alias}) => ({existingCommand})"
+            return f"Set new alias ({alias}) for ({existingCommand})!"
         except Exception as e:
             log.error(str(e))
             return "Failed to add alias."
