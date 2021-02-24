@@ -30,6 +30,20 @@ class LogicEFTBot(LogicEFTBotBase):
         astat = EFT.check_astat(lang, data)
         return astat
 
+    @command("avg7d")
+    def bot_avg7d(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        avg7d = EFT.check_avg7d(lang, data)
+        return avg7d
+
+    @command("avg24")
+    def bot_avg24h(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        avg24h = EFT.check_avg24h(lang, data)
+        return avg24h
+
     @command("helmet")
     def bot_helmet(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)

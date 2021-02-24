@@ -50,6 +50,28 @@ class EFT:
         return response.strip()
 
     @staticmethod
+    def check_avg7d(lang: str, query: str) -> str:
+        avg7d_link = (
+            settings["avg7d_link"][lang] if lang in settings["avg7d_link"] else None
+        )
+        if not avg7d_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = avg7d_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_avg24h(lang: str, query: str) -> str:
+        avg24h_link = (
+            settings["avg24h_link"][lang] if lang in settings["avg24h_link"] else None
+        )
+        if not avg24h_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = avg24h_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
     def check_helmets(lang: str, query: str) -> str:
         helmet_link = (
             settings["helmet_link"][lang] if lang in settings["helmet_link"] else None
