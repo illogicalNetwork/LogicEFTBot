@@ -26,9 +26,7 @@ class DiscordClient(Client):
 
     async def on_ready(self):
         await self.change_presence(
-            activity=discord.Game(
-                name="!eftbot - https://eft.bot"
-            )
+            activity=discord.Game(name="!eftbot - https://eft.bot")
         )
         print("Connected and Discord Status Set")
 

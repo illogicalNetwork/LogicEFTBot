@@ -53,7 +53,8 @@ class Database:
         """
         self.sql.execute("SELECT aliases FROM users WHERE username=%s", (channel,))
         aliases = self.sql.fetchone()
-        if aliases: aliases = aliases[0]
+        if aliases:
+            aliases = aliases[0]
         if not aliases:
             return None
         try:
