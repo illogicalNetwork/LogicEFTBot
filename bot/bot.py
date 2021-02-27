@@ -58,6 +58,20 @@ class LogicEFTBot(LogicEFTBotBase):
         helmetstats = EFT.check_helmetstats(lang, data)
         return helmetstats
 
+    @command("kappaitem")
+    def bot_kappaitem(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        kappaitem = EFT.check_kappaitem(lang, data)
+        return kappaitem
+
+    @command("kappaquest")
+    def bot_kappaquest(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = Database.get().get_lang(ctx.channel)
+        kappaquest = EFT.check_kappaquest(lang, data)
+        return kappaquest
+
     @command("medical")
     def bot_medical(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
