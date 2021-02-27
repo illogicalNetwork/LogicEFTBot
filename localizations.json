@@ -11,7 +11,8 @@
       "ammoArmor":"Armor Damage",
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %"
+      "ammoFrag":"Frag Chance %",
+      "price": "The price of {0} is {1} roubles. Price last updated {2}"
    },
    "es": {
       "validItem":"Debes entrar un nombre de artículo válido. EX: Slick",
@@ -25,7 +26,8 @@
       "ammoArmor":"Armor Damage",
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %"
+      "ammoFrag":"Frag Chance %",
+      "price": "The price of {0} is {1} roubles. Price last updated {2}"
    },
    "de": {
       "validItem": "Sie müssen ein gültigen Elementnamen eingeben. EX: Slick",
@@ -39,7 +41,8 @@
       "ammoArmor":"Armor Damage",
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %"
+      "ammoFrag":"Frag Chance %",
+      "price": "The price of {0} is {1} roubles. Price last updated {2}"
    },
    "nl": {
       "validItem":"Geef een geldig voorwerp in. EX: Slick",
@@ -53,7 +56,8 @@
       "ammoArmor":"Armor Damage",
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %"
+      "ammoFrag":"Frag Chance %",
+      "price": "The price of {0} is {1} roubles. Price last updated {2}"
    },
    "tr": {
       "validItem":"Geçerli bir ürün ismi girmelisiniz. Örnek: Slick",
@@ -67,7 +71,8 @@
       "ammoArmor":"Armor Damage",
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %"
+      "ammoFrag":"Frag Chance %",
+      "price": "The price of {0} is {1} roubles. Price last updated {2}"
    },
     "ru": {
       "validItem":"Укажите корректное название. EX: Slick",
@@ -81,6 +86,7 @@
       "ammoArmor":"Armor Damage",
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %"
+      "ammoFrag":"Frag Chance %",
+      "price": "The price of {0} is {1} roubles. Price last updated {2}"
    }
 }

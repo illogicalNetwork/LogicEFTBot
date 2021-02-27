@@ -142,6 +142,32 @@ class EFT:
         return response.strip()
 
     @staticmethod
+    def check_kappaquest(lang: str, query: str) -> str:
+        kappaquest_link = (
+            settings["kappaquest_link"][lang]
+            if lang in settings["kappaquest_link"]
+            else None
+        )
+        if not kappaquest_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = kappaquest_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_kappaitem(lang: str, query: str) -> str:
+        kappaitem_link = (
+            settings["kappaitem_link"][lang]
+            if lang in settings["kappaitem_link"]
+            else None
+        )
+        if not kappaitem_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = kappaitem_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
     def check_medical(lang: str, query: str) -> str:
         medical_link = (
             settings["medical_link"][lang] if lang in settings["medical_link"] else None
