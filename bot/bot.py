@@ -91,11 +91,8 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = Database.get().get_lang(ctx.channel)
         price = EFT.check_price(lang, data)
-
-        format = localized_string(Database.get().get_lang(ctx.channel), "price")
-        
-
-        return price
+        response = localized_string(lang, "price", price.name, price.price, price.updated.strftime("%m/%d/%Y %H:%M:%S"))
+        return response
 
     @command("trader")
     def bot_trader(self, ctx: CommandContext, data: str) -> str:
