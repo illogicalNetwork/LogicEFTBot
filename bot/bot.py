@@ -2,7 +2,7 @@ from typing import Optional, Any
 import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
-from bot.eft import EFT
+from bot.eft import EFT, PriceResponseModel
 from bot.database import Database
 from bot.log import log
 from bot.config import settings, localized_string
@@ -77,6 +77,10 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = Database.get().get_lang(ctx.channel)
         price = EFT.check_price(lang, data)
+
+        format = localized_string(Database.get().get_lang(ctx.channel), "price")
+        
+
         return price
 
     @command("trader")
