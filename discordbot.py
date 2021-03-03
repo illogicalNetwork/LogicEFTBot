@@ -39,6 +39,7 @@ class DiscordEFTBot(LogicEFTBot):
             description="The Free Tarkov Bot",
             color=0x780A81,
         )
+        embed.set_thumbnail(url=info.img)
         embed.add_field(name=info.name, value=response, inline=True)
         return embed
 
