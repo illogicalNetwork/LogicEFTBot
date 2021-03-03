@@ -1,15 +1,61 @@
-#!/usr/bin/python3
+from __future__ import annotations  # type: ignore
 import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
-from typing import Optional
+from typing import Optional, Any
 from bot.config import settings
+from dataclasses import dataclass
+import datetime
+import maya
+import json
 
 
 class InvalidLocaleError(Exception):
     def __init__(self, locale):
         super().__init__(f"Unknown locale {locale}")
         self.locale = locale
+
+
+def safe_int(value: Any, fallback: int) -> int:
+    try:
+        return int(value)
+    except:
+        return fallback
+
+
+@dataclass
+class PriceResponseModel:
+    name: str
+    shortName: str
+    price: int
+    basePrice: int
+    avg24hPrice: int
+    avg7daysPrice: int
+    traderName: str
+    traderPrice: int
+    tracePriceCur: str
+    updated: datetime.datetime
+    slots: int
+    img: str
+    imgBig: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> PriceResponseModel:
+        return PriceResponseModel(
+            name=object.get("name"),
+            shortName=object.get("shortName"),
+            price=safe_int(object.get("price"), 0),
+            basePrice=safe_int(object.get("basePrice"), 0),
+            avg24hPrice=safe_int(object.get("avg24hPrice"), 0),
+            avg7daysPrice=safe_int(object.get("avg7daysPrice"), 0),
+            traderName=object.get("traderName"),
+            traderPrice=safe_int(object.get("traderPrice"), 0),
+            tracePriceCur=object.get("tracePriceCur"),
+            updated=maya.parse(object.get("updated")).datetime(),
+            slots=safe_int(object.get("slots"), 0),
+            img=object.get("img"),
+            imgBig=object.get("imgBig"),
+        )
 
 
 # utility class for interfacing with EFT's data.
@@ -144,15 +190,15 @@ class EFT:
         return response.strip()
 
     @staticmethod
-    def check_price(lang: str, query: str) -> str:
+    def check_price(lang: str, query: str) -> PriceResponseModel:
         price_link = (
             settings["price_link"][lang] if lang in settings["price_link"] else None
         )
         if not price_link:
             raise InvalidLocaleError(lang)
-        crafted_url = price_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
+        crafted_url = price_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return PriceResponseModel.fromJSONObj(response)
 
     @staticmethod
     def check_slot(lang: str, query: str) -> str:

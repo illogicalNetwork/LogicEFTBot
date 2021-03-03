@@ -15,5 +15,8 @@ with io.open("localizations.json", "r", encoding="utf-8") as _f:
 BOT_UI_ENABLED = bool(os.environ.get("BOT_UI_ENABLED", None))
 
 
-def localized_string(lang: str, string: str) -> str:
-    return str(locale[lang][string])
+def localized_string(lang: str, string: str, *args: Any) -> str:
+    resp = str(locale[lang][string])
+    if args:
+        resp = resp.format(*args)
+    return resp
