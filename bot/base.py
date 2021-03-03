@@ -27,10 +27,10 @@ def command(*names: str):
         sig = signature(func)
         # TODO: We should also technically validate the parameter types here too.
         # i.e the (context, cmd, data) structure.
-        if sig.return_annotation is not str or iscoroutinefunction(func):
+        if not sig.return_annotation or iscoroutinefunction(func):
             # def doesn't have correct signature
             raise Exception(
-                f"Function {func.__name__} cannot be attached to command `{','.join(names)}`. It must have the signature: (..) -> str."
+                f"Function {func.__name__} cannot be attached to command `{','.join(names)}`. It must have the signature: (..) -> Any."
             )
         func._bot_command = names  # type: ignore
         return func

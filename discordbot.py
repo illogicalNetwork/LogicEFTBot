@@ -3,14 +3,40 @@
 import discord
 import os
 from cooldown import check_cooldown, reset_cooldown
-from bot.config import settings
+from bot.config import settings, localized_string
+from bot.eft import EFT
 from bot.bot import LogicEFTBot
-from bot.base import CommandContext, AuthorInfo, CommandNotFoundException
+from bot.base import CommandContext, AuthorInfo, CommandNotFoundException, command
 from bot.log import log
 from bot.database import Database
 from discord import Client
 import signal
 import traceback
+from typing import Union
+
+
+class DiscordEFTBot(LogicEFTBot):
+    @command("price", "p")
+    def bot_price(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        price = EFT.check_price(lang, data)
+        response = localized_string(
+            lang,
+            "price",
+            price.name,
+            price.price,
+            price.updated.strftime("%m/%d/%Y %H:%M:%S"),
+        )
+        embed = discord.Embed(
+            title="LogicEFTBot",
+            url="https://eft.bot",
+            description="The Free Tarkov Bot",
+            color=0x780A81,
+        )
+        # embed.set_thumbnail(url="") #Will be implimented soon
+        embed.add_field(name="Price Check", value=response, inline=True)
+        return embed
 
 
 class DiscordClient(Client):
@@ -22,7 +48,7 @@ class DiscordClient(Client):
 
     def __init__(self):
         super().__init__()
-        self.logic = LogicEFTBot(Database.get())
+        self.logic = DiscordEFTBot(Database.get())
 
     async def on_ready(self):
         await self.change_presence(
@@ -67,17 +93,10 @@ class DiscordClient(Client):
         try:
             resp = self.logic.exec(context, cmd, content)
             if resp:
-                embed = discord.Embed(
-                    title="LogicEFTBot",
-                    url="https://eft.bot",
-                    description="The Free Tarkov Bot",
-                    color=0x780A81,
-                )
-                # embed.set_thumbnail(url="") #Will be implimented soon
-                embed.add_field(
-                    name=cmd.capitalize() + " check", value=resp, inline=True
-                )
-                await message.channel.send(embed=embed)
+                if resp is str:
+                    await message.channel.send(str)
+                elif resp is discord.Embed:
+                    await message.channel.send(embed=resp)
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
