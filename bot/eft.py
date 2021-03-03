@@ -7,6 +7,7 @@ from bot.config import settings
 from dataclasses import dataclass
 import datetime
 import maya
+import json
 
 
 class InvalidLocaleError(Exception):
@@ -39,21 +40,21 @@ class PriceResponseModel:
     imgBig: str
 
     @classmethod
-    def fromJSONObj(cls, json: Any) -> PriceResponseModel:
+    def fromJSONObj(cls, object: Any) -> PriceResponseModel:
         return PriceResponseModel(
-            name=json.get("name"),
-            shortName=json.get("shortName"),
-            price=safe_int(json.get("price"), 0),
-            basePrice=safe_int(json.get("basePrice"), 0),
-            avg24hPrice=safe_int(json.get("avg24hPrice"), 0),
-            avg7daysPrice=safe_int(json.get("avg7daysPrice"), 0),
-            traderName=json.get("traderName"),
-            traderPrice=safe_int(json.get("traderPrice"), 0),
-            tracePriceCur=json.get("tracePriceCur"),
-            updated=maya.parse(safe_int(json.get("updated"), 0)).datetime(),
-            slots=safe_int(json.get("slots"), 0),
-            img=json.get("img"),
-            imgBig=json.get("imgBig"),
+            name=object.get("name"),
+            shortName=object.get("shortName"),
+            price=safe_int(object.get("price"), 0),
+            basePrice=safe_int(object.get("basePrice"), 0),
+            avg24hPrice=safe_int(object.get("avg24hPrice"), 0),
+            avg7daysPrice=safe_int(object.get("avg7daysPrice"), 0),
+            traderName=object.get("traderName"),
+            traderPrice=safe_int(object.get("traderPrice"), 0),
+            tracePriceCur=object.get("tracePriceCur"),
+            updated=maya.parse(object.get("updated")).datetime(),
+            slots=safe_int(object.get("slots"), 0),
+            img=object.get("img"),
+            imgBig=object.get("imgBig"),
         )
 
 
