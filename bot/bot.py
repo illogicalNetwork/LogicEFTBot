@@ -3,7 +3,7 @@ import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
 from bot.eft import EFT
-from bot.models import TarkovMarketModel, TarkovDatabaseModel, ArmorModel, HelmetModel
+from bot.models import TarkovMarketModel, TarkovDatabaseModel, ArmorModel, HelmetModel, AmmoModel
 from bot.database import Database
 from bot.log import log
 from bot.config import settings, localized_string

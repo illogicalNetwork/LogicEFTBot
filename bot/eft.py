@@ -4,7 +4,7 @@ import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Any
 from bot.config import settings
-from bot.models import TarkovMarketModel
+from bot.models import TarkovMarketModel, AmmoModel
 from dataclasses import dataclass
 import datetime
 import maya
@@ -44,15 +44,15 @@ class EFT:
         return response.strip()
 
     @staticmethod
-    def check_astat(lang: str, query: str) -> str:
-        ammo_link = (
-            settings["ammo_link"][lang] if lang in settings["ammo_link"] else None
+    def check_astat(lang: str, query: str) -> AmmoModel:
+        astat_link = (
+            settings["astat_link"][lang] if lang in settings["astat_link"] else None
         )
-        if not ammo_link:
+        if not astat_link:
             raise InvalidLocaleError(lang)
-        crafted_url = ammo_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
+        crafted_url = astat_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return AmmoModel.fromJSONObj(response)
 
     @staticmethod
     def check_avg7d(lang: str, query: str) -> str:

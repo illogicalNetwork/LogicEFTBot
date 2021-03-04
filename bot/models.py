@@ -114,6 +114,12 @@ class AmmoModel:
     name: str
     flesh: int
     pen: int
+    armor: int
+    accuracy: int
+    recoil: int
+    frag:int
+    img: str
+    url: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> AmmoModel:
@@ -121,4 +127,10 @@ class AmmoModel:
             name=object.get("name"),
             flesh=object.get("flesh"),
             pen=object.get("pen"),
+            armor=object.get("armor"),
+            accuracy=object.get("accuracy"),
+            recoil=object.get("recoil"),
+            frag=object.get("frag"),         
+            img=object.get("img"),
+            url=object.get("wikiURL"),
         )

@@ -6,13 +6,14 @@
       "validArmor":"You must input a valid armor item",
       "botHelp":"Commands available: !astat , !armor , !armorstats , !helmet , !helmetstats , !medical , !price, !slot , and !wiki ",
       "addBot":"If you want the bot in your channel, head to https://eft.bot/ and click 'EFT Bot' to add the bot!",
-      "ammoFlesh":"Flesh Damage",
-      "ammoPen":"Armor Penetration",
-      "ammoArmor":"Armor Damage",
-      "ammoAccuracy":"Acurracy %",
-      "ammoRecoil":"Recoil %",
-      "ammoFrag":"Frag Chance %",
-      "price": "The price of `{0}` is `{1}` roubles. Price last updated `{2}`"
+      "flesh":"Flesh Damage",
+      "pen":"Armor Penetration",
+      "armor":"Armor Damage",
+      "accuracy":"Acurracy %",
+      "recoil":"Recoil %",
+      "frag":"Frag Chance %",
+      "price": "The price of `{0}` is `{1}` roubles. Price last updated `{2}`",
+      "ammoDesc":"Detailed Ammo Stats"
    },
    "es": {
       "validItem":"Debes entrar un nombre de artículo válido. EX: Slick",

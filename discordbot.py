@@ -42,6 +42,27 @@ class DiscordEFTBot(LogicEFTBot):
         embed.set_thumbnail(url=info.img)
         embed.add_field(name=info.name, value=response, inline=True)
         return embed
+    
+    @command("astat")
+    def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        astat = EFT.check_astat(lang, data)
+        #response = localized_string(lang,"astat",astat.name,astat.flesh,astat.pen,)
+        embed = discord.Embed(
+            title=astat.name,
+            url=astat.url,
+            description=localized_string(lang,"ammoDesc"),
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url=astat.img)
+        embed.add_field(name=localized_string(lang,"ammoFlesh"), value=astat.flesh, inline=True)
+        embed.add_field(name=localized_string(lang,"pen"), value=astat.pen, inline=True)
+        embed.add_field(name=localized_string(lang,"armor"), value=astat.armor, inline=True)
+        embed.add_field(name=localized_string(lang,"accuracy"), value=astat.accuracy, inline=True)
+        embed.add_field(name=localized_string(lang,"recoil"), value=astat.recoil, inline=True)
+        embed.add_field(name=localized_string(lang,"frag"), value=astat.frag, inline=True)
+        return embed
 
 
 class DiscordClient(Client):
