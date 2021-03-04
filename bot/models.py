@@ -131,7 +131,7 @@ class AmmoModel:
             armor=object.get("armor"),
             accuracy=object.get("accuracy"),
             recoil=object.get("recoil"),
-            frag=object.get("frag"),         
+            frag=object.get("fragmentation"),
             img=object.get("img"),
             url=object.get("wikiURL"),
             desc=object.get("desc"),
