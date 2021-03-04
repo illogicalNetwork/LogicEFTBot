@@ -120,6 +120,7 @@ class AmmoModel:
     frag:int
     img: str
     url: str
+    desc: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> AmmoModel:
@@ -133,4 +134,5 @@ class AmmoModel:
             frag=object.get("frag"),         
             img=object.get("img"),
             url=object.get("wikiURL"),
+            desc=object.get("desc"),
         )

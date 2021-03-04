@@ -52,11 +52,11 @@ class DiscordEFTBot(LogicEFTBot):
         embed = discord.Embed(
             title=astat.name,
             url=astat.url,
-            description=localized_string(lang,"ammoDesc"),
+            description=localized_string(lang,astat.desc),
             color=0x780A81,
         )
         embed.set_thumbnail(url=astat.img)
-        embed.add_field(name=localized_string(lang,"ammoFlesh"), value=astat.flesh, inline=True)
+        embed.add_field(name=localized_string(lang,"flesh"), value=astat.flesh, inline=True)
         embed.add_field(name=localized_string(lang,"pen"), value=astat.pen, inline=True)
         embed.add_field(name=localized_string(lang,"armor"), value=astat.armor, inline=True)
         embed.add_field(name=localized_string(lang,"accuracy"), value=astat.accuracy, inline=True)
