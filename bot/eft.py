@@ -4,6 +4,7 @@ import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Any
 from bot.config import settings
+from bot.models import TarkovMarketModel
 from dataclasses import dataclass
 import datetime
 import maya
