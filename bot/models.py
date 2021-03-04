@@ -111,28 +111,26 @@ class ArmorModel:
 
 @dataclass
 class AmmoModel:
+    bsgID: str
     name: str
-    flesh: int
-    pen: int
-    armor: int
+    description: str
+    damage: int
+    penetration: int
+    armorDamage: int
+    fragmenation: int
     accuracy: int
     recoil: int
-    frag:int
-    img: str
-    url: str
-    desc: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> AmmoModel:
         return AmmoModel(
+            bsgID=object.get("_id"),
             name=object.get("name"),
-            flesh=object.get("flesh"),
-            pen=object.get("pen"),
-            armor=object.get("armor"),
-            accuracy=object.get("accuracy"),
-            recoil=object.get("recoil"),
-            frag=object.get("fragmentation"),
-            img=object.get("img"),
-            url=object.get("wikiURL"),
-            desc=object.get("desc"),
+            description=object.get("description"),
+            damage=safe_int(object.get("damage"), 0),
+            penetration=safe_int(object.get("penetration"), 0),
+            armorDamage=safe_int(object.get("armorDamage"), 0),
+            fragmenation=object.get("fragmentation").get("chance"),
+            accuracy=safe_int(object.get("weaponModifier").get("accuracy"), 0),
+            recoil=safe_int(object.get("weaponModifier").get("recoil"), 0),
         )
