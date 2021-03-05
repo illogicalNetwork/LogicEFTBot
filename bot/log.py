@@ -3,7 +3,7 @@ import logging.handlers as handlers
 import sys
 import os
 
-log = logging.getLogger("the_bot")
+log = logging.getLogger("LogicEFTBot")
 log.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)-15s | %(message)s")
 log_handler = handlers.RotatingFileHandler("bot.log", maxBytes=5000000, backupCount=3)

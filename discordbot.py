@@ -12,7 +12,7 @@ from bot.database import Database
 from discord import Client
 import signal
 import traceback
-import math
+import maya
 from typing import Union
 
 
@@ -26,42 +26,88 @@ class DiscordEFTBot(LogicEFTBot):
     def bot_price(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
         log.info("%s - searching for %s (new)\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        info = EFT.check_price(lang, data)
-        response = localized_string(
-            lang,
-            "price",
-            info.name,
-            info.price,
-            info.updated.strftime("%m/%d/%Y %H:%M"),
-        )
+        price = EFT.check_price(lang, data)
         embed = discord.Embed(
-            title="LogicEFTBot",
-            url="https://eft.bot",
-            description="The Free Tarkov Bot",
+            title=price.name,
+            url=price.wikiLink,
             color=0x780A81,
         )
-        embed.set_thumbnail(url=info.img)
-        embed.add_field(name=info.name, value=response, inline=True)
+        embed.set_thumbnail(url=price.img)
+        embed.add_field(name=localized_string(lang,"marketPrice"), value=format(int(price.price),","), inline=True)
+        embed.add_field(name=localized_string(lang,"marketTrader"), value=price.traderName, inline=True)
+        embed.add_field(name=localized_string(lang,"marketTraderPrice"), value=format(int(price.traderPrice),","), inline=True)
+        embed.add_field(name=localized_string(lang,"marketSlot"), value=format(round((price.price/price.slots)),","), inline=True)
+        embed.add_field(name=localized_string(lang,"market7dAvg"), value=format(int(price.avg7daysPrice),","), inline=True)
+        embed.add_field(name=localized_string(lang,"market24hAvg"), value=format(int(price.avg24hPrice),","), inline=True)
+        embed.set_footer(text=localized_string(lang,"marketUpdated")+maya.MayaDT.from_datetime(price.updated).slang_time())
         return embed
     
     @command("astat")
     def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
         log.info("%s - searching for %s (new)\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        astat = EFT.check_astat(lang, data)
-        embed = discord.Embed(
+        try:
+            astat = EFT.check_astat(lang, data)
+            embed = discord.Embed(
             title=astat.name,
-            url="",
             description=astat.description,
             color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(astat.bsgID))
+            embed.add_field(name=localized_string(lang,"ammoFlesh"), value=astat.damage, inline=True)
+            embed.add_field(name=localized_string(lang,"ammoPen"), value=astat.penetration, inline=True)
+            embed.add_field(name=localized_string(lang,"ammoArmor"), value=astat.armorDamage, inline=True)
+            embed.add_field(name=localized_string(lang,"ammoAccuracy"), value=astat.accuracy, inline=True)
+            embed.add_field(name=localized_string(lang,"ammoRecoil"), value=astat.recoil, inline=True)
+            embed.add_field(name=localized_string(lang,"ammoFrag"), value=(astat.fragmentation*100), inline=True)
+            return embed
+        except:
+            embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://iconsplace.com/wp-content/uploads/_icons/ff0000/256/png/error-icon-14-256.png")
+            embed.add_field(name="Invalid Item", value="You've entered in an invalid ammo ; please try again.", inline=True)
+            return embed
+
+    @command("armor")
+    def bot_armor(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        armor = EFT.check_armor(lang, data)
+        embed = discord.Embed(
+            title=armor.name,
+            description=localized_string(lang,"armorZones")+armor.zones,
+            color=0x780A81,
         )
-        embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(astat.bsgID))
-        embed.add_field(name=localized_string(lang,"flesh"), value=astat.damage, inline=True)
-        embed.add_field(name=localized_string(lang,"pen"), value=astat.penetration, inline=True)
-        embed.add_field(name=localized_string(lang,"armor"), value=astat.armorDamage, inline=True)
-        embed.add_field(name=localized_string(lang,"accuracy"), value=astat.accuracy, inline=True)
-        embed.add_field(name=localized_string(lang,"recoil"), value=astat.recoil, inline=True)
-        embed.add_field(name=localized_string(lang,"frag"), value=astat.fragmenation*100, inline=True)
+        embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(armor.bsgID))
+        embed.add_field(name=localized_string(lang,"armorClass"), value=armor.armorClass, inline=True)
+        embed.add_field(name=localized_string(lang,"armorMaterial"), value=armor.material, inline=True)
+        embed.add_field(name=localized_string(lang,"armorDurability"), value=armor.armorDurability, inline=True)
+        embed.add_field(name=localized_string(lang,"armorMoveSpeed"), value=armor.moveSpeed, inline=True)
+        embed.add_field(name=localized_string(lang,"armorTurnSpeed"), value=armor.turnSpeed, inline=True)
+        embed.add_field(name=localized_string(lang,"armorErgo"), value=armor.ergo, inline=True)
+        embed.set_footer(text=localized_string(lang,"effectiveDurability")+armor.effectiveDurability)
+        return embed
+
+    @command("helmet")
+    def bot_helmet(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        helmet = EFT.check_helmets(lang, data)
+        embed = discord.Embed(
+            title=helmet.name,
+            description=localized_string(lang,"helmetZones")+helmet.zones,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(helmet.bsgID))
+        embed.add_field(name=localized_string(lang,"helmetClass"), value=helmet.helmetClass, inline=True)
+        embed.add_field(name=localized_string(lang,"helmetDurability"), value=helmet.helmetDurability, inline=True)
+        embed.add_field(name=localized_string(lang,"helmetRicochet"), value=helmet.helmetRicochet, inline=True)
+        embed.add_field(name=localized_string(lang,"helmetMoveSpeed"), value=helmet.moveSpeed, inline=True)
+        embed.add_field(name=localized_string(lang,"helmetTurnSpeed"), value=helmet.turnSpeed, inline=True)
+        embed.add_field(name=localized_string(lang,"helmetErgo"), value=helmet.ergo, inline=True)
+        embed.set_footer(text=localized_string(lang,"helmetSoundHeadsets")+helmet.soundHeadsets)
         return embed
 
 
