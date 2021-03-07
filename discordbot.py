@@ -47,7 +47,7 @@ class DiscordEFTBot(LogicEFTBot):
             title="LogicEFTBot - Error",
             color=0x780A81,
             )
-            embed.set_thumbnail(url="https://iconsplace.com/wp-content/uploads/_icons/ff0000/256/png/error-icon-14-256.png")
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
             embed.add_field(name="Invalid Item", value="You've entered in an invalid item ; please try again.", inline=True)
             return embed
     
@@ -76,7 +76,7 @@ class DiscordEFTBot(LogicEFTBot):
             title="LogicEFTBot - Error",
             color=0x780A81,
             )
-            embed.set_thumbnail(url="https://iconsplace.com/wp-content/uploads/_icons/ff0000/256/png/error-icon-14-256.png")
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
             embed.add_field(name="Invalid Item", value="You've entered in an invalid ammo ; please try again.", inline=True)
             return embed
 
@@ -105,7 +105,7 @@ class DiscordEFTBot(LogicEFTBot):
             title="LogicEFTBot - Error",
             color=0x780A81,
             )
-            embed.set_thumbnail(url="https://iconsplace.com/wp-content/uploads/_icons/ff0000/256/png/error-icon-14-256.png")
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
             embed.add_field(name="Invalid Armor", value="You've entered in an invalid armor ; please try again.", inline=True)
             print(e)
             return embed
@@ -136,7 +136,7 @@ class DiscordEFTBot(LogicEFTBot):
             title="LogicEFTBot - Error",
             color=0x780A81,
             )
-            embed.set_thumbnail(url="https://iconsplace.com/wp-content/uploads/_icons/ff0000/256/png/error-icon-14-256.png")
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
             embed.add_field(name="Invalid Helmet", value="You've entered in an invalid helmet ; please try again.", inline=True)
             return embed
 
