@@ -13,54 +13,62 @@ import datetime
 import maya
 import json
 
-def safe_int(value: Any, fallback: int) -> int:
-    try:
-        return int(value)
-    except:
-        return fallback
-
 @dataclass
 class LogicalHelmetModel:
+    bsgID: str
     name: str
-    helmetsclass: int
-    zones: str
-    dura: int
-    rico: str
+    armorClass: str
+    armorZones: str
+    armorDurability: str
+    armorRico: str
+    armorMoveSpeed: str
+    armorTurnSpeed: str
+    armorErgo: str
+    helmetSoundReduc: str
+    helmetBlocksHeadset: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> LogicalHelmetModel:
         return LogicalHelmetModel(
+            bsgID=object.get("bsgID"),
             name=object.get("name"),
-            helmetsclass=object.get("helmetsclass"),
-            zones=object.get("zones"),
-            dura=object.get("dura"),
-            rico=object.get("rico"),
+            armorClass=object.get("armorClass"),
+            armorZones=object.get("armorZones"),
+            armorDurability=object.get("dura"),
+            armorRico=object.get("rico"),
+            armorMoveSpeed=object.get("moveSpeed"),
+            armorTurnSpeed=object.get("turnSpeed"),
+            armorErgo=object.get("ergo"),
+            helmetSoundReduc=object.get("soundsReduc"),
+            helmetBlocksHeadset=object.get("blocksHeadset"),
         )
 
 @dataclass
 class LogicalArmorModel:
-    name: str
+    bsgID: str
+    armorName: str
     armorZones: str
-    armorclass: str
-    material: str
+    armorClass: str
+    armorMaterial: str
     armorDurability: str
     armorMoveSpeed: str
     armorTurnSpeed: str
-    ergo: str
+    armorErgo: str
     effectiveDurability: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
         return LogicalArmorModel(
-            name=object.get("name"),
-            armorZones=object.get("armorZones"),
-            armorclass=object.get("armorclass"),
-            material=object.get("material"),
-            armorDurability=object.get("durability"),
+            bsgID=object.get("bsgID"),
+            armorName=object.get("name"),
+            armorZones=object.get("zones"),
+            armorClass=object.get("armorclass"),
+            armorMaterial=object.get("materials"),
+            armorDurability=object.get("dura"),
             armorMoveSpeed=object.get("moveSpeed"),
             armorTurnSpeed=object.get("turnSpeed"),
             armorErgo=object.get("ergo"),
-            effectiveDurability=object.get("effectiveDurability"),
+            effectiveDurability=object.get("effective"),
         )
 
 @dataclass
@@ -101,14 +109,14 @@ class TarkovMarketModel:
         return TarkovMarketModel(
             name=object.get("name"),
             shortName=object.get("shortName"),
-            price=safe_int(object.get("price"), 0),
-            basePrice=safe_int(object.get("basePrice"), 0),
-            avg24hPrice=safe_int(object.get("avg24hPrice"), 0),
-            avg7daysPrice=safe_int(object.get("avg7daysPrice"), 0),
+            price=object.get("price"),
+            basePrice=object.get("basePrice"),
+            avg24hPrice=object.get("avg24hPrice"),
+            avg7daysPrice=object.get("avg7daysPrice"),
             traderName=object.get("traderName"),
-            traderPrice=safe_int(object.get("traderPrice"), 0),
+            traderPrice=object.get("traderPrice"),
             updated=maya.parse(object.get("updated")).datetime(),
-            slots=safe_int(object.get("slots"), 0),
+            slots=object.get("slots"),
             img=object.get("img"),
             wikiLink=object.get("wikiLink"),
         )
@@ -124,17 +132,19 @@ class WikiAmmoModel:
     fragmentation: str
     accuracy: str
     recoil: str
+    wikiLink: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> WikiAmmoModel:
         return WikiAmmoModel(
-            bsgID=object.get("_id"),
+            bsgID=object.get("bsgId"),
             name=object.get("name"),
             description=object.get("description"),
             damage=object.get("damage"),
             penetration=object.get("penetration"),
             armorDamage=object.get("armorDamage"),
-            fragmentation=object.get("fragmentation").get("chance"),
-            accuracy=object.get("weaponModifier").get("accuracy"),
-            recoil=object.get("weaponModifier").get("recoil"),
+            fragmentation=object.get("fragChance"),
+            accuracy=object.get("accuracy"),
+            recoil=object.get("recoil"),
+            wikiLink=object.get("wikiLink"),
         )

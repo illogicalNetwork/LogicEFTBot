@@ -4,7 +4,7 @@ import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Any
 from bot.config import settings
-from bot.models import TarkovMarketModel, WikiAmmoModel
+from bot.models import TarkovMarketModel, WikiAmmoModel, LogicalArmorModel, LogicalHelmetModel
 from dataclasses import dataclass
 import datetime
 import maya
@@ -20,15 +20,15 @@ class InvalidLocaleError(Exception):
 # utility class for interfacing with EFT's data.
 class EFT:
     @staticmethod
-    def check_armor(lang: str, query: str) -> str:
+    def check_armor(lang: str, query: str) -> LogicalArmorModel:
         armor_link = (
             settings["armor_link"][lang] if lang in settings["armor_link"] else None
         )
         if not armor_link:
             raise InvalidLocaleError(lang)
-        crafted_url = armor_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
+        crafted_url = armor_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return LogicalArmorModel.fromJSONObj(response)
 
     @staticmethod
     def check_armorstats(lang: str, query: str) -> str:
@@ -77,15 +77,15 @@ class EFT:
         return response.strip()
 
     @staticmethod
-    def check_helmets(lang: str, query: str) -> str:
+    def check_helmets(lang: str, query: str) -> LogicalHelmetModel:
         helmet_link = (
             settings["helmet_link"][lang] if lang in settings["helmet_link"] else None
         )
         if not helmet_link:
             raise InvalidLocaleError(lang)
-        crafted_url = helmet_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
+        crafted_url = helmet_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return LogicalHelmetModel.fromJSONObj(response)
 
     @staticmethod
     def check_helmetstats(lang: str, query: str) -> str:
