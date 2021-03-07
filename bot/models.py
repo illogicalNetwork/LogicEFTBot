@@ -26,6 +26,8 @@ class LogicalHelmetModel:
     armorErgo: str
     helmetSoundReduc: str
     helmetBlocksHeadset: str
+    wikiLink: str
+    description: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> LogicalHelmetModel:
@@ -41,6 +43,8 @@ class LogicalHelmetModel:
             armorErgo=object.get("ergo"),
             helmetSoundReduc=object.get("soundsReduc"),
             helmetBlocksHeadset=object.get("blocksHeadset"),
+            wikiLink=object.get("wikiLink"),
+            description=object.get("description"),
         )
 
 @dataclass
@@ -55,6 +59,8 @@ class LogicalArmorModel:
     armorTurnSpeed: str
     armorErgo: str
     effectiveDurability: str
+    wikiLink: str
+    description: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
@@ -69,6 +75,8 @@ class LogicalArmorModel:
             armorTurnSpeed=object.get("turnSpeed"),
             armorErgo=object.get("ergo"),
             effectiveDurability=object.get("effective"),
+            wikiLink=object.get("wikiLink"),
+            description=object.get("description"),
         )
 
 @dataclass
@@ -133,6 +141,7 @@ class WikiAmmoModel:
     accuracy: str
     recoil: str
     wikiLink: str
+    description: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> WikiAmmoModel:

@@ -88,6 +88,7 @@ class DiscordEFTBot(LogicEFTBot):
             armor = EFT.check_armor(lang, data)
             embed = discord.Embed(
             title=armor.armorName,
+            url=armor.wikiLink,
             description=localized_string(lang,"armorZones")+armor.armorZones,
             color=0x780A81,
         )
@@ -118,6 +119,8 @@ class DiscordEFTBot(LogicEFTBot):
             helmet = EFT.check_helmets(lang, data)
             embed = discord.Embed(
             title=helmet.name,
+            url=helmet.wikiLink,
+            description=helmet.description,
             color=0x780A81,
             )
             embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(helmet.bsgID))
