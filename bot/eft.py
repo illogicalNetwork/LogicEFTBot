@@ -4,7 +4,7 @@ import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Any
 from bot.config import settings
-from bot.models import TarkovMarketModel, WikiAmmoModel, LogicalArmorModel, LogicalHelmetModel
+from bot.models import TarkovMarketModel, WikiAmmoModel, LogicalArmorModel, LogicalHelmetModel, MedicalModel
 from dataclasses import dataclass
 import datetime
 import maya
@@ -127,15 +127,15 @@ class EFT:
         return response.strip()
 
     @staticmethod
-    def check_medical(lang: str, query: str) -> str:
+    def check_medical(lang: str, query: str) -> MedicalModel:
         medical_link = (
             settings["medical_link"][lang] if lang in settings["medical_link"] else None
         )
         if not medical_link:
             raise InvalidLocaleError(lang)
-        crafted_url = medical_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
+        crafted_url = medical_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return MedicalModel.fromJSONObj(response)
 
     @staticmethod
     def check_profit(lang: str, query: str) -> str:

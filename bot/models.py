@@ -80,21 +80,25 @@ class LogicalArmorModel:
         )
 
 @dataclass
-class TarkovDatabaseMedicalModel:
+class MedicalModel:
+    bsgID: str
     name: str
-    shortName: str
     description: str
     useTime: int
-    effects: str
+    resources: int
+    resourceRate: int
+    wikiLink: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> TarkovDatabaseMedicalModel:
-        return TarkovDatabaseMedicalModel(
+    def fromJSONObj(cls, object: Any) -> MedicalModel:
+        return MedicalModel(
+            bsgID=object.get("bsgId"),
             name=object.get("name"),
-            shortName=object.get("shortName"),
             description=object.get("description"),
             useTime=object.get("useTime"),
-            effects=object.get("effects"),
+            resources=object.get("resources"),
+            resourceRate=object.get("resourceRate"),
+            wikiLink=object.get("wikiLink"),
         )
 
 @dataclass
