@@ -47,7 +47,7 @@
       "twitch_helmetstats":"{0} has a move-speed penalty of {1} , a turn-speed penalty of {2} and an ergonomics penalty of {3}. It has {4} sound reduction and {5} block headset usage.",      
       "twitch_kappaItems":"You need a total of {0} - {1} to obtain Kappa-Container.",
       "twitch_kappaQuests":"{0}, {1} is on the list of quests required to obtain your Kappa-Container.",
-      "twitch_medical":"{0} has a usage time of {1}. It has a max item health of {2} and uses at most {3} durability per use.",
+      "twitch_medical":"{0} has a usage time of {1} seconds. It has a max item health of {2} and uses at most {3} durability per use.",
       "twitch_price": "The price of {0} is {1} roubles. Price last updated {2}.",
       "twitch_skills":"{0} has {1} minute long raids with a player count of {2}. Besides PMC's, you can possbily find {3} on this map.",
       "twitch_trader":"The best trader to sell a {0} is to {1} for {2}. Price last updated {3}.",
