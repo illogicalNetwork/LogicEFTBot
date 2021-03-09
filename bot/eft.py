@@ -31,19 +31,6 @@ class EFT:
         return LogicalArmorModel.fromJSONObj(response)
 
     @staticmethod
-    def check_armorstats(lang: str, query: str) -> str:
-        armorstats_link = (
-            settings["armorstats_link"][lang]
-            if lang in settings["armorstats_link"]
-            else None
-        )
-        if not armorstats_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = armorstats_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
     def check_astat(lang: str, query: str) -> WikiAmmoModel:
         astat_link = (
             settings["astat_link"][lang] if lang in settings["astat_link"] else None

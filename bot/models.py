@@ -14,6 +14,30 @@ import maya
 import json
 
 @dataclass
+class kappaItems:
+    name: str
+    quantity: int
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> kappaItems:
+        return kappaItems(
+            name=object.get("name"),
+            quantity=object.get("itemQTY"),
+        )
+
+@dataclass
+class kappaQuests:
+    name: str
+    isReq: int
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> kappaQuests:
+        return kappaQuests(
+            name=object.get("name"),
+            isReq=object.get("kappaReq"),
+        )
+
+@dataclass
 class LogicalHelmetModel:
     bsgID: str
     name: str
@@ -161,3 +185,4 @@ class WikiAmmoModel:
             recoil=object.get("recoil"),
             wikiLink=object.get("wikiLink"),
         )
+
