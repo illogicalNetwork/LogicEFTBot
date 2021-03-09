@@ -13,29 +13,32 @@ import datetime
 import maya
 import json
 
+
 @dataclass
-class kappaItems:
+class kappaItemsModel:
     name: str
     quantity: int
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> kappaItems:
-        return kappaItems(
+    def fromJSONObj(cls, object: Any) -> kappaItemsModel:
+        return kappaItemsModel(
             name=object.get("name"),
             quantity=object.get("itemQTY"),
         )
 
+
 @dataclass
-class kappaQuests:
+class kappaQuestsModel:
     name: str
     isReq: int
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> kappaQuests:
-        return kappaQuests(
+    def fromJSONObj(cls, object: Any) -> kappaQuestsModel:
+        return kappaQuestsModel(
             name=object.get("name"),
             isReq=object.get("kappaReq"),
         )
+
 
 @dataclass
 class LogicalHelmetModel:
@@ -71,6 +74,7 @@ class LogicalHelmetModel:
             description=object.get("description"),
         )
 
+
 @dataclass
 class LogicalArmorModel:
     bsgID: str
@@ -103,6 +107,7 @@ class LogicalArmorModel:
             description=object.get("description"),
         )
 
+
 @dataclass
 class MedicalModel:
     bsgID: str
@@ -124,6 +129,7 @@ class MedicalModel:
             resourceRate=object.get("resourceRate"),
             wikiLink=object.get("wikiLink"),
         )
+
 
 @dataclass
 class TarkovMarketModel:
@@ -157,6 +163,7 @@ class TarkovMarketModel:
             wikiLink=object.get("wikiLink"),
         )
 
+
 @dataclass
 class WikiAmmoModel:
     bsgID: str
@@ -169,7 +176,6 @@ class WikiAmmoModel:
     accuracy: str
     recoil: str
     wikiLink: str
-    description: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> WikiAmmoModel:
@@ -185,4 +191,3 @@ class WikiAmmoModel:
             recoil=object.get("recoil"),
             wikiLink=object.get("wikiLink"),
         )
-

@@ -14,13 +14,14 @@ class LogicEFTBot(LogicEFTBotBase):
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
         try:
-            lang = self.db.get_lang(ctx.channel)
             armor = EFT.check_armor(lang, data)
             response = localized_string(
                 lang,
                 "twitch_armor",
                 armor.armorName,
+                armor.armorClass,
                 armor.armorDurability,
                 armor.armorZones,
             )
@@ -32,7 +33,6 @@ class LogicEFTBot(LogicEFTBotBase):
             )
             return response
 
-
     @command("armorstats")
     def bot_armorstats(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -41,7 +41,7 @@ class LogicEFTBot(LogicEFTBotBase):
             armor = EFT.check_armor(lang, data)
             response = localized_string(
                 lang,
-                "twitch_armor",
+                "twitch_armorstats",
                 armor.armorName,
                 armor.effectiveDurability,
                 armor.armorMoveSpeed,
@@ -68,9 +68,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 astat.name,
                 astat.damage,
                 astat.penetration,
-                astat.fragmentation,
-                astat.accuracy,
-                astat.recoil,
             )
             return response
         except:
@@ -194,11 +191,11 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
-            kappa = EFT.check_kappaquest(lang, data)
+            kappa = EFT.check_kappaquests(lang, data)
             response = localized_string(
                 lang,
                 "twitch_kappaQuests",
-                kappa.
+                kappa.isReq,
                 kappa.name,
             )
             return response
