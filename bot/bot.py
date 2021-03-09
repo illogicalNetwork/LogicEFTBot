@@ -262,7 +262,7 @@ class LogicEFTBot(LogicEFTBotBase):
             "twitch_trader",
             trader.name,
             trader.traderName,
-            trader.traderPrice,
+            format(int(trader.traderPrice),","),
             maya.MayaDT.from_datetime(trader.updated).slang_time(),
         )
         return response
@@ -276,7 +276,7 @@ class LogicEFTBot(LogicEFTBotBase):
             lang,
             "twitch_slot",
             slot.name,
-            (slot.price / slot.slots)
+            format(int((slot.price / slot.slots)),",")
         )
         return response
 
