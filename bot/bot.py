@@ -34,7 +34,7 @@ class LogicEFTBot(LogicEFTBotBase):
 
 
     @command("armorstats")
-    def bot_armor(self, ctx: CommandContext, data: str) -> str:
+    def bot_armorstats(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
@@ -90,8 +90,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_avg7d",
                 avg7d.name,
-                format(int(price.avg7daysPrice),","),
-                maya.MayaDT.from_datetime(price.updated).slang_time(),
+                format(int(avg7d.avg7daysPrice),","),
+                maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
             return response
         except:
@@ -111,8 +111,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_avg24h",
                 avg24h.name,
-                format(int(price.avg24haysPrice),","),
-                maya.MayaDT.from_datetime(price.updated).slang_time(),
+                format(int(avg24h.avg24hPrice),","),
+                maya.MayaDT.from_datetime(avg24h.updated).slang_time(),
             )
             return response
         except:
@@ -127,7 +127,7 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
-            helmet = EFT.check_price(lang, data)
+            helmet = EFT.check_helmets(lang, data)
             response = localized_string(
                 lang,
                 "twitch_helmet",
@@ -150,7 +150,7 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
-            helmet = EFT.check_price(lang, data)
+            helmet = EFT.check_helmets(lang, data)
             response = localized_string(
                 lang,
                 "twitch_helmetstats",
@@ -266,7 +266,7 @@ class LogicEFTBot(LogicEFTBotBase):
             trader.name,
             trader.traderName,
             trader.traderPrice,
-            maya.MayaDT.from_datetime(price.updated).slang_time(),
+            maya.MayaDT.from_datetime(trader.updated).slang_time(),
         )
         return response
 

@@ -40,29 +40,7 @@ class EFT:
         crafted_url = astat_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return WikiAmmoModel.fromJSONObj(response)
-
-    @staticmethod
-    def check_avg7d(lang: str, query: str) -> str:
-        avg7d_link = (
-            settings["avg7d_link"][lang] if lang in settings["avg7d_link"] else None
-        )
-        if not avg7d_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = avg7d_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
-    def check_avg24h(lang: str, query: str) -> str:
-        avg24h_link = (
-            settings["avg24h_link"][lang] if lang in settings["avg24h_link"] else None
-        )
-        if not avg24h_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = avg24h_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
+        
     @staticmethod
     def check_helmets(lang: str, query: str) -> LogicalHelmetModel:
         helmet_link = (
@@ -73,19 +51,6 @@ class EFT:
         crafted_url = helmet_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return LogicalHelmetModel.fromJSONObj(response)
-
-    @staticmethod
-    def check_helmetstats(lang: str, query: str) -> str:
-        helmetstats_link = (
-            settings["helmetstats_link"][lang]
-            if lang in settings["helmetstats_link"]
-            else None
-        )
-        if not helmetstats_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = helmetstats_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
 
     @staticmethod
     def check_kappaquest(lang: str, query: str) -> str:
@@ -125,17 +90,6 @@ class EFT:
         return MedicalModel.fromJSONObj(response)
 
     @staticmethod
-    def check_profit(lang: str, query: str) -> str:
-        profit_link = (
-            settings["profit_link"][lang] if lang in settings["profit_link"] else None
-        )
-        if not profit_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = profit_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
     def check_price(lang: str, query: str) -> TarkovMarketModel:
         price_link = (
             settings["price_link"][lang] if lang in settings["price_link"] else None
@@ -145,36 +99,3 @@ class EFT:
         crafted_url = price_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return TarkovMarketModel.fromJSONObj(response)
-
-    @staticmethod
-    def check_slot(lang: str, query: str) -> str:
-        slot_link = (
-            settings["slot_link"][lang] if lang in settings["slot_link"] else None
-        )
-        if not slot_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = slot_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
-    def check_trader(lang: str, query: str) -> str:
-        trader_link = (
-            settings["trader_link"][lang] if lang in settings["trader_link"] else None
-        )
-        if not trader_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = trader_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
-    def check_wiki(lang: str, query: str) -> str:
-        wiki_link = (
-            settings["wiki_link"][lang] if lang in settings["wiki_link"] else None
-        )
-        if not wiki_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = wiki_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
