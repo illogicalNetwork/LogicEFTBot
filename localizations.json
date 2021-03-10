@@ -42,7 +42,7 @@
       "twitch_armorstats":"{0} has an effective durability of {1}, a move-speed penalty of {2} , a turn-speed penalty of {3} and an ergonomics penalty of {4}",
       "twitch_avg7d":"The price of {0} over the last 7 Days is {1}. Price last updated {2}.",
       "twitch_avg24h":"The price of {0} over the last 24 hours is {1}. Price last updated {2}.",
-      "twitch_astat":"The flesh damage of {0} is {1} and it has {2) armor penetration.",
+      "twitch_astat":"The flesh damage of {0} is {1} and it has {2} armor penetration.",
       "twitch_helmet":"{0} is a level {1} helmet with a max durablity of {2}. It has a {3} chance to ricochet and protects the {4}.",
       "twitch_helmetstats":"{0} has a move-speed penalty of {1} , a turn-speed penalty of {2} and an ergonomics penalty of {3}. It has {4} sound reduction and {5} block headset usage.",      
       "twitch_kappaItems":"You need a total of {0} - {1} to obtain Kappa-Container.",
