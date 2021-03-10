@@ -10,7 +10,6 @@ import maya
 
 # TODO: Move most of the actual API calls to eft.py (or move them all back into here)
 class LogicEFTBot(LogicEFTBotBase):
-    
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -87,7 +86,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_avg7d",
                 avg7d.name,
-                format(int(avg7d.avg7daysPrice),","),
+                format(int(avg7d.avg7daysPrice), ","),
                 maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
             return response
@@ -108,7 +107,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_avg24h",
                 avg24h.name,
-                format(int(avg24h.avg24hPrice),","),
+                format(int(avg24h.avg24hPrice), ","),
                 maya.MayaDT.from_datetime(avg24h.updated).slang_time(),
             )
             return response
@@ -176,7 +175,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_kappaItems",
                 kappa.quantity,
-                kappa.name,                
+                kappa.name,
             )
             return response
         except:
@@ -227,14 +226,14 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
             return response
-            
+
     @command("profit")
     def bot_profit(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         response = localized_string(
-        lang,
-        "twitch_profit",
+            lang,
+            "twitch_profit",
         )
         return response
 
@@ -247,7 +246,7 @@ class LogicEFTBot(LogicEFTBotBase):
             lang,
             "twitch_price",
             price.name,
-            format(int(price.price),","),
+            format(int(price.price), ","),
             maya.MayaDT.from_datetime(price.updated).slang_time(),
         )
         return response
@@ -262,7 +261,7 @@ class LogicEFTBot(LogicEFTBotBase):
             "twitch_trader",
             trader.name,
             trader.traderName,
-            format(int(trader.traderPrice),","),
+            format(int(trader.traderPrice), ","),
             maya.MayaDT.from_datetime(trader.updated).slang_time(),
         )
         return response
@@ -273,10 +272,7 @@ class LogicEFTBot(LogicEFTBotBase):
         lang = self.db.get_lang(ctx.channel)
         slot = EFT.check_price(lang, data)
         response = localized_string(
-            lang,
-            "twitch_slot",
-            slot.name,
-            format(int((slot.price / slot.slots)),",")
+            lang, "twitch_slot", slot.name, format(int((slot.price / slot.slots)), ",")
         )
         return response
 
@@ -285,12 +281,7 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         wiki = EFT.check_price(lang, data)
-        response = localized_string(
-            lang,
-            "twitch_wiki",
-            wiki.name,
-            wiki.wikiLink
-        )
+        response = localized_string(lang, "twitch_wiki", wiki.name, wiki.wikiLink)
         return response
 
     @command("eftbot")

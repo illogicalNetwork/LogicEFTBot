@@ -4,7 +4,15 @@ import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Any
 from bot.config import settings
-from bot.models import TarkovMarketModel, WikiAmmoModel, LogicalArmorModel, LogicalHelmetModel, MedicalModel, kappaItemsModel, kappaQuestsModel
+from bot.models import (
+    TarkovMarketModel,
+    WikiAmmoModel,
+    LogicalArmorModel,
+    LogicalHelmetModel,
+    MedicalModel,
+    kappaItemsModel,
+    kappaQuestsModel,
+)
 from dataclasses import dataclass
 import datetime
 import maya
@@ -40,7 +48,7 @@ class EFT:
         crafted_url = astat_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return WikiAmmoModel.fromJSONObj(response)
-        
+
     @staticmethod
     def check_helmets(lang: str, query: str) -> LogicalHelmetModel:
         helmet_link = (
@@ -55,7 +63,9 @@ class EFT:
     @staticmethod
     def check_kappaquests(lang: str, query: str) -> kappaQuestsModel:
         kappaquests_link = (
-            settings["kappaquests_link"][lang] if lang in settings["kappaquests_link"] else None
+            settings["kappaquests_link"][lang]
+            if lang in settings["kappaquests_link"]
+            else None
         )
         if not kappaquests_link:
             raise InvalidLocaleError(lang)
@@ -66,14 +76,16 @@ class EFT:
     @staticmethod
     def check_kappaitem(lang: str, query: str) -> kappaItemsModel:
         kappaitem_link = (
-            settings["kappaitem_link"][lang] if lang in settings["kappaitem_link"] else None
+            settings["kappaitem_link"][lang]
+            if lang in settings["kappaitem_link"]
+            else None
         )
         if not kappaitem_link:
             raise InvalidLocaleError(lang)
         crafted_url = kappaitem_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return kappaItemsModel.fromJSONObj(response)
-        
+
     @staticmethod
     def check_medical(lang: str, query: str) -> MedicalModel:
         medical_link = (
