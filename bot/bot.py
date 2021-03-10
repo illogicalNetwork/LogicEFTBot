@@ -175,8 +175,8 @@ class LogicEFTBot(LogicEFTBotBase):
             response = localized_string(
                 lang,
                 "twitch_kappaItems",
-                kappa.name,
                 kappa.quantity,
+                kappa.name,                
             )
             return response
         except:
@@ -202,7 +202,7 @@ class LogicEFTBot(LogicEFTBotBase):
         except:
             response = localized_string(
                 lang,
-                "searchFailed"
+                "searchFailed",
             )
             return response
 
