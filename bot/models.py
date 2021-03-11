@@ -15,26 +15,26 @@ import json
 
 
 @dataclass
-class kappaItemsModel:
+class KappaItemsModel:
     name: str
     quantity: int
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> kappaItemsModel:
-        return kappaItemsModel(
+    def fromJSONObj(cls, object: Any) -> KappaItemsModel:
+        return KappaItemsModel(
             name=object.get("name"),
             quantity=object.get("itemQTY"),
         )
 
 
 @dataclass
-class kappaQuestsModel:
+class KappaQuestsModel:
     name: str
     isReq: int
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> kappaQuestsModel:
-        return kappaQuestsModel(
+    def fromJSONObj(cls, object: Any) -> KappaQuestsModel:
+        return KappaQuestsModel(
             name=object.get("name"),
             isReq=object.get("kappaReq"),
         )

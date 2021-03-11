@@ -61,7 +61,7 @@ class EFT:
         return LogicalHelmetModel.fromJSONObj(response)
 
     @staticmethod
-    def check_kappaquests(lang: str, query: str) -> kappaQuestsModel:
+    def check_kappaquests(lang: str, query: str) -> KappaQuestsModel:
         kappaquests_link = (
             settings["kappaquests_link"][lang]
             if lang in settings["kappaquests_link"]
@@ -71,10 +71,10 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = kappaquests_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
-        return kappaQuestsModel.fromJSONObj(response)
+        return KappaQuestsModel.fromJSONObj(response)
 
     @staticmethod
-    def check_kappaitem(lang: str, query: str) -> kappaItemsModel:
+    def check_kappaitem(lang: str, query: str) -> KappaItemsModel:
         kappaitem_link = (
             settings["kappaitem_link"][lang]
             if lang in settings["kappaitem_link"]
@@ -84,7 +84,7 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = kappaitem_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
-        return kappaItemsModel.fromJSONObj(response)
+        return KappaItemsModel.fromJSONObj(response)
 
     @staticmethod
     def check_medical(lang: str, query: str) -> MedicalModel:
