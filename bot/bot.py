@@ -212,66 +212,91 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_profit(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        return localized_string(
-        lang,
-        "twitch_profit",
-        )
-        return response
+        try:
+            return localized_string(
+            lang,
+            "twitch_profit",
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("price", "p")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        price = EFT.check_price(lang, data)
-        return localized_string(
-            lang,
-            "twitch_price",
-            price.name,
-            format(int(price.price),","),
-            maya.MayaDT.from_datetime(price.updated).slang_time(),
-        )
-        return response
+        try:
+            price = EFT.check_price(lang, data)
+            return localized_string(
+                lang,
+                "twitch_price",
+                price.name,
+                format(int(price.price),","),
+                maya.MayaDT.from_datetime(price.updated).slang_time(),
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("trader")
     def bot_trader(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         trader = EFT.check_price(lang, data)
-        return localized_string(
-            lang,
-            "twitch_trader",
-            trader.name,
-            trader.traderName,
-            format(int(trader.traderPrice),","),
-            maya.MayaDT.from_datetime(trader.updated).slang_time(),
-        )
-        return response
+        try:
+            return localized_string(
+                lang,
+                "twitch_trader",
+                trader.name,
+                trader.traderName,
+                format(int(trader.traderPrice),","),
+                maya.MayaDT.from_datetime(trader.updated).slang_time(),
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("slot")
     def bot_slot(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        slot = EFT.check_price(lang, data)
-        return localized_string(
-            lang,
-            "twitch_slot",
-            slot.name,
-            format(int((slot.price / slot.slots)),",")
-        )
-        return response
+        try:
+            slot = EFT.check_price(lang, data)
+            return localized_string(
+                lang,
+                "twitch_slot",
+                slot.name,
+                format(int((slot.price / slot.slots)),",")
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("wiki")
     def bot_wiki(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         wiki = EFT.check_price(lang, data)
-        return localized_string(
-            lang,
-            "twitch_wiki",
-            wiki.name,
-            wiki.wikiLink
-        )
-        return response
+        try:
+            return localized_string(
+                lang,
+                "twitch_wiki",
+                wiki.name,
+                wiki.wikiLink
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("eftbot")
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
