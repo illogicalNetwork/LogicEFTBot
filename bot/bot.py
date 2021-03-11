@@ -3,12 +3,19 @@ import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
 from bot.eft import EFT
-from bot.models import TarkovMarketModel, TarkovDatabaseModel, ArmorModel, HelmetModel, AmmoModel
+from bot.models import (
+    TarkovMarketModel,
+    TarkovDatabaseModel,
+    ArmorModel,
+    HelmetModel,
+    AmmoModel,
+    safe_int,
+)
 from bot.database import Database
 from bot.log import log
 from bot.config import settings, localized_string
 
-# TODO: Move most of the actual API calls to eft.py (or move them all back into here)
+
 class LogicEFTBot(LogicEFTBotBase):
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
@@ -174,3 +181,29 @@ class LogicEFTBot(LogicEFTBotBase):
         except Exception as e:
             log.error(str(e))
             return "Failed to add alias."
+
+    @command("tax")
+    def calculate_tax(self, ctx: CommandContext, data: str) -> str:
+        lang = self.db.get_lang(ctx.channel)
+        tax_link = settings.get("tax_link", {}).get(lang, None)
+        USAGE = "Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market."
+        if not data:
+            return USAGE
+        parts = data.split()
+        if len(parts) < 2:
+            return localized_string(lang, "invalid_command_tax_link")
+        amount = safe_int(parts[0], 0)
+        if amount == 0:
+            return USAGE
+        query = " ".join(parts[1:])
+        tax_amount = EFT.check_tax(lang, amount, query)
+        if not tax_amount:
+            return USAGE
+        (tax, model) = tax_amount
+        return localized_string(
+            lang,
+            "calculateTax",
+            model.name,
+            tax,
+            model.updated.strftime("%m/%d/%Y %H:%M:%S"),
+        )

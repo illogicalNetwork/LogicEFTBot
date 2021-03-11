@@ -43,7 +43,7 @@ class DiscordEFTBot(LogicEFTBot):
         embed.set_thumbnail(url=info.img)
         embed.add_field(name=info.name, value=response, inline=True)
         return embed
-    
+
     @command("astat")
     def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
         log.info("%s - searching for %s (new)\n", ctx.channel, data)
@@ -55,13 +55,31 @@ class DiscordEFTBot(LogicEFTBot):
             description=astat.description,
             color=0x780A81,
         )
-        embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(astat.bsgID))
-        embed.add_field(name=localized_string(lang,"flesh"), value=astat.damage, inline=True)
-        embed.add_field(name=localized_string(lang,"pen"), value=astat.penetration, inline=True)
-        embed.add_field(name=localized_string(lang,"armor"), value=astat.armorDamage, inline=True)
-        embed.add_field(name=localized_string(lang,"accuracy"), value=astat.accuracy, inline=True)
-        embed.add_field(name=localized_string(lang,"recoil"), value=astat.recoil, inline=True)
-        embed.add_field(name=localized_string(lang,"frag"), value=astat.fragmenation*100, inline=True)
+        embed.set_thumbnail(
+            url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(
+                astat.bsgID
+            )
+        )
+        embed.add_field(
+            name=localized_string(lang, "flesh"), value=astat.damage, inline=True
+        )
+        embed.add_field(
+            name=localized_string(lang, "pen"), value=astat.penetration, inline=True
+        )
+        embed.add_field(
+            name=localized_string(lang, "armor"), value=astat.armorDamage, inline=True
+        )
+        embed.add_field(
+            name=localized_string(lang, "accuracy"), value=astat.accuracy, inline=True
+        )
+        embed.add_field(
+            name=localized_string(lang, "recoil"), value=astat.recoil, inline=True
+        )
+        embed.add_field(
+            name=localized_string(lang, "frag"),
+            value=astat.fragmenation * 100,
+            inline=True,
+        )
         return embed
 
 

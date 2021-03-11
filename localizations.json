@@ -13,7 +13,8 @@
       "recoil":"Recoil %",
       "frag":"Frag Chance %",
       "price": "The price of `{0}` is `{1}` roubles. Price last updated `{2}`",
-      "ammoDesc":"Detailed Ammo Stats"
+      "ammoDesc":"Detailed Ammo Stats",
+      "calculateTax": "The tax to sell {0} is {1} roubles. Last updated `{2}`"
    },
    "es": {
       "validItem":"Debes entrar un nombre de artículo válido. EX: Slick",
@@ -28,7 +29,8 @@
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
       "ammoFrag":"Frag Chance %",
-      "price": "The price of {0} is {1} roubles. Price last updated {2}"
+      "price": "The price of {0} is {1} roubles. Price last updated {2}",
+      "calculateTax": "The tax to sell {0} is {1} roubles. Last updated `{2}`"
    },
    "de": {
       "validItem": "Sie müssen ein gültigen Elementnamen eingeben. EX: Slick",
@@ -43,7 +45,8 @@
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
       "ammoFrag":"Frag Chance %",
-      "price": "The price of {0} is {1} roubles. Price last updated {2}"
+      "price": "The price of {0} is {1} roubles. Price last updated {2}",
+      "calculateTax": "The tax to sell {0} is {1} roubles. Last updated `{2}`"
    },
    "nl": {
       "validItem":"Geef een geldig voorwerp in. EX: Slick",
@@ -58,7 +61,8 @@
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
       "ammoFrag":"Frag Chance %",
-      "price": "The price of {0} is {1} roubles. Price last updated {2}"
+      "price": "The price of {0} is {1} roubles. Price last updated {2}",
+      "calculateTax": "The tax to sell {0} is {1} roubles. Last updated `{2}`"
    },
    "tr": {
       "validItem":"Geçerli bir ürün ismi girmelisiniz. Örnek: Slick",
@@ -73,7 +77,8 @@
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
       "ammoFrag":"Frag Chance %",
-      "price": "The price of {0} is {1} roubles. Price last updated {2}"
+      "price": "The price of {0} is {1} roubles. Price last updated {2}",
+      "calculateTax": "The tax to sell {0} is {1} roubles. Last updated `{2}`"
    },
     "ru": {
       "validItem":"Укажите корректное название. EX: Slick",
@@ -88,6 +93,7 @@
       "ammoAccuracy":"Acurracy %",
       "ammoRecoil":"Recoil %",
       "ammoFrag":"Frag Chance %",
-      "price": "The price of {0} is {1} roubles. Price last updated {2}"
+      "price": "The price of {0} is {1} roubles. Price last updated {2}",
+      "calculateTax": "The tax to sell {0} is {1} roubles. Last updated `{2}`"
    }
 }

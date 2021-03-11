@@ -14,6 +14,7 @@ import datetime
 import maya
 import json
 
+
 def safe_int(value: Any, fallback: int) -> int:
     try:
         return int(value)
@@ -55,6 +56,7 @@ class TarkovMarketModel:
             imgBig=object.get("imgBig"),
         )
 
+
 @dataclass
 class TarkovDatabaseModel:
     name: str
@@ -72,6 +74,7 @@ class TarkovDatabaseModel:
             useTime=object.get("useTime"),
             effects=object.get("effects"),
         )
+
 
 @dataclass
 class HelmetModel:
@@ -91,6 +94,7 @@ class HelmetModel:
             rico=object.get("rico"),
         )
 
+
 @dataclass
 class ArmorModel:
     name: str
@@ -108,6 +112,7 @@ class ArmorModel:
             dura=object.get("dura"),
             materials=object.get("materials"),
         )
+
 
 @dataclass
 class AmmoModel:
