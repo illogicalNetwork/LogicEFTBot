@@ -3,101 +3,232 @@ import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
 from bot.eft import EFT
-from bot.models import TarkovMarketModel, TarkovDatabaseModel, ArmorModel, HelmetModel, AmmoModel
 from bot.database import Database
 from bot.log import log
 from bot.config import settings, localized_string
+import maya
 
 # TODO: Move most of the actual API calls to eft.py (or move them all back into here)
 class LogicEFTBot(LogicEFTBotBase):
+    
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        armor = EFT.check_armor(lang, data)
-        return armor
+        try:
+            armor = EFT.check_armor(lang, data)
+            return localized_string(
+                lang,
+                "twitch_armor",
+                armor.armorName,
+                armor.armorClass,
+                armor.armorDurability,
+                armor.armorZones,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("armorstats")
     def bot_armorstats(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        armorstats = EFT.check_armorstats(lang, data)
-        return armorstats
+        try:
+            armor = EFT.check_armor(lang, data)
+            return localized_string(
+                lang,
+                "twitch_armorstats",
+                armor.armorName,
+                armor.effectiveDurability,
+                armor.armorMoveSpeed,
+                armor.armorTurnSpeed,
+                armor.armorErgo,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("astat")
     def bot_astat(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        astat = EFT.check_astat(lang, data)
-        return astat
+        try:
+            astat = EFT.check_astat(lang, data)
+            return localized_string(
+                lang,
+                "twitch_astat",
+                astat.name,
+                astat.damage,
+                astat.penetration,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("avg7d")
     def bot_avg7d(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        avg7d = EFT.check_avg7d(lang, data)
-        return avg7d
+        try:
+            avg7d = EFT.check_price(lang, data)
+            return localized_string(
+                lang,
+                "twitch_avg7d",
+                avg7d.name,
+                format(int(avg7d.avg7daysPrice),","),
+                maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
-    @command("avg24")
+    @command("avg24h")
     def bot_avg24h(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        avg24h = EFT.check_avg24h(lang, data)
-        return avg24h
+        try:
+            avg24h = EFT.check_price(lang, data)
+            return localized_string(
+                lang,
+                "twitch_avg24h",
+                avg24h.name,
+                format(int(avg24h.avg24hPrice),","),
+                maya.MayaDT.from_datetime(avg24h.updated).slang_time(),
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("helmet")
     def bot_helmet(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        helmet = EFT.check_helmets(lang, data)
-        return helmet
+        try:
+            helmet = EFT.check_helmets(lang, data)
+            return localized_string(
+                lang,
+                "twitch_helmet",
+                helmet.name,
+                helmet.armorClass,
+                helmet.armorDurability,
+                helmet.armorRico,
+                helmet.armorZones,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("helmetstats")
     def bot_helmetstats(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        helmetstats = EFT.check_helmetstats(lang, data)
-        return helmetstats
+        try:
+            helmet = EFT.check_helmets(lang, data)
+            return localized_string(
+                lang,
+                "twitch_helmetstats",
+                helmet.name,
+                helmet.armorMoveSpeed,
+                helmet.armorTurnSpeed,
+                helmet.armorErgo,
+                helmet.helmetSoundReduc,
+                helmet.helmetBlocksHeadset,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("kappaitem")
     def bot_kappaitem(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        kappaitem = EFT.check_kappaitem(lang, data)
-        return kappaitem
+        try:
+            kappa = EFT.check_kappaitem(lang, data)
+            return localized_string(
+                lang,
+                "twitch_kappaItems",
+                kappa.quantity,
+                kappa.name,                
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("kappaquest")
     def bot_kappaquest(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        kappaquest = EFT.check_kappaquest(lang, data)
-        return kappaquest
+        try:
+            kappa = EFT.check_kappaquests(lang, data)
+            return localized_string(
+                lang,
+                "twitch_kappaQuests",
+                kappa.isReq,
+                kappa.name,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("medical")
     def bot_medical(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        medical = EFT.check_medical(lang, data)
-        return medical
-
+        try:
+            medical = EFT.check_medical(lang, data)
+            return localized_string(
+                lang,
+                "twitch_medical",
+                medical.name,
+                medical.useTime,
+                medical.resources,
+                medical.resourceRate,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
+            
     @command("profit")
     def bot_profit(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        profit = EFT.check_profit(lang, data)
-        return profit
+        return localized_string(
+        lang,
+        "twitch_profit",
+        )
+        return response
 
     @command("price", "p")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         price = EFT.check_price(lang, data)
-        response = localized_string(
+        return localized_string(
             lang,
-            "price",
+            "twitch_price",
             price.name,
-            price.price,
-            price.updated.strftime("%m/%d/%Y %H:%M:%S"),
+            format(int(price.price),","),
+            maya.MayaDT.from_datetime(price.updated).slang_time(),
         )
         return response
 
@@ -105,22 +236,42 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_trader(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        trader = EFT.check_trader(lang, data)
-        return trader
+        trader = EFT.check_price(lang, data)
+        return localized_string(
+            lang,
+            "twitch_trader",
+            trader.name,
+            trader.traderName,
+            format(int(trader.traderPrice),","),
+            maya.MayaDT.from_datetime(trader.updated).slang_time(),
+        )
+        return response
 
     @command("slot")
     def bot_slot(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        slot = EFT.check_slot(lang, data)
-        return slot
+        slot = EFT.check_price(lang, data)
+        return localized_string(
+            lang,
+            "twitch_slot",
+            slot.name,
+            format(int((slot.price / slot.slots)),",")
+        )
+        return response
 
     @command("wiki")
     def bot_wiki(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        wiki = EFT.check_wiki(lang, data)
-        return wiki
+        wiki = EFT.check_price(lang, data)
+        return localized_string(
+            lang,
+            "twitch_wiki",
+            wiki.name,
+            wiki.wikiLink
+        )
+        return response
 
     @command("eftbot")
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
