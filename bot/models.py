@@ -14,6 +14,13 @@ import maya
 import json
 
 
+def safe_int(value: Any, fallback: int) -> int:
+    try:
+        return int(value)
+    except:
+        return fallback
+
+
 @dataclass
 class KappaItemsModel:
     name: str

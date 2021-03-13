@@ -3,14 +3,16 @@ import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
 from bot.eft import EFT
+from bot.models import (
+    safe_int,
+)
 from bot.database import Database
 from bot.log import log
 from bot.config import settings, localized_string
 import maya
 
-# TODO: Move most of the actual API calls to eft.py (or move them all back into here)
+
 class LogicEFTBot(LogicEFTBotBase):
-    
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -81,7 +83,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_avg7d",
                 avg7d.name,
-                format(int(avg7d.avg7daysPrice),","),
+                format(int(avg7d.avg7daysPrice), ","),
                 maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
         except:
@@ -100,7 +102,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_avg24h",
                 avg24h.name,
-                format(int(avg24h.avg24hPrice),","),
+                format(int(avg24h.avg24hPrice), ","),
                 maya.MayaDT.from_datetime(avg24h.updated).slang_time(),
             )
         except:
@@ -162,7 +164,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_kappaItems",
                 kappa.quantity,
-                kappa.name,                
+                kappa.name,
             )
         except:
             return localized_string(
@@ -207,15 +209,15 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "searchFailed",
             )
-            
+
     @command("profit")
     def bot_profit(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
             return localized_string(
-            lang,
-            "twitch_profit",
+                lang,
+                "twitch_profit",
             )
         except:
             return localized_string(
@@ -233,7 +235,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_price",
                 price.name,
-                format(int(price.price),","),
+                format(int(price.price), ","),
                 maya.MayaDT.from_datetime(price.updated).slang_time(),
             )
         except:
@@ -253,7 +255,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 "twitch_trader",
                 trader.name,
                 trader.traderName,
-                format(int(trader.traderPrice),","),
+                format(int(trader.traderPrice), ","),
                 maya.MayaDT.from_datetime(trader.updated).slang_time(),
             )
         except:
@@ -272,7 +274,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_slot",
                 slot.name,
-                format(int((slot.price / slot.slots)),",")
+                format(int((slot.price / slot.slots)), ","),
             )
         except:
             return localized_string(
@@ -286,12 +288,7 @@ class LogicEFTBot(LogicEFTBotBase):
         lang = self.db.get_lang(ctx.channel)
         wiki = EFT.check_price(lang, data)
         try:
-            return localized_string(
-                lang,
-                "twitch_wiki",
-                wiki.name,
-                wiki.wikiLink
-            )
+            return localized_string(lang, "twitch_wiki", wiki.name, wiki.wikiLink)
         except:
             return localized_string(
                 lang,
@@ -350,3 +347,30 @@ class LogicEFTBot(LogicEFTBotBase):
         except Exception as e:
             log.error(str(e))
             return "Failed to add alias."
+
+    @command("tax")
+    def calculate_tax(self, ctx: CommandContext, data: str) -> str:
+        lang = self.db.get_lang(ctx.channel)
+        tax_link = settings.get("tax_link", {}).get(lang, None)
+        USAGE = "Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market."
+        if not data:
+            return USAGE
+        parts = data.split()
+        if len(parts) < 2:
+            return localized_string(lang, "invalid_command_tax_link")
+        amount = safe_int(parts[0], 0)
+        if amount == 0:
+            return USAGE
+        query = " ".join(parts[1:])
+        tax_amount = EFT.check_tax(lang, amount, query)
+        if not tax_amount:
+            return USAGE
+        (tax, model) = tax_amount
+        return localized_string(
+            lang,
+            "calculateTax",
+            model.name,
+            amount,
+            tax,
+            model.updated.strftime("%m/%d/%Y %H:%M:%S"),
+        )

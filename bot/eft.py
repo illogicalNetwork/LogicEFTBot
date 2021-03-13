@@ -2,7 +2,7 @@ from __future__ import annotations  # type: ignore
 import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
-from typing import Optional, Any
+from typing import Optional, Any, Tuple
 from bot.config import settings
 from bot.models import (
     TarkovMarketModel,
@@ -17,6 +17,7 @@ from dataclasses import dataclass
 import datetime
 import maya
 import json
+import math
 
 
 class InvalidLocaleError(Exception):
@@ -107,3 +108,57 @@ class EFT:
         crafted_url = price_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return TarkovMarketModel.fromJSONObj(response)
+
+    @staticmethod
+    def check_slot(lang: str, query: str) -> str:
+        slot_link = (
+            settings["slot_link"][lang] if lang in settings["slot_link"] else None
+        )
+        if not slot_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = slot_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_trader(lang: str, query: str) -> str:
+        trader_link = (
+            settings["trader_link"][lang] if lang in settings["trader_link"] else None
+        )
+        if not trader_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = trader_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_wiki(lang: str, query: str) -> str:
+        wiki_link = (
+            settings["wiki_link"][lang] if lang in settings["wiki_link"] else None
+        )
+        if not wiki_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = wiki_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_tax(
+        lang: str, requestValue: int, query: str
+    ) -> Optional[Tuple[int, TarkovMarketModel]]:
+        """
+        Returns the computed tax, or None if there was an error.
+        """
+        price = EFT.check_price(lang, query)
+        if not price:
+            return None
+        offerModifier = math.log10(float(price.basePrice) / requestValue)
+        requestModifier = math.log10(requestValue / float(price.basePrice))
+        if requestValue >= price.basePrice:
+            requestModifier = pow(requestModifier, 1.08)
+        else:
+            offerModifier = pow(offerModifier, 1.08)
+        tax = price.basePrice * 0.05 * pow(
+            4, offerModifier
+        ) + requestValue * 0.05 * pow(4, requestModifier)
+        return (math.floor(tax), price)
