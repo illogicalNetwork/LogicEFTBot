@@ -54,7 +54,7 @@ class LogicalArmorModel:
     armorMoveSpeed: str
     armorTurnSpeed: str
     armorErgo: str
-    effectiveDurability: str
+    armorEffectiveDurability: str
     wikiLink: str
     description: str
 
@@ -70,7 +70,7 @@ class LogicalArmorModel:
             armorMoveSpeed=object.get("moveSpeed"),
             armorTurnSpeed=object.get("turnSpeed"),
             armorErgo=object.get("ergo"),
-            effectiveDurability=object.get("effective"),
+            armorEffectiveDurability=object.get("effective"),
             wikiLink=object.get("wikiLink"),
             description=object.get("description"),
         )

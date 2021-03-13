@@ -195,7 +195,7 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "armorEffectiveDurability")
-                + armor.effectiveDurability
+                + armor.armorEffectiveDurability
             )
             return embed
         except Exception as e:

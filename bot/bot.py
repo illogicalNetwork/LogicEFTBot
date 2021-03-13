@@ -48,7 +48,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 armor.armorTurnSpeed,
                 armor.armorErgo,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -283,15 +284,18 @@ class LogicEFTBot(LogicEFTBotBase):
             if not tax_amount:
                 return USAGE
             (tax, model) = tax_amount
+            profit = (amount - tax)
             return localized_string(
                 lang,
-                "calculateTax",
+                "twitch_tax",
                 model.name,
                 format(int(amount), ","),
                 format(int(tax), ","),
+                format(int(profit), ","),
                 maya.MayaDT.from_datetime(model.updated).slang_time(),
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -328,8 +332,10 @@ class LogicEFTBot(LogicEFTBotBase):
                 "twitch_slot",
                 slot.name,
                 format(int((slot.price / slot.slots)), ","),
+                maya.MayaDT.from_datetime(slot.updated).slang_time(),
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
