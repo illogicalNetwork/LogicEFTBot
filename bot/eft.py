@@ -2,7 +2,7 @@ from __future__ import annotations  # type: ignore
 import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
-from typing import Optional, Any
+from typing import Optional, Any, Tuple
 from bot.config import settings
 from bot.models import (
     TarkovMarketModel,
@@ -108,7 +108,6 @@ class EFT:
         crafted_url = price_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return TarkovMarketModel.fromJSONObj(response)
-<<<<<<< HEAD
 
     @staticmethod
     def check_slot(lang: str, query: str) -> str:
@@ -163,5 +162,3 @@ class EFT:
             4, offerModifier
         ) + requestValue * 0.05 * pow(4, requestModifier)
         return (math.floor(tax), price)
-=======
->>>>>>> 51d55a8ea58501dd0b3a8ce02e4ec069dd791d5b

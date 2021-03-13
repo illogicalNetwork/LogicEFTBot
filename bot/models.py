@@ -14,12 +14,12 @@ import maya
 import json
 
 
-
 def safe_int(value: Any, fallback: int) -> int:
     try:
         return int(value)
     except:
         return fallback
+
 
 @dataclass
 class KappaItemsModel:
@@ -196,5 +196,5 @@ class WikiAmmoModel:
             fragmentation=object.get("fragChance"),
             accuracy=object.get("accuracy"),
             recoil=object.get("recoil"),
-            wikiLink=object.get("wikiLink")
+            wikiLink=object.get("wikiLink"),
         )
