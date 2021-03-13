@@ -8,6 +8,9 @@ from bot.eft import EFT
 from bot.bot import LogicEFTBot
 from bot.base import CommandContext, AuthorInfo, CommandNotFoundException, command
 from bot.log import log
+from bot.models import (
+    safe_int,
+)
 from bot.database import Database
 from discord import Client
 import signal
@@ -191,7 +194,7 @@ class DiscordEFTBot(LogicEFTBot):
                 inline=True,
             )
             embed.set_footer(
-                text=localized_string(lang, "effectiveDurability")
+                text=localized_string(lang, "armorEffectiveDurability")
                 + armor.effectiveDurability
             )
             return embed
@@ -303,7 +306,7 @@ class DiscordEFTBot(LogicEFTBot):
                 )
             )
             embed.add_field(
-                name=localized_string(lang, "useTime"),
+                name=localized_string(lang, "medUseTime"),
                 value=medical.useTime,
                 inline=True,
             )
@@ -328,6 +331,113 @@ class DiscordEFTBot(LogicEFTBot):
             embed.add_field(
                 name="Invalid Item Search",
                 value="You've entered in an invalid medical item ; please try again.",
+                inline=True,
+            )
+            return embed
+
+    @command("maps")
+    def bot_maps(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        try:
+            maps = EFT.check_maps(lang, data)
+            embed = discord.Embed(
+                title=maps.name,
+                url=maps.wikiLink,
+                description=maps.features,
+                color=0x780A81,
+            )
+            embed.set_thumbnail(
+                url="https://eft.bot/images/wiki/{0}.png".format(
+                    maps.shortName
+                )
+            )
+            embed.add_field(
+                name=localized_string(lang, "mapPlayers"),
+                value=maps.players,
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "mapDuration"),
+                value=maps.duration,
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "mapEnemies"),
+                value=maps.enemies,
+                inline=True,
+            )
+            return embed
+        except:
+            embed = discord.Embed(
+                title="LogicEFTBot - Error",
+                color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
+            embed.add_field(
+                name="Invalid Item Search",
+                value="You've entered in an invalid map name ; please try again.",
+                inline=True,
+            )
+            return embed
+
+    @command("tax")
+    def calculate_tax(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        try:
+            USAGE = localized_string(lang, "taxUsage")
+            if not data:
+                return USAGE
+            parts = data.split()
+            if len(parts) < 2:
+                return localized_string(lang, "taxUsage")
+            amount = safe_int(parts[0], 0)
+            if amount == 0:
+                return USAGE
+            query = " ".join(parts[1:])
+            tax_amount = EFT.check_tax(lang, amount, query)
+            if not tax_amount:
+                return USAGE
+            (tax, model) = tax_amount
+            profit = (amount - tax)
+            embed = discord.Embed(
+                title=model.name,
+                url=model.wikiLink,
+                color=0x780A81,
+            )
+            embed.set_thumbnail(
+                url=model.img
+            )
+            embed.add_field(
+                name=localized_string(lang,"taxBasePrice"),
+                value=format(int(model.basePrice), ",") + " ₽",
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang,"taxBaseTax"),
+                value=format(int(tax), ",")  + " ₽",
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang,"taxProfit"),
+                value=format(int(profit), ",")  + " ₽",
+                inline=True,
+            )
+            embed.set_footer(
+                text=localized_string(lang, "marketUpdated")
+                + maya.MayaDT.from_datetime(model.updated).slang_time()
+            )
+            return embed
+        except:
+            embed = discord.Embed(
+                title="LogicEFTBot - Error",
+                color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
+            embed.add_field(
+                name="Invalid Item Search",
+                value="You've entered in an invalid map name ; please try again.",
                 inline=True,
             )
             return embed

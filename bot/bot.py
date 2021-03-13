@@ -43,7 +43,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_armorstats",
                 armor.armorName,
-                armor.effectiveDurability,
+                armor.armorEffectiveDurability,
                 armor.armorMoveSpeed,
                 armor.armorTurnSpeed,
                 armor.armorErgo,
@@ -190,6 +190,26 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
+    @command("maps")
+    def bot_maps(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        try:
+            maps = EFT.check_maps(lang, data)
+            return localized_string(
+                lang,
+                "twitch_maps",
+                maps.name,
+                maps.duration,
+                maps.players,
+                maps.enemies,
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
+
     @command("medical")
     def bot_medical(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -246,30 +266,36 @@ class LogicEFTBot(LogicEFTBotBase):
 
     @command("tax")
     def calculate_tax(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        tax_link = settings.get("tax_link", {}).get(lang, None)
-        USAGE = "Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market."
-        if not data:
-            return USAGE
-        parts = data.split()
-        if len(parts) < 2:
-            return localized_string(lang, "invalid_command_tax_link")
-        amount = safe_int(parts[0], 0)
-        if amount == 0:
-            return USAGE
-        query = " ".join(parts[1:])
-        tax_amount = EFT.check_tax(lang, amount, query)
-        if not tax_amount:
-            return USAGE
-        (tax, model) = tax_amount
-        return localized_string(
-            lang,
-            "calculateTax",
-            model.name,
-            format(int(amount), ","),
-            format(int(tax), ","),
-            maya.MayaDT.from_datetime(model.updated).slang_time(),
-        )
+        try:
+            USAGE = localized_string(lang, "taxUsage")
+            if not data:
+                return USAGE
+            parts = data.split()
+            if len(parts) < 2:
+                return localized_string(lang, "taxUsage")
+            amount = safe_int(parts[0], 0)
+            if amount == 0:
+                return USAGE
+            query = " ".join(parts[1:])
+            tax_amount = EFT.check_tax(lang, amount, query)
+            if not tax_amount:
+                return USAGE
+            (tax, model) = tax_amount
+            return localized_string(
+                lang,
+                "calculateTax",
+                model.name,
+                format(int(amount), ","),
+                format(int(tax), ","),
+                maya.MayaDT.from_datetime(model.updated).slang_time(),
+            )
+        except:
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
 
     @command("trader")
     def bot_trader(self, ctx: CommandContext, data: str) -> str:

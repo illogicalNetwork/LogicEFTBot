@@ -13,13 +13,11 @@ import datetime
 import maya
 import json
 
-
 def safe_int(value: Any, fallback: int) -> int:
     try:
         return int(value)
     except:
         return fallback
-
 
 @dataclass
 class KappaItemsModel:
@@ -33,7 +31,6 @@ class KappaItemsModel:
             quantity=object.get("itemQTY"),
         )
 
-
 @dataclass
 class KappaQuestsModel:
     name: str
@@ -46,6 +43,37 @@ class KappaQuestsModel:
             isReq=object.get("kappaReq"),
         )
 
+@dataclass
+class LogicalArmorModel:
+    bsgID: str
+    armorName: str
+    armorZones: str
+    armorClass: str
+    armorMaterial: str
+    armorDurability: str
+    armorMoveSpeed: str
+    armorTurnSpeed: str
+    armorErgo: str
+    effectiveDurability: str
+    wikiLink: str
+    description: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
+        return LogicalArmorModel(
+            bsgID=object.get("bsgID"),
+            armorName=object.get("name"),
+            armorZones=object.get("zones"),
+            armorClass=object.get("armorclass"),
+            armorMaterial=object.get("materials"),
+            armorDurability=object.get("dura"),
+            armorMoveSpeed=object.get("moveSpeed"),
+            armorTurnSpeed=object.get("turnSpeed"),
+            armorErgo=object.get("ergo"),
+            effectiveDurability=object.get("effective"),
+            wikiLink=object.get("wikiLink"),
+            description=object.get("description"),
+        )
 
 @dataclass
 class LogicalHelmetModel:
@@ -81,39 +109,27 @@ class LogicalHelmetModel:
             description=object.get("description"),
         )
 
-
 @dataclass
-class LogicalArmorModel:
-    bsgID: str
-    armorName: str
-    armorZones: str
-    armorClass: str
-    armorMaterial: str
-    armorDurability: str
-    armorMoveSpeed: str
-    armorTurnSpeed: str
-    armorErgo: str
-    effectiveDurability: str
+class LogicalMapsModel:
+    name: str
+    features: str
+    duration: str
+    players: str
+    enemies: str
     wikiLink: str
-    description: str
+    shortName: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
-        return LogicalArmorModel(
-            bsgID=object.get("bsgID"),
-            armorName=object.get("name"),
-            armorZones=object.get("zones"),
-            armorClass=object.get("armorclass"),
-            armorMaterial=object.get("materials"),
-            armorDurability=object.get("dura"),
-            armorMoveSpeed=object.get("moveSpeed"),
-            armorTurnSpeed=object.get("turnSpeed"),
-            armorErgo=object.get("ergo"),
-            effectiveDurability=object.get("effective"),
+    def fromJSONObj(cls, object: Any) -> LogicalMapsModel:
+        return LogicalMapsModel(
+            name=object.get("name"),
+            features=object.get("features"),
+            duration=object.get("duration"),
+            players=object.get("players"),
+            enemies=object.get("enemies"),
             wikiLink=object.get("wikiLink"),
-            description=object.get("description"),
+            shortName=object.get("shortName"),
         )
-
 
 @dataclass
 class MedicalModel:
@@ -136,7 +152,6 @@ class MedicalModel:
             resourceRate=object.get("resourceRate"),
             wikiLink=object.get("wikiLink"),
         )
-
 
 @dataclass
 class TarkovMarketModel:
@@ -169,7 +184,6 @@ class TarkovMarketModel:
             img=object.get("img"),
             wikiLink=object.get("wikiLink"),
         )
-
 
 @dataclass
 class WikiAmmoModel:

@@ -5,13 +5,14 @@ from requests.utils import quote  # type: ignore
 from typing import Optional, Any, Tuple
 from bot.config import settings
 from bot.models import (
-    TarkovMarketModel,
-    WikiAmmoModel,
-    LogicalArmorModel,
-    LogicalHelmetModel,
-    MedicalModel,
     KappaItemsModel,
     KappaQuestsModel,
+    LogicalArmorModel,
+    LogicalHelmetModel,
+    LogicalMapsModel,
+    MedicalModel,
+    TarkovMarketModel,
+    WikiAmmoModel,    
 )
 from dataclasses import dataclass
 import datetime
@@ -86,6 +87,17 @@ class EFT:
         crafted_url = kappaitem_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return KappaItemsModel.fromJSONObj(response)
+    
+    @staticmethod
+    def check_maps(lang: str, query: str) -> LogicalMapsModel:
+        maps_link = (
+            settings["maps_link"][lang] if lang in settings["maps_link"] else None
+        )
+        if not maps_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = maps_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return LogicalMapsModel.fromJSONObj(response)
 
     @staticmethod
     def check_medical(lang: str, query: str) -> MedicalModel:
