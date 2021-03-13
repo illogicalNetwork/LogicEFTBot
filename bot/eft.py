@@ -110,39 +110,6 @@ class EFT:
         return TarkovMarketModel.fromJSONObj(response)
 
     @staticmethod
-    def check_slot(lang: str, query: str) -> str:
-        slot_link = (
-            settings["slot_link"][lang] if lang in settings["slot_link"] else None
-        )
-        if not slot_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = slot_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
-    def check_trader(lang: str, query: str) -> str:
-        trader_link = (
-            settings["trader_link"][lang] if lang in settings["trader_link"] else None
-        )
-        if not trader_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = trader_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
-    def check_wiki(lang: str, query: str) -> str:
-        wiki_link = (
-            settings["wiki_link"][lang] if lang in settings["wiki_link"] else None
-        )
-        if not wiki_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = wiki_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
-
-    @staticmethod
     def check_tax(
         lang: str, requestValue: int, query: str
     ) -> Optional[Tuple[int, TarkovMarketModel]]:

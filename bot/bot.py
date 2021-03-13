@@ -244,6 +244,33 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
+    @command("tax")
+    def calculate_tax(self, ctx: CommandContext, data: str) -> str:
+        lang = self.db.get_lang(ctx.channel)
+        tax_link = settings.get("tax_link", {}).get(lang, None)
+        USAGE = "Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market."
+        if not data:
+            return USAGE
+        parts = data.split()
+        if len(parts) < 2:
+            return localized_string(lang, "invalid_command_tax_link")
+        amount = safe_int(parts[0], 0)
+        if amount == 0:
+            return USAGE
+        query = " ".join(parts[1:])
+        tax_amount = EFT.check_tax(lang, amount, query)
+        if not tax_amount:
+            return USAGE
+        (tax, model) = tax_amount
+        return localized_string(
+            lang,
+            "calculateTax",
+            model.name,
+            format(int(amount), ","),
+            format(int(tax), ","),
+            maya.MayaDT.from_datetime(model.updated).slang_time(),
+        )
+
     @command("trader")
     def bot_trader(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -294,7 +321,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "searchFailed",
             )
-
+###################### GENERAL INFO COMMANDS ######################################
     @command("eftbot")
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
@@ -308,7 +335,7 @@ class LogicEFTBot(LogicEFTBotBase):
         self, ctx: CommandContext, _=None
     ) -> str:  # Later change this to invite link
         return localized_string(self.db.get_lang(ctx.channel), "addBot")
-
+######################## MOD COMMANDS ############################################
     @command("setCD")
     def bot_set_cd(
         self, ctx: CommandContext, cooldown_time=settings["default_cooldown"]
@@ -347,30 +374,3 @@ class LogicEFTBot(LogicEFTBotBase):
         except Exception as e:
             log.error(str(e))
             return "Failed to add alias."
-
-    @command("tax")
-    def calculate_tax(self, ctx: CommandContext, data: str) -> str:
-        lang = self.db.get_lang(ctx.channel)
-        tax_link = settings.get("tax_link", {}).get(lang, None)
-        USAGE = "Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market."
-        if not data:
-            return USAGE
-        parts = data.split()
-        if len(parts) < 2:
-            return localized_string(lang, "invalid_command_tax_link")
-        amount = safe_int(parts[0], 0)
-        if amount == 0:
-            return USAGE
-        query = " ".join(parts[1:])
-        tax_amount = EFT.check_tax(lang, amount, query)
-        if not tax_amount:
-            return USAGE
-        (tax, model) = tax_amount
-        return localized_string(
-            lang,
-            "calculateTax",
-            model.name,
-            amount,
-            tax,
-            model.updated.strftime("%m/%d/%Y %H:%M:%S"),
-        )
