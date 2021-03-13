@@ -10,8 +10,8 @@ from bot.models import (
     LogicalArmorModel,
     LogicalHelmetModel,
     MedicalModel,
-    kappaItemsModel,
-    kappaQuestsModel,
+    KappaItemsModel,
+    KappaQuestsModel,
 )
 from dataclasses import dataclass
 import datetime
