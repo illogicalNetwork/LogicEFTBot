@@ -4,5 +4,10 @@ from tests.integration.test import TwitchIntegrationTest
 class LogicEFTBotIntegrationTest(TwitchIntegrationTest):
 
     def test_price_works(self):
-        # TODO: Test that commands work.
-        self.assertTrue(True)
+        """
+        Test that if, someone in chat types "!price slick"
+        The bot will respond with the following python-compatible
+        regex.
+        """
+        self.chatmember_say("!price slick")
+        self.expect_reply(r"The price of (.+?) is: (.*?)", timeout=30)
