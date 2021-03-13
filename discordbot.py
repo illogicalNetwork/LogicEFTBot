@@ -3,14 +3,66 @@
 import discord
 import os
 from cooldown import check_cooldown, reset_cooldown
-from bot.config import settings
+from bot.config import settings, localized_string
+from bot.eft import EFT
 from bot.bot import LogicEFTBot
-from bot.base import CommandContext, AuthorInfo, CommandNotFoundException
+from bot.base import CommandContext, AuthorInfo, CommandNotFoundException, command
 from bot.log import log
 from bot.database import Database
 from discord import Client
 import signal
 import traceback
+import math
+from typing import Union
+
+
+class DiscordEFTBot(LogicEFTBot):
+    """
+    Any commands that you want to override to have special behavior for discord,
+    you can override in this class.
+    """
+
+    @command("price", "p")
+    def bot_price(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        info = EFT.check_price(lang, data)
+        response = localized_string(
+            lang,
+            "price",
+            info.name,
+            info.price,
+            info.updated.strftime("%m/%d/%Y %H:%M"),
+        )
+        embed = discord.Embed(
+            title="LogicEFTBot",
+            url="https://eft.bot",
+            description="The Free Tarkov Bot",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url=info.img)
+        embed.add_field(name=info.name, value=response, inline=True)
+        return embed
+    
+    @command("astat")
+    def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        astat = EFT.check_astat(lang, data)
+        embed = discord.Embed(
+            title=astat.name,
+            url="",
+            description=astat.description,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(astat.bsgID))
+        embed.add_field(name=localized_string(lang,"flesh"), value=astat.damage, inline=True)
+        embed.add_field(name=localized_string(lang,"pen"), value=astat.penetration, inline=True)
+        embed.add_field(name=localized_string(lang,"armor"), value=astat.armorDamage, inline=True)
+        embed.add_field(name=localized_string(lang,"accuracy"), value=astat.accuracy, inline=True)
+        embed.add_field(name=localized_string(lang,"recoil"), value=astat.recoil, inline=True)
+        embed.add_field(name=localized_string(lang,"frag"), value=astat.fragmenation*100, inline=True)
+        return embed
 
 
 class DiscordClient(Client):
@@ -22,10 +74,13 @@ class DiscordClient(Client):
 
     def __init__(self):
         super().__init__()
-        self.logic = LogicEFTBot(Database.get())
+        self.logic = DiscordEFTBot(Database.get())
 
     async def on_ready(self):
-        print("Connected!")
+        await self.change_presence(
+            activity=discord.Game(name="!eftbot - https://eft.bot")
+        )
+        print("Connected and Discord Status Set")
 
     async def on_message(self, message):
         full_cmd = message.content.split()
@@ -63,19 +118,13 @@ class DiscordClient(Client):
             return
         try:
             resp = self.logic.exec(context, cmd, content)
-            if resp:
-                embed = discord.Embed(
-                    title="LogicEFTBot",
-                    url="https://eft.bot",
-                    description="The Free Tarkov Bot",
-                    color=0x780A81,
-                )
-                # embed.set_thumbnail(url="") #Will be implimented soon
-                embed.add_field(
-                    name=cmd.capitalize() + " check", value=resp, inline=True
-                )
-                await message.channel.send(embed=embed)
-                reset_cooldown(context.channel)
+            if isinstance(resp, str):
+                await message.channel.send(resp)
+            elif isinstance(resp, discord.Embed):
+                await message.channel.send(embed=resp)
+            else:
+                log.error("Unknown response: {}".format(str(resp)))
+            reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.
             pass

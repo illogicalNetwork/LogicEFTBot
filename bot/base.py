@@ -1,4 +1,4 @@
-from typing import Optional, Any, Callable, Dict
+from typing import Optional, Any, Callable, Dict, List
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
 from bot.log import log
@@ -18,7 +18,7 @@ class CommandNotFoundException(Exception):
         super().__init__(f"Command ${command} not found.")
 
 
-def command(name: str):
+def command(*names: str):
     """
     Decorator to support marking a function as a command.
     """
@@ -27,15 +27,15 @@ def command(name: str):
         sig = signature(func)
         # TODO: We should also technically validate the parameter types here too.
         # i.e the (context, cmd, data) structure.
-        if sig.return_annotation is not str or iscoroutinefunction(func):
+        if not sig.return_annotation or iscoroutinefunction(func):
             # def doesn't have correct signature
             raise Exception(
-                f"Function {func.__name__} cannot be attached to command `{name}`. It must have the signature: (..) -> str."
+                f"Function {func.__name__} cannot be attached to command `{','.join(names)}`. It must have the signature: (..) -> Any."
             )
-        func._bot_command = name  # type: ignore
+        func._bot_command = names  # type: ignore
         return func
 
-    decorator._bot_command = name  # type: ignore
+    decorator._bot_command = names  # type: ignore
     return decorator
 
 
@@ -77,19 +77,27 @@ class LogicEFTBotBase:
             if not hasattr(obj, "_bot_command"):
                 # doesn't have a command fn annotation
                 continue
-            cmd = getattr(obj, "_bot_command").lower()
-            if cmd in self.commands:
-                # command already exists.
-                raise Exception(
-                    f"LogicEFTBot has duplicate commands registered for ${cmd}"
-                )
-            self.commands[cmd] = obj
+            names = getattr(obj, "_bot_command")
+            for name in names:
+                name = name.lower()
+                if name in self.commands:
+                    # command already exists.
+                    raise Exception(
+                        f"LogicEFTBot has duplicate commands registered for ${name}"
+                    )
+                self.commands[name] = obj
 
     def exec(self, ctx: CommandContext, command: str, data: Optional[str]) -> str:
         """
         Execute a bot command given by `!command <data>`, where data is some
         optional string included after the command.
         """
+        # attempt to resolve the alias
+        aliases = self.db.get_command_aliases(ctx.channel)
+        if aliases:
+            command = command.lower()  # cmds are case-insensitive
+            if command in aliases:
+                command = aliases[command]  # resolve the alias
         # search for command
         if not command in self.commands:
             raise CommandNotFoundException(command)

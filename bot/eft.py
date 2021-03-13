@@ -1,9 +1,14 @@
-#!/usr/bin/python3
+from __future__ import annotations  # type: ignore
 import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
-from typing import Optional
+from typing import Optional, Any
 from bot.config import settings
+from bot.models import TarkovMarketModel, AmmoModel
+from dataclasses import dataclass
+import datetime
+import maya
+import json
 
 
 class InvalidLocaleError(Exception):
@@ -39,13 +44,35 @@ class EFT:
         return response.strip()
 
     @staticmethod
-    def check_astat(lang: str, query: str) -> str:
-        ammo_link = (
-            settings["ammo_link"][lang] if lang in settings["ammo_link"] else None
+    def check_astat(lang: str, query: str) -> AmmoModel:
+        astat_link = (
+            settings["astat_link"][lang] if lang in settings["astat_link"] else None
         )
-        if not ammo_link:
+        if not astat_link:
             raise InvalidLocaleError(lang)
-        crafted_url = ammo_link.format(quote(query))
+        crafted_url = astat_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return AmmoModel.fromJSONObj(response)
+
+    @staticmethod
+    def check_avg7d(lang: str, query: str) -> str:
+        avg7d_link = (
+            settings["avg7d_link"][lang] if lang in settings["avg7d_link"] else None
+        )
+        if not avg7d_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = avg7d_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_avg24h(lang: str, query: str) -> str:
+        avg24h_link = (
+            settings["avg24h_link"][lang] if lang in settings["avg24h_link"] else None
+        )
+        if not avg24h_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = avg24h_link.format(quote(query))
         response = requests.get(crafted_url).text
         return response.strip()
 
@@ -74,6 +101,32 @@ class EFT:
         return response.strip()
 
     @staticmethod
+    def check_kappaquest(lang: str, query: str) -> str:
+        kappaquest_link = (
+            settings["kappaquest_link"][lang]
+            if lang in settings["kappaquest_link"]
+            else None
+        )
+        if not kappaquest_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = kappaquest_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
+    def check_kappaitem(lang: str, query: str) -> str:
+        kappaitem_link = (
+            settings["kappaitem_link"][lang]
+            if lang in settings["kappaitem_link"]
+            else None
+        )
+        if not kappaitem_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = kappaitem_link.format(quote(query))
+        response = requests.get(crafted_url).text
+        return response.strip()
+
+    @staticmethod
     def check_medical(lang: str, query: str) -> str:
         medical_link = (
             settings["medical_link"][lang] if lang in settings["medical_link"] else None
@@ -96,15 +149,15 @@ class EFT:
         return response.strip()
 
     @staticmethod
-    def check_price(lang: str, query: str) -> str:
+    def check_price(lang: str, query: str) -> TarkovMarketModel:
         price_link = (
             settings["price_link"][lang] if lang in settings["price_link"] else None
         )
         if not price_link:
             raise InvalidLocaleError(lang)
-        crafted_url = price_link.format(quote(query))
-        response = requests.get(crafted_url).text
-        return response.strip()
+        crafted_url = price_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return TarkovMarketModel.fromJSONObj(response)
 
     @staticmethod
     def check_slot(lang: str, query: str) -> str:

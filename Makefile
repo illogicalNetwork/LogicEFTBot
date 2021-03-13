@@ -1,14 +1,16 @@
 setup:
-	python3.7 -m pip install requests irc mysql-connector-python black rich
+	python3.7 -m pip install requests maya irc mysql-connector-python black rich
 
 setup-discord:
 	python3.7 -m pip install discord requests mysql-connector-python black
 
-test: FORCE
+check: FORCE
 	black *.py bot/*.py tests/*.py
 	mypy -m twitch-master --ignore-missing-imports
 	mypy -m discordbot --ignore-missing-imports
 	mypy -m tests.bot --ignore-missing-imports
+
+test: check FORCE
 	python3.7 -m unittest tests.bot
 
 integration: FORCE

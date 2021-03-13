@@ -11,7 +11,7 @@ from queue import Empty
 from multiprocessing import Queue, Process
 from twitch import TwitchIrcBot
 from bot.database import Database
-from bot.config import settings
+from bot.config import settings, BOT_UI_ENABLED
 from bot.log import log
 from rich.table import Table
 from rich.live import Live
@@ -101,9 +101,21 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
         volume = bot.processed_commands
         bot.processed_commands = 0
         try:
-            channel = queue.get(timeout=0.1)  # block for no more than 100ms.
-            if channel:
-                if channel == END_OF_LIFE:
+            commands = []
+            target_time = time.time() + 2
+            while time.time() < target_time:
+                # for 2 seconds, attempt to read all of the items out of the queue.
+                # we don't want to spend too much time here, since this is called every 5 seconds,
+                # and we have a responsibility to PONG the server.
+                try:
+                    command = queue.get(timeout=0.1)
+                    if command:
+                        commands.append(command)
+                except Empty:
+                    # no more items left to pull
+                    break
+            for command in commands:
+                if command == END_OF_LIFE:
                     # exit command.
                     bot.disconnect()
                     # we need to be careful to empty the queue before exiting, so that
@@ -116,19 +128,18 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
                     feedbackQueue.put(
                         ShardUpdate(
                             status=":smiley: Healthy",
-                            message=f"Joining #{channel}",
+                            message=f"Joining #{command}",
                             RPM=volume,
                         )
                     )
                     # issue a join command to the twitch bot.
-                    bot.do_join(str(channel))
-
-            feedbackQueue.put(
-                ShardUpdate(status=bot.status, message=bot.message, RPM=volume)
-            )
-        except Empty:
+                    bot.do_join(str(command))
+                feedbackQueue.put(
+                    ShardUpdate(status=bot.status, message=bot.message, RPM=volume)
+                )
+        except Exception as e:
             # nothing to do.
-            pass
+            log.error("Exception in shard: %s", str(e))
 
     bot.set_periodic(between_frames, 5)
     bot.start()  # note- this blocks + runs indefinitely.
@@ -279,8 +290,13 @@ if __name__ == "__main__":
         log.info("Startup aborted.")
 
     # Run the UI
-    with Live(generate_ui(), refresh_per_second=1) as live:
-        while not SHUTDOWN_COMPLETE:
-            poll_status()
-            time.sleep(0.2)
-            live.update(generate_ui())
+    if BOT_UI_ENABLED:
+        log.info("Bot UI enabled, to disable `unset BOT_UI_ENABLED`")
+        with Live(generate_ui(), refresh_per_second=1) as live:
+            while not SHUTDOWN_COMPLETE:
+                poll_status()
+                time.sleep(0.2)
+                live.update(generate_ui())
+    else:
+        log.info("Bot UI disabled, to enable `export BOT_UI_ENABLED=true`")
+        log.info("Note: this requires unicode support in your terminal.")
