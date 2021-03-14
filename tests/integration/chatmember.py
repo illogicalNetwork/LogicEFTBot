@@ -7,8 +7,12 @@ import json
 from dataclasses import dataclass
 from bot.config import settings
 import sys
+import os
 
-IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_token"])
+TOKEN = os.environ.get("CHATMEMBER_TOKEN")
+NICK = "irctestbot"
+
+IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), TOKEN)
 
 @dataclass
 class ChatMemberCommand:
@@ -25,7 +29,7 @@ class ChatMemberResponse:
 
 class ChatMember(SingleServerIRCBot):
     def __init__(self, inbound: Queue, outbound: Queue):
-        super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
+        super().__init__([IRC_SPEC], NICK, NICK)
         self.inbound = inbound
         self.outbound = outbound
         self.is_welcome = False

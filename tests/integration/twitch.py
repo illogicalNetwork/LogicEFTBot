@@ -10,4 +10,4 @@ class LogicEFTBotIntegrationTest(TwitchIntegrationTest):
         regex.
         """
         self.chatmember_say("!price slick")
-        self.expect_reply(r"The price of (.+?) is: (.*?)", timeout=30)
+        self.expect_reply(r"The price of (.+?) is (.*?)", timeout=30)
