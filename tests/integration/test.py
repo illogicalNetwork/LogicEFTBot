@@ -1,13 +1,15 @@
 import unittest
 import subprocess
 import threading
-from tests.integration.chatmember import ChatMember, ChatMemberCommand, ChatMemberResponse
+from twitch_master import main, abort_bot
+from tests.integration.chatmember import ChatMember, ChatMemberCommand, ChatMemberResponse, NICK
 from queue import SimpleQueue, Empty
 from typing import Callable
 import dataclasses
 import json
 import time
 import re
+import subprocess
 
 CHAT_MEMBER_QUEUE : SimpleQueue = SimpleQueue()
 CHAT_MEMBER_COMMANDS : SimpleQueue = SimpleQueue()
@@ -67,20 +69,30 @@ class TwitchIntegrationTest(unittest.TestCase):
         """
         1. Start ChatMember, wait for it to connect.
         2. Wait for it to connect.
+        3. Start Bot.
+        4. Wait for it to connect.
         """
         # start thread
         cls.chat_member_thread = threading.Thread(target=run_chat_member, args=())
         cls.chat_member_thread.start()
         cls.is_chatmember_running = True
         cls.error_msg = None
+
+        cls.bot_thread = threading.Thread(target=main, args=())
+        cls.bot_thread.start()
         # expect a welcome within 10 seconds.
         try:
             cls.expect_chatmember_response(lambda message: message.connected, timeout=30, error_message="Failed to connect to twitch.")
             cls.expect_chatmember_response(lambda message: message.welcome, timeout=30, error_message="Failed to get welcome from twitch.")
-            CHAT_MEMBER_COMMANDS.put(ChatMemberCommand(join=TEST_CHANNEL))
+            time.sleep(5)
+            CHAT_MEMBER_COMMANDS.put(ChatMemberCommand(join=NICK))
+            # Wait for the bot to connect.
+            print("Waiting for bot to come online...")
+            time.sleep(10)
         except Exception as e:
             cls.is_chatmember_running = False
             cls.error_msg = str(e)
+
 
     @classmethod
     def tearDownClass(cls):
@@ -88,3 +100,5 @@ class TwitchIntegrationTest(unittest.TestCase):
         CHAT_MEMBER_COMMANDS.put(ChatMemberCommand(exit=True))
         cls.expect_chatmember_response(lambda message: message.shutdown, timeout=10, error_message="Failed to shutdown bot in time.")
         cls.chat_member_thread.join()
+        abort_bot()
+        cls.bot_thread.join()

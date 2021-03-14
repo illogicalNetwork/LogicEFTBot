@@ -10,7 +10,7 @@ import sys
 import os
 
 TOKEN = os.environ.get("CHATMEMBER_TOKEN")
-NICK = "irctestbot"
+NICK = "ircsampletestbot"
 
 IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), TOKEN)
 
@@ -57,8 +57,6 @@ class ChatMember(SingleServerIRCBot):
         print(f"Got error: {str(event)}")
 
     def on_welcome(self, connection, event):
-        # Request specific capabilities before you can use them
-        connection.cap("REQ", ":twitch.tv/membership")
         # Tell the test we got our welcome call
         self.outbound.put(ChatMemberResponse(welcome=True))
 
@@ -104,5 +102,5 @@ class ChatMember(SingleServerIRCBot):
         self.reactor.scheduler.execute_every(frequency_s, fn)
 
 if __name__ == "__main__":
-    chatMember = ChatMember(Queue(), Queue(), "pawn_star")
+    chatMember = ChatMember(Queue(), Queue())
     chatMember.start()

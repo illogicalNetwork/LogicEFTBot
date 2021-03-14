@@ -123,6 +123,8 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
                     # see: https://stackoverflow.com/questions/31665328/python-3-multiprocessing-queue-deadlock-when-calling-join-before-the-queue-is-em
                     while not queue.empty():
                         queue.get()
+                    # destroy the mysql connection
+                    bot.db.shutdown()
                     os._exit(0)
                 else:
                     feedbackQueue.put(
@@ -206,11 +208,15 @@ def observe_db():
 
 
 def signal_handler(sig, frame):
-    # Stop the DB Observer.
+    abort_bot()
+
+
+def abort_bot():
     global SHUTDOWN_INITIATED
     global DB_OBSERVER_THREAD
     global ABORT_STARTUP
     global SHUTDOWN_COMPLETE
+    global DB
     log.info("Stopping DB observer...")
     SHUTDOWN_INITIATED.set()
     ABORT_STARTUP = True
@@ -220,6 +226,8 @@ def signal_handler(sig, frame):
     for i, shard in enumerate(ALL_SHARDS):
         shard.queue.put(END_OF_LIFE)  # end-of-life signal.
         shard.process.join()
+    log.info("Shutting down DB.")
+    DB.shutdown()
     log.info("Goodbye.")
     SHUTDOWN_COMPLETE = True
 
@@ -227,7 +235,6 @@ def signal_handler(sig, frame):
 def create_shard() -> Shard:
     time.sleep(settings["init_shard_wait_s"])
     global TOTAL_SHARDS
-
     ALL_SHARDS_INFO[TOTAL_SHARDS] = ShardUpdate(status="New", message="Starting Up")
     id = TOTAL_SHARDS
     TOTAL_SHARDS = TOTAL_SHARDS + 1
@@ -261,9 +268,10 @@ def poll_status() -> None:
             ALL_SHARDS_INFO[shard.id] = update
 
 
-if __name__ == "__main__":
+def main():
     # Install Ctrl+C handler.
-    signal.signal(signal.SIGINT, signal_handler)
+    if threading.current_thread() is threading.main_thread():
+        signal.signal(signal.SIGINT, signal_handler)
 
     all_channels_count = len(DB.get_channels())
     suggested_shard_size = int(
@@ -283,6 +291,7 @@ if __name__ == "__main__":
     # Start observing DB for changes.
     if not ABORT_STARTUP:
         DB_OBSERVER_THREAD = threading.Thread(target=observe_db, args=())
+        DB_OBSERVER_THREAD.daemon = True
         DB_OBSERVER_THREAD.start()
         ALL_SHARDS_INFO["db"] = ShardUpdate(status="New", message="Starting Up")
         log.info("Startup complete.")
@@ -300,3 +309,6 @@ if __name__ == "__main__":
     else:
         log.info("Bot UI disabled, to enable `export BOT_UI_ENABLED=true`")
         log.info("Note: this requires unicode support in your terminal.")
+
+if __name__ == "__main__":
+    main()
