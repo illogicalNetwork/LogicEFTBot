@@ -348,9 +348,7 @@ class DiscordEFTBot(LogicEFTBot):
                 color=0x780A81,
             )
             embed.set_thumbnail(
-                url="https://eft.bot/images/wiki/{0}.png".format(
-                    maps.shortName
-                )
+                url="https://eft.bot/images/wiki/{0}.png".format(maps.shortName)
             )
             embed.add_field(
                 name=localized_string(lang, "mapPlayers"),
@@ -400,28 +398,26 @@ class DiscordEFTBot(LogicEFTBot):
             if not tax_amount:
                 return USAGE
             (tax, model) = tax_amount
-            profit = (amount - tax)
+            profit = amount - tax
             embed = discord.Embed(
                 title=model.name,
                 url=model.wikiLink,
                 color=0x780A81,
             )
-            embed.set_thumbnail(
-                url=model.img
-            )
+            embed.set_thumbnail(url=model.img)
             embed.add_field(
-                name=localized_string(lang,"taxBasePrice"),
+                name=localized_string(lang, "taxBasePrice"),
                 value=format(int(model.basePrice), ",") + " ₽",
                 inline=True,
             )
             embed.add_field(
-                name=localized_string(lang,"taxBaseTax"),
-                value=format(int(tax), ",")  + " ₽",
+                name=localized_string(lang, "taxBaseTax"),
+                value=format(int(tax), ",") + " ₽",
                 inline=True,
             )
             embed.add_field(
-                name=localized_string(lang,"taxProfit"),
-                value=format(int(profit), ",")  + " ₽",
+                name=localized_string(lang, "taxProfit"),
+                value=format(int(profit), ",") + " ₽",
                 inline=True,
             )
             embed.set_footer(

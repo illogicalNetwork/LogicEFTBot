@@ -12,7 +12,7 @@ from bot.models import (
     LogicalMapsModel,
     MedicalModel,
     TarkovMarketModel,
-    WikiAmmoModel,    
+    WikiAmmoModel,
 )
 from dataclasses import dataclass
 import datetime
@@ -87,7 +87,7 @@ class EFT:
         crafted_url = kappaitem_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return KappaItemsModel.fromJSONObj(response)
-    
+
     @staticmethod
     def check_maps(lang: str, query: str) -> LogicalMapsModel:
         maps_link = (

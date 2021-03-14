@@ -13,11 +13,13 @@ import datetime
 import maya
 import json
 
+
 def safe_int(value: Any, fallback: int) -> int:
     try:
         return int(value)
     except:
         return fallback
+
 
 @dataclass
 class KappaItemsModel:
@@ -31,6 +33,7 @@ class KappaItemsModel:
             quantity=object.get("itemQTY"),
         )
 
+
 @dataclass
 class KappaQuestsModel:
     name: str
@@ -42,6 +45,7 @@ class KappaQuestsModel:
             name=object.get("name"),
             isReq=object.get("kappaReq"),
         )
+
 
 @dataclass
 class LogicalArmorModel:
@@ -74,6 +78,7 @@ class LogicalArmorModel:
             wikiLink=object.get("wikiLink"),
             description=object.get("description"),
         )
+
 
 @dataclass
 class LogicalHelmetModel:
@@ -109,6 +114,7 @@ class LogicalHelmetModel:
             description=object.get("description"),
         )
 
+
 @dataclass
 class LogicalMapsModel:
     name: str
@@ -131,6 +137,7 @@ class LogicalMapsModel:
             shortName=object.get("shortName"),
         )
 
+
 @dataclass
 class MedicalModel:
     bsgID: str
@@ -152,6 +159,7 @@ class MedicalModel:
             resourceRate=object.get("resourceRate"),
             wikiLink=object.get("wikiLink"),
         )
+
 
 @dataclass
 class TarkovMarketModel:
@@ -184,6 +192,7 @@ class TarkovMarketModel:
             img=object.get("img"),
             wikiLink=object.get("wikiLink"),
         )
+
 
 @dataclass
 class WikiAmmoModel:

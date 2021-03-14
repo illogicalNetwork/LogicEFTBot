@@ -284,7 +284,7 @@ class LogicEFTBot(LogicEFTBotBase):
             if not tax_amount:
                 return USAGE
             (tax, model) = tax_amount
-            profit = (amount - tax)
+            profit = amount - tax
             return localized_string(
                 lang,
                 "twitch_tax",
@@ -353,7 +353,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "searchFailed",
             )
-###################### GENERAL INFO COMMANDS ######################################
+
+    ###################### GENERAL INFO COMMANDS ######################################
     @command("eftbot")
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
@@ -367,7 +368,8 @@ class LogicEFTBot(LogicEFTBotBase):
         self, ctx: CommandContext, _=None
     ) -> str:  # Later change this to invite link
         return localized_string(self.db.get_lang(ctx.channel), "addBot")
-######################## MOD COMMANDS ############################################
+
+    ######################## MOD COMMANDS ############################################
     @command("setCD")
     def bot_set_cd(
         self, ctx: CommandContext, cooldown_time=settings["default_cooldown"]
