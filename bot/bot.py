@@ -210,7 +210,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 "twitch_maps",
                 maps.name,
                 maps.players,
-                maps.duration,                
+                maps.duration,
                 maps.enemies,
             )
         except Exception as e:

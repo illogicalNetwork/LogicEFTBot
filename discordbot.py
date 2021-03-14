@@ -380,7 +380,7 @@ class DiscordEFTBot(LogicEFTBot):
             return embed
 
     @command("tax")
-    def calculate_tax(self, ctx: CommandContext, data: str) -> str:
+    def calculate_tax(self, ctx: CommandContext, data: str) -> discord.Embed:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
