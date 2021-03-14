@@ -27,7 +27,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 armor.armorDurability,
                 armor.armorZones,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -68,7 +69,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 astat.damage,
                 astat.penetration,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -87,7 +89,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 format(int(avg7d.avg7daysPrice), ","),
                 maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -106,7 +109,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 format(int(avg24h.avg24hPrice), ","),
                 maya.MayaDT.from_datetime(avg24h.updated).slang_time(),
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -127,7 +131,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 helmet.armorRico,
                 helmet.armorZones,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -149,7 +154,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 helmet.helmetSoundReduc,
                 helmet.helmetBlocksHeadset,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -167,10 +173,11 @@ class LogicEFTBot(LogicEFTBotBase):
                 kappa.quantity,
                 kappa.name,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
-                "searchFailed",
+                "twitch_notKappaItem",
             )
 
     @command("kappaquest")
@@ -185,7 +192,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 kappa.isReq,
                 kappa.name,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -201,11 +209,12 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_maps",
                 maps.name,
-                maps.duration,
                 maps.players,
+                maps.duration,                
                 maps.enemies,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -225,7 +234,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 medical.resources,
                 medical.resourceRate,
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -240,7 +250,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_profit",
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -259,7 +270,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 format(int(price.price), ","),
                 maya.MayaDT.from_datetime(price.updated).slang_time(),
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -276,6 +288,8 @@ class LogicEFTBot(LogicEFTBotBase):
             parts = data.split()
             if len(parts) < 2:
                 return localized_string(lang, "taxUsage")
+            if len(parts[0]) > 9:
+                return "The item amount cannot exceed 9 digits."
             amount = safe_int(parts[0], 0)
             if amount == 0:
                 return USAGE
@@ -315,7 +329,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 format(int(trader.traderPrice), ","),
                 maya.MayaDT.from_datetime(trader.updated).slang_time(),
             )
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",
@@ -348,7 +363,8 @@ class LogicEFTBot(LogicEFTBotBase):
         wiki = EFT.check_price(lang, data)
         try:
             return localized_string(lang, "twitch_wiki", wiki.name, wiki.wikiLink)
-        except:
+        except Exception as e:
+            print(e)
             return localized_string(
                 lang,
                 "searchFailed",

@@ -25,67 +25,7 @@ class DiscordEFTBot(LogicEFTBot):
     you can override in this class.
     """
 
-    @command("price", "p")
-    def bot_price(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            price = EFT.check_price(lang, data)
-            embed = discord.Embed(
-                title=price.name,
-                url=price.wikiLink,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url=price.img)
-            embed.add_field(
-                name=localized_string(lang, "marketPrice"),
-                value=format(int(price.price), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "marketTrader"),
-                value=price.traderName,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "marketTraderPrice"),
-                value=format(int(price.traderPrice), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "marketSlot"),
-                value=format(round((price.price / price.slots)), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "market7dAvg"),
-                value=format(int(price.avg7daysPrice), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "market24hAvg"),
-                value=format(int(price.avg24hPrice), ","),
-                inline=True,
-            )
-            embed.set_footer(
-                text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(price.updated).slang_time()
-            )
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid item ; please try again.",
-                inline=True,
-            )
-            return embed
-
-    @command("astat")
+    @command("astat", "ammo")
     def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
         log.info("%s - searching for %s (new)\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
@@ -212,7 +152,7 @@ class DiscordEFTBot(LogicEFTBot):
             print(e)
             return embed
 
-    @command("helmet")
+    @command("helmet", "helm")
     def bot_helmet(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
         log.info("%s - searching for %s (new)\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
@@ -288,7 +228,7 @@ class DiscordEFTBot(LogicEFTBot):
             )
             return embed
 
-    @command("medical")
+    @command("medical", "meds")
     def bot_medical(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
         log.info("%s - searching for %s (new)\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
@@ -375,6 +315,66 @@ class DiscordEFTBot(LogicEFTBot):
             embed.add_field(
                 name="Invalid Item Search",
                 value="You've entered in an invalid map name ; please try again.",
+                inline=True,
+            )
+            return embed
+
+    @command("price", "p")
+    def bot_price(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
+        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        try:
+            price = EFT.check_price(lang, data)
+            embed = discord.Embed(
+                title=price.name,
+                url=price.wikiLink,
+                color=0x780A81,
+            )
+            embed.set_thumbnail(url=price.img)
+            embed.add_field(
+                name=localized_string(lang, "marketPrice"),
+                value=format(int(price.price), ","),
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "marketTrader"),
+                value=price.traderName,
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "marketTraderPrice"),
+                value=format(int(price.traderPrice), ","),
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "marketSlot"),
+                value=format(round((price.price / price.slots)), ","),
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "market7dAvg"),
+                value=format(int(price.avg7daysPrice), ","),
+                inline=True,
+            )
+            embed.add_field(
+                name=localized_string(lang, "market24hAvg"),
+                value=format(int(price.avg24hPrice), ","),
+                inline=True,
+            )
+            embed.set_footer(
+                text=localized_string(lang, "marketUpdated")
+                + maya.MayaDT.from_datetime(price.updated).slang_time()
+            )
+            return embed
+        except:
+            embed = discord.Embed(
+                title="LogicEFTBot - Error",
+                color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
+            embed.add_field(
+                name="Invalid Item Search",
+                value="You've entered in an invalid item ; please try again.",
                 inline=True,
             )
             return embed
