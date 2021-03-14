@@ -373,7 +373,7 @@
       "taxUsage":"Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market.",
       "twitch_armor":"{0} is a level {1} armor with a max durablity of {2} and protects the {3}.",
       "twitch_armorstats":"{0} has an effective durability of {1}, a move-speed penalty of {2} , a turn-speed penalty of {3} and an ergonomics penalty of {4}",
-      "twitch_astat":"The flesh damage of {0} is {1} and it has {2} armor penetration.",
+      "twitch_astat":"Урон патрона {0} is: {1} Проникающая способность патрона: {2}.",
       "twitch_avg24h":"The price of {0} over the last 24 hours is {1}. Price last updated {2}.",
       "twitch_avg7d":"The price of {0} over the last 7 Days is {1}. Price last updated {2}.",
       "twitch_helmet":"{0} is a level {1} helmet with a max durablity of {2}. It has a {3} chance to ricochet and protects the {4}.",
@@ -381,13 +381,13 @@
       "twitch_kappaItems":"You need a total of {0} - {1} to obtain Kappa-Container.",
       "twitch_kappaQuests":"{0}, {1} is on the list of quests required to obtain your Kappa-Container.",
       "twitch_maps":"{0} has a player count of {1} and the raid is for {2}.",
-      "twitch_medical":"{0} has a usage time of {1} seconds. It has a max item health of {2} and uses at most {3} durability per use.",
-      "twitch_price": "The price of {0} is {1} roubles. Price last updated {2}.",
+      "twitch_medical":"Время использования {0} is: {1} секунд.",
+      "twitch_price": "Цена {0} is: {1} рублей.",
       "twitch_profit":"This command is being re-worked at the moment.",
       "twitch_skills":"{0} has {1} minute long raids with a player count of {2}. Besides PMC's, you can possbily find {3} on this map.",
-      "twitch_slot":"The price per slot of {0} is {1} roubles.",
+      "twitch_slot":"Цена за слот {0}  is: {1} рублей.",
       "twitch_tax":"The tax for selling {0} for {1} roubles is: {2} roubles. You will get a profit of {3} roubles. Price last updated {4}.",
       "twitch_trader":"The best trader to sell a {0} is to {1} for {2}. Price last updated {3}.",
-      "twitch_wiki":"The link to the Wiki for {0} is {1}"
+      "twitch_wiki":"Ссылка на wiki {0}"
    }
 }
