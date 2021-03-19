@@ -11,6 +11,10 @@ import json
 class Database:
     singleton = None
 
+    def shutdown(self) -> None:
+        if self.db:
+            self.db.close()
+
     @staticmethod
     def get(recreate=False) -> Database:
         if recreate or not Database.singleton:
