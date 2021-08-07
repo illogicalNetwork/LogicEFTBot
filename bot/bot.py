@@ -379,6 +379,10 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_help(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
 
+    @command("news", "changes")
+    def bot_changes(self, ctx: CommandContext, _=None) -> str:
+        return localized_string(self.db.get_lang(ctx.channel), "botChanges")
+
     @command("addbot")
     def bot_add_bot(
         self, ctx: CommandContext, _=None
