@@ -40,4 +40,4 @@ Note - All `cooldown` commands do not require exact search entries. Some example
  - !setCD 5 >> `Sets the cooldown for the bot to 5 seconds`
  - !setLang en >> `Sets the bots language to English. Valid codes: en , es , de , nl , tr , ru`
 
-API Calls are redacted or else my bot would be useless - big thanks to both https://tarkov-market.com/ and https://tarkov-database.com/ for their API's that power this project!
+API Calls are redacted or else my bot would be useless - big thanks to both https://tarkov-market.com/ for their API that help power this project!
