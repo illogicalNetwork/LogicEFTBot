@@ -320,7 +320,7 @@ class LogicEFTBot(LogicEFTBotBase):
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
-            trader = EFT.check_price(lang, data)            
+            trader = EFT.check_price(lang, data)
             return localized_string(
                 lang,
                 "twitch_trader",

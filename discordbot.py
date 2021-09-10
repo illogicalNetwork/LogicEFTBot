@@ -27,7 +27,7 @@ class DiscordEFTBot(LogicEFTBot):
 
     @command("astat", "ammo")
     def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
+        log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
         try:
             astat = EFT.check_astat(lang, data)
@@ -38,7 +38,7 @@ class DiscordEFTBot(LogicEFTBot):
                 color=0x780A81,
             )
             embed.set_thumbnail(
-                url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(
+                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
                     astat.bsgID
                 )
             )
@@ -99,7 +99,7 @@ class DiscordEFTBot(LogicEFTBot):
                 color=0x780A81,
             )
             embed.set_thumbnail(
-                url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(
+                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
                     armor.bsgID
                 )
             )
@@ -135,7 +135,7 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "armorEffectiveDurability")
-                + armor.armorEffectiveDurability
+                + armor.armorEffectiveDurability + " - Data provided by Tarkov-Changes"
             )
             return embed
         except Exception as e:
@@ -165,7 +165,7 @@ class DiscordEFTBot(LogicEFTBot):
                 color=0x780A81,
             )
             embed.set_thumbnail(
-                url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(
+                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
                     helmet.bsgID
                 )
             )
@@ -241,7 +241,7 @@ class DiscordEFTBot(LogicEFTBot):
                 color=0x780A81,
             )
             embed.set_thumbnail(
-                url="https://static.tarkov-database.com/image/icon/1-1/{0}.png".format(
+                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
                     medical.bsgID
                 )
             )
@@ -363,7 +363,7 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(price.updated).slang_time()
+                + maya.MayaDT.from_datetime(price.updated).slang_time() + " - Data provided by Tarkov-Market"
             )
             return embed
         except:
@@ -422,7 +422,7 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(model.updated).slang_time()
+                + maya.MayaDT.from_datetime(model.updated).slang_time() + " - Data provided by Tarkov-Market"
             )
             return embed
         except:
