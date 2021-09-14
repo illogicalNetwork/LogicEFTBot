@@ -115,6 +115,9 @@ class Database:
         channels = self.sql.fetchall()
         self.db.commit()
         return list(map(lambda row: str(row[0]), channels))
+    
+    def shutdown(self) -> None:
+        self.db.close()
 
 
 def check_lang(channel_name: str) -> str:

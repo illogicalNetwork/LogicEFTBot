@@ -34,9 +34,9 @@ class ChatMember(SingleServerIRCBot):
         self.outbound = outbound
         self.is_welcome = False
         self.channel = None
-        self.set_periodic(self.on_tick, .3)
+        self.set_periodic(self._chatmember_on_tick, .3)
 
-    def on_tick(self):
+    def _chatmember_on_tick(self):
         # poll inbound queue for messages
         try:
             command = self.inbound.get(block=False)

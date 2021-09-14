@@ -1,5 +1,6 @@
 import unittest
 import subprocess
+import asyncio
 import threading
 from twitch_master import main, abort_bot
 from tests.integration.chatmember import ChatMember, ChatMemberCommand, ChatMemberResponse, NICK
@@ -13,7 +14,7 @@ import subprocess
 
 CHAT_MEMBER_QUEUE : SimpleQueue = SimpleQueue()
 CHAT_MEMBER_COMMANDS : SimpleQueue = SimpleQueue()
-TEST_CHANNEL = "pawn_star"
+TEST_CHANNEL = "ircsampletestbot"
 
 def run_chat_member():
     global CHAT_MEMBER_COMMANDS
@@ -78,7 +79,13 @@ class TwitchIntegrationTest(unittest.TestCase):
         cls.is_chatmember_running = True
         cls.error_msg = None
 
-        cls.bot_thread = threading.Thread(target=main, args=())
+        def testFn():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(main())
+            loop.close()
+
+        cls.bot_thread = threading.Thread(target=testFn, args=())
         cls.bot_thread.start()
         # expect a welcome within 10 seconds.
         try:
