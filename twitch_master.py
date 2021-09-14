@@ -1,4 +1,5 @@
 from __future__ import annotations  # type: ignore
+import asyncio
 import signal
 import time
 import threading
@@ -6,12 +7,14 @@ import math
 import os
 import json
 from typing import Callable, List, Any, List, Dict, Optional, Union
+from threading import RLock
 from dataclasses import dataclass
 from queue import Empty
 from multiprocessing import Queue, Process
 from twitch import TwitchIrcBot
 from bot.database import Database
 from bot.config import settings, BOT_UI_ENABLED
+from bot.shardupdate import ShardUpdate
 from bot.log import log
 from rich.table import Table
 from rich.live import Live
@@ -24,17 +27,6 @@ SHUTDOWN_COMPLETE = False
 END_OF_LIFE = -1
 TOTAL_SHARDS = 0
 SHUTDOWN_INITIATED: threading.Event = threading.Event()
-
-
-@dataclass
-class ShardUpdate:
-    """
-    An update for a shard to give the master process.
-    """
-
-    status: str
-    message: str
-    RPM: int = 0
 
 
 @dataclass
@@ -77,6 +69,7 @@ class Shard:
             return None
 
 
+ALL_SHARDS_LOCK = RLock()
 ALL_SHARDS: List[Shard] = []
 ALL_SHARDS_INFO: Dict[Union[str, int], ShardUpdate] = {}
 
@@ -93,16 +86,18 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
 
     signal.signal(signal.SIGINT, noop_signal_handler)
     bot = TwitchIrcBot(
-        Database.get(True)
-    )  # important to recreate the db conn, since it has been forked.
+        Database.get(True), queue, feedbackQueue
+    )  # important to recreate the db conn, since it has been forked.)
 
     def between_frames() -> None:
         # this is run when the twitch bot has free time, roughly every 5s.
         volume = bot.processed_commands
         bot.processed_commands = 0
+
         try:
             commands = []
             target_time = time.time() + 2
+
             while time.time() < target_time:
                 # for 2 seconds, attempt to read all of the items out of the queue.
                 # we don't want to spend too much time here, since this is called every 5 seconds,
@@ -126,18 +121,27 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
                     # destroy the mysql connection
                     bot.db.shutdown()
                     os._exit(0)
+                elif command.startswith("broadcast:"):
+                    broadcast_msg = command[len("broadcast:") :]
+                    bot.do_broadcast(broadcast_msg)
                 else:
                     feedbackQueue.put(
                         ShardUpdate(
                             status=":smiley: Healthy",
                             message=f"Joining #{command}",
                             RPM=volume,
+                            requestedBroadcast=None,
                         )
                     )
                     # issue a join command to the twitch bot.
                     bot.do_join(str(command))
                 feedbackQueue.put(
-                    ShardUpdate(status=bot.status, message=bot.message, RPM=volume)
+                    ShardUpdate(
+                        status=bot.status,
+                        message=bot.message,
+                        RPM=volume,
+                        requestedBroadcast=None,
+                    )
                 )
         except Exception as e:
             # nothing to do.
@@ -147,23 +151,35 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
     bot.start()  # note- this blocks + runs indefinitely.
 
 
-def get_unsaturated_shards() -> List[Shard]:
-    """
-    Returns all of the subprocesses that can still join more channels.
-    If none exist, creates another one.
-    """
-    unsaturated_shards = list(
-        filter(lambda shard: not shard.is_saturated(), ALL_SHARDS)
-    )
-    if not unsaturated_shards:
-        # no free shards available, create one.
-        shard = create_shard()
-        ALL_SHARDS.append(shard)
-        return [shard]
-    return unsaturated_shards
-
-
+######
+#       !THIS IS A DIFFERENT THREAD!
+#       !THIS IS A DIFFERENT THREAD!
+#       !THIS IS A DIFFERENT THREAD!
+#       !THIS IS A DIFFERENT THREAD!
+#       !THIS IS A DIFFERENT THREAD!
+######
 def observe_db():
+    def get_unsaturated_shards() -> List[Shard]:
+        """
+        Returns all of the subprocesses that can still join more channels.
+        If none exist, creates another one.
+
+        This is declared nested as only the DB observer should call this.
+        """
+        with ALL_SHARDS_LOCK:
+            unsaturated_shards = list(
+                filter(lambda shard: not shard.is_saturated(), ALL_SHARDS)
+            )
+            if not unsaturated_shards:
+                # no free shards available, create one.
+                log.info(
+                    f"No free shards available. Creating one. ({ALL_SHARDS[0] if ALL_SHARDS else None})"
+                )
+                shard = create_shard()
+                ALL_SHARDS.append(shard)
+                return [shard]
+            return unsaturated_shards
+
     joined_channels = set()
     """
     A watchdog thread that checks for new channels being added to the DB.
@@ -218,17 +234,20 @@ def abort_bot():
     global SHUTDOWN_COMPLETE
     global DB
     log.info("Stopping DB observer...")
+    if SHUTDOWN_INITIATED.is_set():
+        log.info("Shutdown in progress...")
+        return
     SHUTDOWN_INITIATED.set()
     ABORT_STARTUP = True
     if DB_OBSERVER_THREAD:
         DB_OBSERVER_THREAD.join()
-    log.info("Stopping shards...")
+        log.info("DB Observer Stopped.")
     for i, shard in enumerate(ALL_SHARDS):
         shard.queue.put(END_OF_LIFE)  # end-of-life signal.
         shard.process.join()
-    log.info("Shutting down DB.")
     DB.shutdown()
-    log.info("Goodbye.")
+    log.info("Shut down DB.")
+    log.info("All shards shutdown.")
     SHUTDOWN_COMPLETE = True
 
 
@@ -254,21 +273,31 @@ def generate_ui() -> Table:
 
     db_info = ALL_SHARDS_INFO["db"]
     table.add_row("DB_OBSERVER", db_info.status, db_info.message, "")
-    for i, SHARD in enumerate(ALL_SHARDS):
-        info = ALL_SHARDS_INFO[i]
-        table.add_row(f"Shard {i}", info.status, info.message, str(info.RPM))
+    with ALL_SHARDS_LOCK:
+        for i, SHARD in enumerate(ALL_SHARDS):
+            info = ALL_SHARDS_INFO[i]
+            table.add_row(f"Shard {i}", info.status, info.message, str(info.RPM))
     return table
+
+
+def broadcast_message_on_shard(shard: Shard, message: str) -> None:
+    shard.queue.put("broadcast:" + message)
 
 
 def poll_status() -> None:
     # Poll for the status of our sub-processes (non blocking)
-    for shard in ALL_SHARDS:
-        update = shard.poll_update()
-        if update:
-            ALL_SHARDS_INFO[shard.id] = update
+    with ALL_SHARDS_LOCK:
+        for shard in ALL_SHARDS:
+            update = shard.poll_update()
+            if update:
+                ALL_SHARDS_INFO[shard.id] = update
+                if update.requestedBroadcast:
+                    for s in ALL_SHARDS:
+                        broadcast_message_on_shard(s, update.requestedBroadcast)
 
 
-def main():
+async def main():
+    global ALL_SHARDS
     # Install Ctrl+C handler.
     if threading.current_thread() is threading.main_thread():
         signal.signal(signal.SIGINT, signal_handler)
@@ -282,11 +311,16 @@ def main():
     # note that if the DB grows, we'll only ever grow by one shard at a time.
     log.info("%d channels loaded initially.", all_channels_count)
     log.info("Sharding into %d processes.", proc_count)
-    ALL_SHARDS = []
-    for _ in range(proc_count):
-        ALL_SHARDS.append(create_shard())
-        if ABORT_STARTUP:
-            break
+
+    # create all the shards.
+    with ALL_SHARDS_LOCK:
+        ALL_SHARDS = []
+        for _ in range(proc_count):
+            ALL_SHARDS.append(create_shard())
+            if ABORT_STARTUP:
+                break
+
+    log.info(f"Initialized {len(ALL_SHARDS)} shards.")
 
     # Start observing DB for changes.
     if not ABORT_STARTUP:
@@ -294,7 +328,7 @@ def main():
         DB_OBSERVER_THREAD.daemon = True
         DB_OBSERVER_THREAD.start()
         ALL_SHARDS_INFO["db"] = ShardUpdate(status="New", message="Starting Up")
-        log.info("Startup complete.")
+        log.info("DB Startup complete.")
     else:
         log.info("Startup aborted.")
 
@@ -309,6 +343,12 @@ def main():
     else:
         log.info("Bot UI disabled, to enable `export BOT_UI_ENABLED=true`")
         log.info("Note: this requires unicode support in your terminal.")
+        broadcast_messages = []
+        while not SHUTDOWN_COMPLETE:
+            poll_status()
+            time.sleep(0.2)
+        log.info("Goodbye.")
+
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
