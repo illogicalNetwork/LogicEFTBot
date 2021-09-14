@@ -25,7 +25,7 @@ IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_tok
 
 class TwitchIrcBot(SingleServerIRCBot):
 
-    APPROVED_ADMINS = ["LogicalSolutions", "whaleneck_music"]
+    APPROVED_ADMINS = ["LogicalSolutions"]
 
     def __init__(self, db: Database, inputQueue: Queue, outputQueue: Queue):
         super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
