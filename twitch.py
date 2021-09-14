@@ -25,7 +25,7 @@ IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_tok
 
 class TwitchIrcBot(SingleServerIRCBot):
 
-    APPROVED_ADMINS = ["LogicalSolutions"]
+    APPROVED_ADMINS = ["LogicalSolutions", "whaleneck_music"]
 
     def __init__(self, db: Database, inputQueue: Queue, outputQueue: Queue):
         super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
@@ -54,14 +54,14 @@ class TwitchIrcBot(SingleServerIRCBot):
 
     """
     Send a broadcasted message to every channel we're connected to.
-
-    # TODO: change "are_you_sure" to True.
     """
 
     def do_broadcast(self, message: str) -> None:
         log.info(f"Broadcast: {message}")
+        recently_active_channels = self.db.get_recently_active_channels()
         for channel in self.joined_channels:
-            self.do_send_msg(channel, message)
+            if channel in recently_active_channels:
+                self.do_send_msg(channel, message)
 
     def do_join(self, channel: str) -> None:
         if channel in self.joined_channels:

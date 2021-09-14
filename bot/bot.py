@@ -437,9 +437,10 @@ class LogicEFTBot(LogicEFTBotBase):
         data = data.strip()
         if not data:
             return "Usage: !alias <alias> <existingCommand>"
-
         # Communicate upward to the other nodes that we need
         # a broadcast.
+
+        # TODO: disable this on discord.
         self.outputQueue.put(
             ShardUpdate(status="", message="", requestedBroadcast=data)
         )
