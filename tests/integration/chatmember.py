@@ -33,8 +33,8 @@ class ChatMember(SingleServerIRCBot):
         self.inbound = inbound
         self.outbound = outbound
         self.is_welcome = False
-        self.channel = None
-        self.set_periodic(self._chatmember_on_tick, .3)
+        self.selected_channel: Optional[str] = None
+        self.set_periodic(self._chatmember_on_tick, 1)
 
     def _chatmember_on_tick(self):
         # poll inbound queue for messages
@@ -42,7 +42,7 @@ class ChatMember(SingleServerIRCBot):
             command = self.inbound.get(block=False)
             if command:
                 if command.say:
-                    self.do_send_msg(self.channel, command.say)
+                    self.do_send_msg(self.selected_channel, command.say)
                 elif command.join:
                     self.do_join(command.join)
                 elif command.exit:
@@ -81,7 +81,7 @@ class ChatMember(SingleServerIRCBot):
 
     def do_join(self, channel: str) -> None:
         self.connection.join("#" + channel)
-        self.channel = channel
+        self.selected_channel = channel
 
     def _on_disconnect(self, connection, event):
         super()._on_disconnect(connection, event)

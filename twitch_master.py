@@ -11,7 +11,7 @@ from threading import RLock
 from dataclasses import dataclass
 from queue import Empty
 from multiprocessing import Queue, Process
-from twitch import TwitchIrcBot
+from twitch_bot import TwitchIrcBot
 from bot.database import Database
 from bot.config import settings, BOT_UI_ENABLED
 from bot.shardupdate import ShardUpdate

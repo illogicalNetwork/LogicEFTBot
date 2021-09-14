@@ -33,7 +33,7 @@ class TwitchIntegrationTest(unittest.TestCase):
     def expect_reply(cls, matching: str, timeout: int = 5, error_message: str = '') -> None:
         def is_valid_response(response: ChatMemberResponse) -> bool:
             if response.message:
-                return re.search(matching, response.message)
+                return re.search(matching, response.message) is not None
             return False
         cls.expect_chatmember_response(is_valid_response, timeout, error_message)
 

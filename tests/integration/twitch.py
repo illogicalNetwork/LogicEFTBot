@@ -11,3 +11,11 @@ class LogicEFTBotIntegrationTest(TwitchIntegrationTest):
         """
         self.chatmember_say("!price slick")
         self.expect_reply(r"The price of (.+?) is (.*?)", timeout=30)
+
+    def test_only_logical_can_broadcast(self):
+        """
+        Only an admin (i.e logical) can broadcast.
+        """
+        self.chatmember_say("!broadcast copypasta")
+        self.expect_reply(r"You ain't an admin you dingus!", timeout=30)
+
