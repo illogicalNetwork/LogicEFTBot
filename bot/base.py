@@ -42,7 +42,14 @@ def command(*names: str):
 @dataclass(frozen=True)
 class AuthorInfo:
     name: str
-    is_mod: str
+    """
+    Whether the author is a moderator of the channel the bot is in.
+    """
+    is_mod: bool
+    """
+    Whether the author is an admin (i.e LogicalSolutions)
+    """
+    is_admin: bool
 
 
 @dataclass(frozen=True)

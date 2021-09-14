@@ -23,6 +23,9 @@ IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_tok
 
 
 class TwitchIrcBot(SingleServerIRCBot):
+
+    APPROVED_ADMINS = ["LogicalSolutions"]
+
     def __init__(self, db: Database):
         super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
         self.db = db
@@ -47,6 +50,18 @@ class TwitchIrcBot(SingleServerIRCBot):
             for chan in self.enqueued_channels:
                 self.do_join(chan)
         self.enqueued_channels = []
+
+    """
+    Send a broadcasted message to every channel we're connected to.
+
+    # TODO: change "are_you_sure" to True.
+    """
+    def do_broadcast(self, message: str, are_you_sure: bool = False) -> None:
+        log.info(f"Broadcast: {message}")
+        if are_you_sure:
+            for channel in self.joined_channels:
+                self.do_send_msg(channel, message)
+
 
     def do_join(self, channel: str) -> None:
         if channel in self.joined_channels:
@@ -83,8 +98,9 @@ class TwitchIrcBot(SingleServerIRCBot):
             elif tag["key"] == "badges":
                 is_mod = is_mod or (tag["value"] and "broadcaster/1" in tag["value"])
         channel = event.target[1:] if event.target[0] == "#" else event.target
+        is_admin = (display_name is not None) and display_name in APPROVED_ADMINS
         return CommandContext(
-            author=AuthorInfo(name=display_name, is_mod=is_mod),
+            author=AuthorInfo(name=display_name, is_mod=is_mod, is_admin=is_admin),
             channel=channel,
             platform="twitch",
         )

@@ -1,7 +1,8 @@
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
+from bot.broadcast import BroadcastCenter
 from bot.eft import EFT
 from bot.models import (
     safe_int,
@@ -13,6 +14,7 @@ import maya
 
 
 class LogicEFTBot(LogicEFTBotBase):
+
     @command("armor")
     def bot_armor(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -428,3 +430,16 @@ class LogicEFTBot(LogicEFTBotBase):
         except Exception as e:
             log.error(str(e))
             return "Failed to add alias."
+
+    @command("broadcast")
+    def bot_broadcast(self, ctx: CommandContext, data: str) -> str:
+        if not ctx.author.is_admin:
+            return "You ain't an admin you dingus!"
+        data = data.strip()
+        if not data:
+            return "Usage: !alias <alias> <existingCommand>"
+        # TODO: Should probably validate that nothing terrible is in here.
+        # Probably, all of these should be logged to mysql for posterity as well.
+        BroadcastCenter.broadcast(data)
+
+        

@@ -446,6 +446,9 @@ class DiscordClient(Client):
     Where <token> is the valid oauth token for executing this bot.
     """
 
+    # TODO(@LogicalSolutions) put your numerical discord user id in here.
+    APPROVED_ADMIN_USER_IDS = []
+
     def __init__(self):
         super().__init__()
         self.logic = DiscordEFTBot(Database.get())
@@ -480,8 +483,11 @@ class DiscordClient(Client):
             if author.guild_permissions
             else False
         )
+        is_admin = (
+            author.id in APPROVED_ADMIN_USER_IDS
+        )
         context = CommandContext(
-            author=AuthorInfo(name=message.author.display_name, is_mod=is_mod),
+            author=AuthorInfo(name=message.author.display_name, is_mod=is_mod, is_admin=is_admin),
             channel=channel,
             platform="discord",
         )

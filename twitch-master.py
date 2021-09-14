@@ -1,4 +1,5 @@
 from __future__ import annotations  # type: ignore
+import asyncio
 import signal
 import time
 import threading
@@ -10,6 +11,7 @@ from dataclasses import dataclass
 from queue import Empty
 from multiprocessing import Queue, Process
 from twitch import TwitchIrcBot
+from bot.broadcast import BroadcastCenter
 from bot.database import Database
 from bot.config import settings, BOT_UI_ENABLED
 from bot.log import log
@@ -94,7 +96,7 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
     signal.signal(signal.SIGINT, noop_signal_handler)
     bot = TwitchIrcBot(
         Database.get(True)
-    )  # important to recreate the db conn, since it has been forked.
+    )  # important to recreate the db conn, since it has been forked.)
 
     def between_frames() -> None:
         # this is run when the twitch bot has free time, roughly every 5s.
@@ -124,6 +126,9 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
                     while not queue.empty():
                         queue.get()
                     os._exit(0)
+                elif command.startswith("broadcast:"):
+                    broadcast_msg = command[len("broadcast:"):]
+                    bot.do_broadcast(broadcast_msg)
                 else:
                     feedbackQueue.put(
                         ShardUpdate(
@@ -260,8 +265,13 @@ def poll_status() -> None:
         if update:
             ALL_SHARDS_INFO[shard.id] = update
 
+def broadcast_message_on_shard(shard: Shard, message: str) -> None
+    shard.queue.put("broadcast:" + message)
 
 if __name__ == "__main__":
+    asyncio.run(main())
+
+async def main():
     # Install Ctrl+C handler.
     signal.signal(signal.SIGINT, signal_handler)
 
@@ -292,6 +302,7 @@ if __name__ == "__main__":
     # Run the UI
     if BOT_UI_ENABLED:
         log.info("Bot UI enabled, to disable `unset BOT_UI_ENABLED`")
+        log.info("NOTE: !broadcast will not work in UI mode.")
         with Live(generate_ui(), refresh_per_second=1) as live:
             while not SHUTDOWN_COMPLETE:
                 poll_status()
@@ -300,3 +311,14 @@ if __name__ == "__main__":
     else:
         log.info("Bot UI disabled, to enable `export BOT_UI_ENABLED=true`")
         log.info("Note: this requires unicode support in your terminal.")
+        
+        broadcast_messages = []
+        BroadcastCenter.listen(lambda message: broadcast_messages.append(message))
+        while True:
+            # wait for any broadcast messages.
+            if broadcast_messages:
+                message = broadcast_messages.pop()
+                for shard in ALL_SHARDS:
+                    broadcast_message_on_shard(shard, message)
+                await BroadcastCenter.waitUntilNextEvent()
+
