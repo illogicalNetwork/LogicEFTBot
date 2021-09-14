@@ -105,6 +105,17 @@ class Database:
         )
         self.db.commit()
 
+    def get_recently_active_channels(self) -> List[str]:
+        """
+        Return all channels that have been active within the last 4 hours. (i.e have logged commands.)
+        """
+        self.sql.execute(
+            "SELECT DISTINCT channel FROM bot_logging WHERE now() - interval 4 hour < timestamp"
+        )
+        channels = self.sql.fetchall()
+        self.db.commit()
+        return list(map(lambda row: str(row[0]), channels))
+
 
 def check_lang(channel_name: str) -> str:
     return Database.get().get_lang(channel_name)

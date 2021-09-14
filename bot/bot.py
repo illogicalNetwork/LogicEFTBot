@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional, Any, Callable
 import requests
 from inspect import signature
 from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
@@ -9,6 +9,7 @@ from bot.models import (
 from bot.database import Database
 from bot.log import log
 from bot.config import settings, localized_string
+from bot.shardupdate import ShardUpdate
 import maya
 
 
@@ -428,3 +429,20 @@ class LogicEFTBot(LogicEFTBotBase):
         except Exception as e:
             log.error(str(e))
             return "Failed to add alias."
+
+    @command("broadcast")
+    def bot_broadcast(self, ctx: CommandContext, data: str) -> str:
+        if not ctx.author.is_admin:
+            return "You ain't an admin you dingus!"
+        data = data.strip()
+        if not data:
+            return "Usage: !alias <alias> <existingCommand>"
+        # Communicate upward to the other nodes that we need
+        # a broadcast.
+
+        # TODO: disable this on discord.
+        self.outputQueue.put(
+            ShardUpdate(status="", message="", requestedBroadcast=data)
+        )
+
+        return "Broadcast sent!"

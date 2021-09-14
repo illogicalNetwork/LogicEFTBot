@@ -6,6 +6,7 @@ import irc
 from irc.bot import SingleServerIRCBot
 import time
 import requests
+from multiprocessing import Queue
 from bot.database import Database, check_lang
 from bot.config import settings
 from bot.base import CommandNotFoundException
@@ -23,10 +24,13 @@ IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_tok
 
 
 class TwitchIrcBot(SingleServerIRCBot):
-    def __init__(self, db: Database):
+
+    APPROVED_ADMINS = ["LogicalSolutions"]
+
+    def __init__(self, db: Database, inputQueue: Queue, outputQueue: Queue):
         super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
         self.db = db
-        self.logic = LogicEFTBot(db)
+        self.logic = LogicEFTBot(db, inputQueue, outputQueue)
         self.status = "Startup"
         self.message = "Initializing"
         self.enqueued_channels: List[str] = []
@@ -47,6 +51,17 @@ class TwitchIrcBot(SingleServerIRCBot):
             for chan in self.enqueued_channels:
                 self.do_join(chan)
         self.enqueued_channels = []
+
+    """
+    Send a broadcasted message to every channel we're connected to.
+    """
+
+    def do_broadcast(self, message: str) -> None:
+        log.info(f"Broadcast: {message}")
+        recently_active_channels = self.db.get_recently_active_channels()
+        for channel in self.joined_channels:
+            if channel in recently_active_channels:
+                self.do_send_msg(channel, message)
 
     def do_join(self, channel: str) -> None:
         if channel in self.joined_channels:
@@ -83,8 +98,11 @@ class TwitchIrcBot(SingleServerIRCBot):
             elif tag["key"] == "badges":
                 is_mod = is_mod or (tag["value"] and "broadcaster/1" in tag["value"])
         channel = event.target[1:] if event.target[0] == "#" else event.target
+        is_admin = (
+            display_name is not None
+        ) and display_name in TwitchIrcBot.APPROVED_ADMINS
         return CommandContext(
-            author=AuthorInfo(name=display_name, is_mod=is_mod),
+            author=AuthorInfo(name=display_name, is_mod=is_mod, is_admin=is_admin),
             channel=channel,
             platform="twitch",
         )
