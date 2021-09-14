@@ -13,6 +13,7 @@ from bot.models import (
 )
 from bot.database import Database
 from discord import Client
+from multiprocessing import Queue
 import signal
 import traceback
 import maya
@@ -454,7 +455,7 @@ class DiscordClient(Client):
 
     def __init__(self):
         super().__init__()
-        self.logic = DiscordEFTBot(Database.get())
+        self.logic = DiscordEFTBot(Database.get(), Queue(), Queue())
 
     async def on_ready(self):
         await self.change_presence(
