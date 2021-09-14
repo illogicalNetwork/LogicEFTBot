@@ -16,7 +16,7 @@ from discord import Client
 import signal
 import traceback
 import maya
-from typing import Union
+from typing import Union, List
 
 
 class DiscordEFTBot(LogicEFTBot):
@@ -135,7 +135,8 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "armorEffectiveDurability")
-                + armor.armorEffectiveDurability + " - Data provided by Tarkov-Changes"
+                + armor.armorEffectiveDurability
+                + " - Data provided by Tarkov-Changes"
             )
             return embed
         except Exception as e:
@@ -363,7 +364,8 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(price.updated).slang_time() + " - Data provided by Tarkov-Market"
+                + maya.MayaDT.from_datetime(price.updated).slang_time()
+                + " - Data provided by Tarkov-Market"
             )
             return embed
         except:
@@ -422,7 +424,8 @@ class DiscordEFTBot(LogicEFTBot):
             )
             embed.set_footer(
                 text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(model.updated).slang_time() + " - Data provided by Tarkov-Market"
+                + maya.MayaDT.from_datetime(model.updated).slang_time()
+                + " - Data provided by Tarkov-Market"
             )
             return embed
         except:
@@ -447,7 +450,7 @@ class DiscordClient(Client):
     """
 
     # TODO(@LogicalSolutions) put your numerical discord user id in here.
-    APPROVED_ADMIN_USER_IDS = []
+    APPROVED_ADMIN_USER_IDS: List[int] = []
 
     def __init__(self):
         super().__init__()
@@ -483,11 +486,11 @@ class DiscordClient(Client):
             if author.guild_permissions
             else False
         )
-        is_admin = (
-            author.id in APPROVED_ADMIN_USER_IDS
-        )
+        is_admin = author.id in DiscordClient.APPROVED_ADMIN_USER_IDS
         context = CommandContext(
-            author=AuthorInfo(name=message.author.display_name, is_mod=is_mod, is_admin=is_admin),
+            author=AuthorInfo(
+                name=message.author.display_name, is_mod=is_mod, is_admin=is_admin
+            ),
             channel=channel,
             platform="discord",
         )

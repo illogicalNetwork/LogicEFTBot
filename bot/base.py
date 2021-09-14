@@ -1,3 +1,4 @@
+from multiprocessing import Queue
 from typing import Optional, Any, Callable, Dict, List
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
@@ -72,10 +73,13 @@ class LogicEFTBotBase:
     def has_command(self, cmd: str):
         return cmd in self.commands
 
-    def __init__(self, db: Database):
+    def __init__(self, db: Database, inputQueue: Queue, outputQueue: Queue):
         # read all methods on this object and cache them.
         self.db = db
         self.commands: CommandCacheType = {}
+        self.inputQueue = inputQueue
+        self.outputQueue = outputQueue
+
         for attr in dir(self):
             obj = getattr(self, attr)
             if attr.startswith("__") or not callable(obj):

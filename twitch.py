@@ -6,6 +6,7 @@ import irc
 from irc.bot import SingleServerIRCBot
 import time
 import requests
+from multiprocessing import Queue
 from bot.database import Database, check_lang
 from bot.config import settings
 from bot.base import CommandNotFoundException
@@ -24,12 +25,12 @@ IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_tok
 
 class TwitchIrcBot(SingleServerIRCBot):
 
-    APPROVED_ADMINS = ["LogicalSolutions"]
+    APPROVED_ADMINS = ["LogicalSolutions", "whaleneck_music"]
 
-    def __init__(self, db: Database):
+    def __init__(self, db: Database, inputQueue: Queue, outputQueue: Queue):
         super().__init__([IRC_SPEC], settings["nick"], settings["nick"])
         self.db = db
-        self.logic = LogicEFTBot(db)
+        self.logic = LogicEFTBot(db, inputQueue, outputQueue)
         self.status = "Startup"
         self.message = "Initializing"
         self.enqueued_channels: List[str] = []
@@ -56,12 +57,11 @@ class TwitchIrcBot(SingleServerIRCBot):
 
     # TODO: change "are_you_sure" to True.
     """
-    def do_broadcast(self, message: str, are_you_sure: bool = False) -> None:
-        log.info(f"Broadcast: {message}")
-        if are_you_sure:
-            for channel in self.joined_channels:
-                self.do_send_msg(channel, message)
 
+    def do_broadcast(self, message: str) -> None:
+        log.info(f"Broadcast: {message}")
+        for channel in self.joined_channels:
+            self.do_send_msg(channel, message)
 
     def do_join(self, channel: str) -> None:
         if channel in self.joined_channels:
@@ -98,7 +98,9 @@ class TwitchIrcBot(SingleServerIRCBot):
             elif tag["key"] == "badges":
                 is_mod = is_mod or (tag["value"] and "broadcaster/1" in tag["value"])
         channel = event.target[1:] if event.target[0] == "#" else event.target
-        is_admin = (display_name is not None) and display_name in APPROVED_ADMINS
+        is_admin = (
+            display_name is not None
+        ) and display_name in TwitchIrcBot.APPROVED_ADMINS
         return CommandContext(
             author=AuthorInfo(name=display_name, is_mod=is_mod, is_admin=is_admin),
             channel=channel,
