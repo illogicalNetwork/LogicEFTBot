@@ -28,7 +28,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 armor.armorZones,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -50,7 +50,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 armor.armorErgo,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -70,7 +70,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 astat.penetration,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -90,7 +90,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -110,7 +110,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(avg24h.updated).slang_time(),
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -132,7 +132,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 helmet.armorZones,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -155,7 +155,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 helmet.helmetBlocksHeadset,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -174,7 +174,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 kappa.name,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "twitch_notKappaItem",
@@ -193,7 +193,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 kappa.name,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -214,7 +214,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maps.enemies,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -235,7 +235,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 medical.resourceRate,
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -251,7 +251,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 "twitch_profit",
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -271,7 +271,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(price.updated).slang_time(),
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -309,7 +309,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(model.updated).slang_time(),
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -319,8 +319,8 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_trader(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        trader = EFT.check_price(lang, data)
         try:
+            trader = EFT.check_price(lang, data)
             return localized_string(
                 lang,
                 "twitch_trader",
@@ -330,7 +330,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(trader.updated).slang_time(),
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -350,7 +350,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(slot.updated).slang_time(),
             )
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -360,11 +360,11 @@ class LogicEFTBot(LogicEFTBotBase):
     def bot_wiki(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
-        wiki = EFT.check_price(lang, data)
         try:
+            wiki = EFT.check_price(lang, data)
             return localized_string(lang, "twitch_wiki", wiki.name, wiki.wikiLink)
         except Exception as e:
-            print(e)
+            print("There was a search type error in a channel")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -378,6 +378,10 @@ class LogicEFTBot(LogicEFTBotBase):
     @command("help")
     def bot_help(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
+
+    @command("news", "changes")
+    def bot_changes(self, ctx: CommandContext, _=None) -> str:
+        return localized_string(self.db.get_lang(ctx.channel), "botChanges")
 
     @command("addbot")
     def bot_add_bot(
