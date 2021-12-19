@@ -12,6 +12,7 @@ from bot.models import (
     LogicalMapsModel,
     MedicalModel,
     TarkovMarketModel,
+    TarkovStatusModel,
     WikiAmmoModel,
 )
 from dataclasses import dataclass
@@ -87,6 +88,19 @@ class EFT:
         crafted_url = kappaitem_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return KappaItemsModel.fromJSONObj(response)
+
+    @staticmethod
+    def tarkovStatus(lang: str, query: str) -> TarkovStatusModel:
+        tarkovStatus_link = (
+            settings["tarkovStatus_link"][lang]
+            if lang in settings["tarkovStatus_link"]
+            else None
+        )
+        if not tarkovStatus_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = tarkovStatus_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return TarkovStatusModel.fromJSONObj(response)
 
     @staticmethod
     def check_maps(lang: str, query: str) -> LogicalMapsModel:

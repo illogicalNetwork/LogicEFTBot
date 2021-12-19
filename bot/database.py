@@ -92,7 +92,7 @@ class Database:
 
     def get_channels(self) -> List[str]:
         self.db.commit()
-        self.sql.execute("SELECT username from users")
+        self.sql.execute("SELECT username from users ORDER BY username ASC")
         return [i[0] for i in self.sql.fetchall()]
 
     def sql_log(

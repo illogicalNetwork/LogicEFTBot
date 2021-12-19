@@ -221,3 +221,15 @@ class WikiAmmoModel:
             recoil=object.get("recoil"),
             wikiLink=object.get("wikiLink"),
         )
+
+@dataclass
+class TarkovStatusModel:
+    name: str
+    status: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> TarkovStatusModel:
+        return TarkovStatusModel(
+            name=object.get("name"),
+            status=object.get("status"),
+        )

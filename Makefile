@@ -6,9 +6,9 @@ setup-discord:
 
 check: FORCE
 	black *.py bot/*.py tests/*.py
-	mypy bot --ignore-missing-imports
-	mypy tests --ignore-missing-imports
-	mypy *.py --ignore-missing-imports
+	mypy -m twitch-master --ignore-missing-imports
+	mypy -m discordbot --ignore-missing-imports
+	mypy -m tests.bot --ignore-missing-imports
 
 test: check FORCE
 	python3.7 -m unittest tests.bot

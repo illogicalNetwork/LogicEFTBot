@@ -357,6 +357,25 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
+    @command("status")
+    def bot_status(self, ctx: CommandContext, data: str) -> str:
+        log.info("%s - searching for %s\n", ctx.channel, data)
+        lang = self.db.get_lang(ctx.channel)
+        try:
+            status = EFT.tarkovStatus(lang, data)
+            return localized_string(
+                lang,
+                "tarkovStatus",
+                status.name,
+                status.status
+            )
+        except Exception as e:
+            print("There was a search type error in a channel")
+            return localized_string(
+                lang,
+                "searchFailed",
+            )
+
     @command("wiki")
     def bot_wiki(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
