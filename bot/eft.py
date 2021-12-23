@@ -13,6 +13,7 @@ from bot.models import (
     MedicalModel,
     TarkovMarketModel,
     TarkovStatusModel,
+    TraderResetsModel,
     WikiAmmoModel,
 )
 from dataclasses import dataclass
@@ -155,3 +156,16 @@ class EFT:
             4, offerModifier
         ) + requestValue * 0.05 * pow(4, requestModifier)
         return (math.floor(tax), price)
+
+    @staticmethod
+    def traderResets(lang: str, query: str) -> TraderResetsModel:
+        traderResets_link = (
+            settings["tarkovtraders_link"][lang]
+            if lang in settings["tarkovtraders_link"]
+            else None
+        )
+        if not traderResets_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = traderResets_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return TraderResetsModel.fromJSONObj(response)

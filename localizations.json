@@ -47,6 +47,7 @@
       "taxProfit":"Total Profit",
       "tarkovStatus":"The {0} system is currently {1}",
       "taxUsage":"Usage: !tax <amount> <item> - Compute the tax incurred when selling <item> for <amount> roubles on the flea market.",
+      "traderReset": "{0} will reset {1}",
       "twitch_armor":"{0} is a level {1} armor with a max durablity of {2} and protects the {3}.",
       "twitch_armorstats":"{0} has an effective durability of {1}, a move-speed penalty of {2} , a turn-speed penalty of {3} and an ergonomics penalty of {4}",
       "twitch_astat":"The flesh damage of {0} is {1} and it has {2} armor penetration.",

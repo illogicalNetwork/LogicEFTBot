@@ -233,3 +233,15 @@ class TarkovStatusModel:
             name=object.get("name"),
             status=object.get("status"),
         )
+
+@dataclass
+class TraderResetsModel:
+    name: str
+    resetTimer: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> TraderResetsModel:
+        return TraderResetsModel(
+            name=object.get("name"),
+            resetTimer=object.get("resetTimer"),
+        )
