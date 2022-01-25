@@ -390,7 +390,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
-    @command("time")
+    @command("tarkovtime")
     def bot_time(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
         lang = self.db.get_lang(ctx.channel)
@@ -399,11 +399,12 @@ class LogicEFTBot(LogicEFTBotBase):
             return localized_string(
                 lang,
                 "tarkovTime",
-                tarkovTime.leftTime,
-                tarkovTime.rightTime
+                tarkovTime.left,
+                tarkovTime.right
             )
         except Exception as e:
             print("There was a search type error in a channel")
+            print(str(e))
             return localized_string(
                 lang,
                 "searchFailed",
