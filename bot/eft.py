@@ -13,6 +13,7 @@ from bot.models import (
     MedicalModel,
     TarkovMarketModel,
     TarkovStatusModel,
+    TarkovTimeModel,
     TraderResetsModel,
     WikiAmmoModel,
 )
@@ -169,3 +170,16 @@ class EFT:
         crafted_url = traderResets_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return TraderResetsModel.fromJSONObj(response)
+
+    @staticmethod
+    def tarkovTime(lang: str, query: str) -> TarkovTimeModel:
+        tarkovTime_link = (
+            settings["tarkovTime_link"][lang]
+            if lang in settings["tarkovTime_link"]
+            else None
+        )
+        if not tarkovTime_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = tarkovTime_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return TarkovTimeModel.fromJSONObj(response)

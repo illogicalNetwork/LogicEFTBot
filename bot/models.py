@@ -245,3 +245,15 @@ class TraderResetsModel:
             name=object.get("name"),
             resetTimer=object.get("resetTimer"),
         )
+
+@dataclass
+class TarkovTimeModel:
+    left: str
+    right: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> TarkovTimeModel:
+        return TarkovTimeModel(
+            left=object.get("left"),
+            right=object.get("right"),
+        )
