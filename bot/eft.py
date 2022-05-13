@@ -153,7 +153,7 @@ class EFT:
             requestModifier = pow(requestModifier, 1.08)
         else:
             offerModifier = pow(offerModifier, 1.08)
-        tax = price.basePrice * 0.19 * pow(
+        tax = price.basePrice * 0.05 * pow(
             4, offerModifier
         ) + requestValue * 0.19 * pow(4, requestModifier)
         return (math.floor(tax), price)
