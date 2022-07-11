@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import discord
+from discord import AutoShardedClient
 import os
 from cooldown import check_cooldown, reset_cooldown
 from bot.config import settings, localized_string
@@ -443,7 +444,7 @@ class DiscordEFTBot(LogicEFTBot):
             return embed
 
 
-class DiscordClient(Client):
+class DiscordClient(AutoShardedClient):
     """
     A discord client for LogicEFTBot.
     To run: `export LOGIC_DISCORD_TOKEN=<token> && make discord`
