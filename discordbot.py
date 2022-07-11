@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import discord
+from discord import AutoShardedClient
 import os
 from cooldown import check_cooldown, reset_cooldown
 from bot.config import settings, localized_string
@@ -34,8 +35,8 @@ class DiscordEFTBot(LogicEFTBot):
             astat = EFT.check_astat(lang, data)
             embed = discord.Embed(
                 title=astat.name,
-                url=astat.wikiLink,
-                description=astat.description,
+                url="https://tarkov-changes.com/item/" + astat.name,
+                #description=astat.description,
                 color=0x780A81,
             )
             embed.set_thumbnail(
@@ -443,7 +444,7 @@ class DiscordEFTBot(LogicEFTBot):
             return embed
 
 
-class DiscordClient(Client):
+class DiscordClient(AutoShardedClient):
     """
     A discord client for LogicEFTBot.
     To run: `export LOGIC_DISCORD_TOKEN=<token> && make discord`

@@ -15,7 +15,7 @@ from bot.models import (
     TarkovStatusModel,
     TarkovTimeModel,
     TraderResetsModel,
-    WikiAmmoModel,
+    TarkovChangesAmmoModel,
 )
 from dataclasses import dataclass
 import datetime
@@ -44,7 +44,7 @@ class EFT:
         return LogicalArmorModel.fromJSONObj(response)
 
     @staticmethod
-    def check_astat(lang: str, query: str) -> WikiAmmoModel:
+    def check_astat(lang: str, query: str) -> TarkovChangesAmmoModel:
         astat_link = (
             settings["astat_link"][lang] if lang in settings["astat_link"] else None
         )
@@ -52,7 +52,7 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = astat_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
-        return WikiAmmoModel.fromJSONObj(response)
+        return TarkovChangesAmmoModel.fromJSONObj(response)
 
     @staticmethod
     def check_helmets(lang: str, query: str) -> LogicalHelmetModel:
