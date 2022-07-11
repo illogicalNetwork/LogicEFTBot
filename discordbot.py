@@ -34,8 +34,8 @@ class DiscordEFTBot(LogicEFTBot):
             astat = EFT.check_astat(lang, data)
             embed = discord.Embed(
                 title=astat.name,
-                url=astat.wikiLink,
-                description=astat.description,
+                url="https://tarkov-changes.com/item/" + astat.name,
+                #description=astat.description,
                 color=0x780A81,
             )
             embed.set_thumbnail(

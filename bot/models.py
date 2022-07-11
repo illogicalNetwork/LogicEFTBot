@@ -195,31 +195,31 @@ class TarkovMarketModel:
 
 
 @dataclass
-class WikiAmmoModel:
+class TarkovChangesAmmoModel:
     bsgID: str
     name: str
-    description: str
+    #description: str
     damage: int
     penetration: int
     armorDamage: int
     fragmentation: str
     accuracy: str
     recoil: str
-    wikiLink: str
+    #wikiLink: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> WikiAmmoModel:
-        return WikiAmmoModel(
-            bsgID=object.get("bsgId"),
-            name=object.get("name"),
-            description=object.get("description"),
-            damage=object.get("damage"),
-            penetration=object.get("penetration"),
-            armorDamage=object.get("armorDamage"),
-            fragmentation=object.get("fragChance"),
-            accuracy=object.get("accuracy"),
-            recoil=object.get("recoil"),
-            wikiLink=object.get("wikiLink"),
+    def fromJSONObj(cls, object: Any) -> TarkovChangesAmmoModel:
+        return TarkovChangesAmmoModel(
+            bsgID=object.get("Item ID"),
+            name=object.get("Name"),
+            #description=object.get("description"),
+            damage=object.get("Flesh Damage"),
+            penetration=object.get("Penetration Power"),
+            armorDamage=object.get("Armor Damage"),
+            fragmentation=object.get("Frag Chance"),
+            accuracy=object.get("Accuracy"),
+            recoil=object.get("Recoil"),
+            #wikiLink=object.get("wikiLink"),
         )
 
 @dataclass
