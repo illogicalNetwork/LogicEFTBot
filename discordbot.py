@@ -16,7 +16,7 @@ class LogicEFTClient(discord.AutoShardedClient):
         self.synced = False #we use this so the bot doesn't sync commands more than once
 
     async def on_ready(self):
-        stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/logiceftbot")
+        stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/TarkovChangesBot")
         await client.change_presence(activity=stream)
         await self.wait_until_ready()
         await tree.sync(guild=discord.Object(id=589883759692611614))
@@ -79,7 +79,7 @@ async def price(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed) 
     except:
         embed = discord.Embed(
-                    title="LogicEFTBot - Error",
+                    title="TarkovChangesBot - Error",
                     color=0x780A81,
                 )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
@@ -141,7 +141,7 @@ async def ammo(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed) 
     except Exception as e:
         embed = discord.Embed(
-            title="LogicEFTBot - Error",
+            title="TarkovChangesBot - Error",
             color=0x780A81,
         )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
@@ -207,7 +207,7 @@ async def armor(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
     except Exception as e:
         embed = discord.Embed(
-            title="LogicEFTBot - Error",
+            title="TarkovChangesBot - Error",
             color=0x780A81,
         )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
@@ -283,7 +283,7 @@ async def helmet(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
     except:
         embed = discord.Embed(
-            title="LogicEFTBot - Error",
+            title="TarkovChangesBot - Error",
             color=0x780A81,
         )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
@@ -329,7 +329,7 @@ async def meds(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
     except:
         embed = discord.Embed(
-            title="LogicEFTBot - Error",
+            title="TarkovChangesBot - Error",
             color=0x780A81,
         )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
@@ -372,7 +372,7 @@ async def maps(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
     except:
         embed = discord.Embed(
-            title="LogicEFTBot - Error",
+            title="TarkovChangesBot - Error",
             color=0x780A81,
         )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
@@ -431,7 +431,7 @@ async def tax(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
     except:
         embed = discord.Embed(
-            title="LogicEFTBot - Error",
+            title="TarkovChangesBot - Error",
             color=0x780A81,
         )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
