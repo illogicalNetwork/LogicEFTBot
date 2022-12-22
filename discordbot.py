@@ -104,7 +104,7 @@ async def ammo(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
                 astat.bsgID
             )
         )
@@ -165,7 +165,7 @@ async def armor(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
                 armor.bsgID
             )
         )
@@ -231,7 +231,7 @@ async def helmet(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
                 helmet.bsgID
             )
         )
@@ -306,7 +306,7 @@ async def meds(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
                 medical.bsgID
             )
         )
