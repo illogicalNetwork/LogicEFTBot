@@ -198,7 +198,7 @@ class TarkovMarketModel:
 class TarkovChangesAmmoModel:
     bsgID: str
     name: str
-    #description: str
+    description: str
     damage: int
     penetration: int
     armorDamage: int
@@ -212,7 +212,7 @@ class TarkovChangesAmmoModel:
         return TarkovChangesAmmoModel(
             bsgID=object.get("Item ID"),
             name=object.get("Name"),
-            #description=object.get("description"),
+            description=object.get("Description"),
             damage=object.get("Flesh Damage"),
             penetration=object.get("Penetration Power"),
             armorDamage=object.get("Armor Damage"),

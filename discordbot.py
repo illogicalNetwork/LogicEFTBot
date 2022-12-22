@@ -99,6 +99,7 @@ async def ammo(interaction: discord.Interaction, data: str):
         embed = discord.Embed(
             title=astat.name,
             url=f"https://tarkov-changes.com/item/{newname}",
+            description=astat.description,
             color=0x780A81,
         )
         embed.set_thumbnail(
