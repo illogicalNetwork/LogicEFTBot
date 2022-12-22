@@ -1,546 +1,445 @@
-#!/usr/bin/python3
-
 import discord
-from discord import AutoShardedClient
-import os
-from cooldown import check_cooldown, reset_cooldown
+from discord import app_commands
 from bot.config import settings, localized_string
+from bot.database import Database
 from bot.eft import EFT
-from bot.bot import LogicEFTBot
-from bot.base import CommandContext, AuthorInfo, CommandNotFoundException, command
 from bot.log import log
 from bot.models import (
     safe_int,
 )
-from bot.database import Database
-from discord import Client
-from multiprocessing import Queue
-import signal
-import traceback
 import maya
-from typing import Union, List
+import os
 
-
-class DiscordEFTBot(LogicEFTBot):
-    """
-    Any commands that you want to override to have special behavior for discord,
-    you can override in this class.
-    """
-
-    @command("astat", "ammo")
-    def bot_astat(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            astat = EFT.check_astat(lang, data)
-            embed = discord.Embed(
-                title=astat.name,
-                url="https://tarkov-changes.com/item/" + astat.name,
-                #description=astat.description,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(
-                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
-                    astat.bsgID
-                )
-            )
-            embed.add_field(
-                name=localized_string(lang, "ammoFlesh"),
-                value=astat.damage,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "ammoPen"),
-                value=astat.penetration,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "ammoArmor"),
-                value=astat.armorDamage,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "ammoAccuracy"),
-                value=astat.accuracy,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "ammoRecoil"),
-                value=astat.recoil,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "ammoFrag"),
-                value=astat.fragmentation,
-                inline=True,
-            )
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid ammo item ; please try again.",
-                inline=True,
-            )
-            return embed
-
-    @command("armor")
-    def bot_armor(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            armor = EFT.check_armor(lang, data)
-            embed = discord.Embed(
-                title=armor.armorName,
-                url=armor.wikiLink,
-                description=localized_string(lang, "armorZones") + armor.armorZones,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(
-                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
-                    armor.bsgID
-                )
-            )
-            embed.add_field(
-                name=localized_string(lang, "armorClass"),
-                value=armor.armorClass,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "armorMaterial"),
-                value=armor.armorMaterial,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "armorDurability"),
-                value=armor.armorDurability,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "armorMoveSpeed"),
-                value=armor.armorMoveSpeed,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "armorTurnSpeed"),
-                value=armor.armorTurnSpeed,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "armorErgo"),
-                value=armor.armorErgo,
-                inline=True,
-            )
-            embed.set_footer(
-                text=localized_string(lang, "armorEffectiveDurability")
-                + armor.armorEffectiveDurability
-                + " - Data provided by Tarkov-Changes"
-            )
-            return embed
-        except Exception as e:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid armor item ; please try again.",
-                inline=True,
-            )
-            print(e)
-            return embed
-
-    @command("helmet", "helm")
-    def bot_helmet(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            helmet = EFT.check_helmets(lang, data)
-            embed = discord.Embed(
-                title=helmet.name,
-                url=helmet.wikiLink,
-                description=helmet.description,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(
-                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
-                    helmet.bsgID
-                )
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetZones"),
-                value=helmet.armorZones,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetClass"),
-                value=helmet.armorClass,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetDurability"),
-                value=helmet.armorDurability,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetRicochet"),
-                value=helmet.armorRico,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetMoveSpeed"),
-                value=helmet.armorMoveSpeed,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetTurnSpeed"),
-                value=helmet.armorTurnSpeed,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetErgo"),
-                value=helmet.armorErgo,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetSoundReduc"),
-                value=helmet.helmetSoundReduc,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "helmetBlocksHeadset"),
-                value=helmet.helmetBlocksHeadset,
-                inline=True,
-            )
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid helmet item ; please try again.",
-                inline=True,
-            )
-            return embed
-
-    @command("medical", "meds")
-    def bot_medical(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            medical = EFT.check_medical(lang, data)
-            embed = discord.Embed(
-                title=medical.name,
-                url=medical.wikiLink,
-                description=medical.description,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(
-                url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
-                    medical.bsgID
-                )
-            )
-            embed.add_field(
-                name=localized_string(lang, "medUseTime"),
-                value=medical.useTime,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "maxItemHP"),
-                value=medical.resources,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "maxHealPerUse"),
-                value=medical.resourceRate,
-                inline=True,
-            )
-
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid medical item ; please try again.",
-                inline=True,
-            )
-            return embed
-
-    @command("maps")
-    def bot_maps(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            maps = EFT.check_maps(lang, data)
-            embed = discord.Embed(
-                title=maps.name,
-                url=maps.wikiLink,
-                description=maps.features,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(
-                url="https://eft.bot/images/wiki/{0}.png".format(maps.shortName)
-            )
-            embed.add_field(
-                name=localized_string(lang, "mapPlayers"),
-                value=maps.players,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "mapDuration"),
-                value=maps.duration,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "mapEnemies"),
-                value=maps.enemies,
-                inline=True,
-            )
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid map name ; please try again.",
-                inline=True,
-            )
-            return embed
-
-    @command("price", "p")
-    def bot_price(self, ctx: CommandContext, data: str) -> Union[str, discord.Embed]:
-        log.info("%s - searching for %s (new)\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            price = EFT.check_price(lang, data)
-            embed = discord.Embed(
-                title=price.name,
-                url=price.wikiLink,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url=price.img)
-            embed.add_field(
-                name=localized_string(lang, "marketPrice"),
-                value=format(int(price.price), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "marketTrader"),
-                value=price.traderName,
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "marketTraderPrice"),
-                value=format(int(price.traderPrice), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "marketSlot"),
-                value=format(round((price.price / price.slots)), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "market7dAvg"),
-                value=format(int(price.avg7daysPrice), ","),
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "market24hAvg"),
-                value=format(int(price.avg24hPrice), ","),
-                inline=True,
-            )
-            embed.set_footer(
-                text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(price.updated).slang_time()
-                + " - Data provided by Tarkov-Market"
-            )
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid item ; please try again.",
-                inline=True,
-            )
-            return embed
-
-    @command("tax")
-    def calculate_tax(self, ctx: CommandContext, data: str) -> discord.Embed:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            USAGE = localized_string(lang, "taxUsage")
-            if not data:
-                return USAGE
-            parts = data.split()
-            if len(parts) < 2:
-                return localized_string(lang, "taxUsage")
-            amount = safe_int(parts[0], 0)
-            if amount == 0:
-                return USAGE
-            query = " ".join(parts[1:])
-            tax_amount = EFT.check_tax(lang, amount, query)
-            if not tax_amount:
-                return USAGE
-            (tax, model) = tax_amount
-            profit = amount - tax
-            embed = discord.Embed(
-                title=model.name,
-                url=model.wikiLink,
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url=model.img)
-            embed.add_field(
-                name=localized_string(lang, "taxBasePrice"),
-                value=format(int(model.basePrice), ",") + " ₽",
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "taxBaseTax"),
-                value=format(int(tax), ",") + " ₽",
-                inline=True,
-            )
-            embed.add_field(
-                name=localized_string(lang, "taxProfit"),
-                value=format(int(profit), ",") + " ₽",
-                inline=True,
-            )
-            embed.set_footer(
-                text=localized_string(lang, "marketUpdated")
-                + maya.MayaDT.from_datetime(model.updated).slang_time()
-                + " - Data provided by Tarkov-Market"
-            )
-            return embed
-        except:
-            embed = discord.Embed(
-                title="LogicEFTBot - Error",
-                color=0x780A81,
-            )
-            embed.set_thumbnail(url="https://illogical.network/api/error.png")
-            embed.add_field(
-                name="Invalid Item Search",
-                value="You've entered in an invalid map name ; please try again.",
-                inline=True,
-            )
-            return embed
-
-
-class DiscordClient(AutoShardedClient):
-    """
-    A discord client for LogicEFTBot.
-    To run: `export LOGIC_DISCORD_TOKEN=<token> && make discord`
-    Where <token> is the valid oauth token for executing this bot.
-    """
-
-    # TODO(@LogicalSolutions) put your numerical discord user id in here.
-    APPROVED_ADMIN_USER_IDS: List[int] = []
-
+class LogicEFTClient(discord.AutoShardedClient):
     def __init__(self):
-        super().__init__()
-        self.logic = DiscordEFTBot(Database.get(), Queue(), Queue())
+        super().__init__(intents = discord.Intents.default())
+        self.synced = False #we use this so the bot doesn't sync commands more than once
 
     async def on_ready(self):
-        await self.change_presence(
-            activity=discord.Game(name="!eftbot - https://eft.bot")
-        )
-        print("Connected and Discord Status Set")
+        stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/logiceftbot")
+        await client.change_presence(activity=stream)
+        await self.wait_until_ready()
+        if not self.synced: #check if slash commands have been synced 
+            await tree.sync() #guild specific: leave blank if global (global registration can take 1-24 hours)
+            self.synced = True
+        print(f"We have logged in as {self.user}.")
+        
 
-    async def on_message(self, message):
-        full_cmd = message.content.split()
-        if not full_cmd:
-            return
-        cmd = full_cmd[0]
-        if not cmd:
-            return
-        if not cmd[0] == settings["prefix"]:
-            return
-        cmd = cmd[len(settings["prefix"]) :]  # skip past "!"
+client = LogicEFTClient()
+tree = app_commands.CommandTree(client)
+db = Database()
 
-        # check cooldown for this channel.
-        guild = message.guild
-        if not guild:
-            return
-        channel = str(
-            guild.id
-        )  # this is a unique int representing this discord server.
-        author = message.author
-        is_mod = (
-            author.guild_permissions.administrator
-            if author.guild_permissions
-            else False
+@tree.command(name = 'price', description='Check the price of an item via Tarkov-Market API') #guild specific slash command
+async def price(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        price = EFT.check_price(lang, data)
+        embed = discord.Embed(
+            title=price.name,
+            url=price.wikiLink,
+            color=0x780A81,
         )
-        is_admin = author.id in DiscordClient.APPROVED_ADMIN_USER_IDS
-        context = CommandContext(
-            author=AuthorInfo(
-                name=message.author.display_name, is_mod=is_mod, is_admin=is_admin
-            ),
-            channel=channel,
-            platform="discord",
+        embed.set_thumbnail(url=price.img)
+        embed.add_field(
+            name=localized_string(lang, "marketPrice"),
+            value=format(int(price.price), ","),
+            inline=True,
         )
-        db = Database.get()
-        content = " ".join(full_cmd[1:] or [])
-        if check_cooldown(db, context.channel):
-            # Enforce cooldown for this channel.
-            return
-        try:
-            resp = self.logic.exec(context, cmd, content)
-            if isinstance(resp, str):
-                await message.channel.send(resp)
-            elif isinstance(resp, discord.Embed):
-                await message.channel.send(embed=resp)
-            else:
-                log.error("Unknown response: {}".format(str(resp)))
-            reset_cooldown(context.channel)
-        except CommandNotFoundException:
-            # just be silent if we don't know the command.
-            pass
-        except Exception as e:
-            # Log all other exceptions.
-            log.error(
-                f"Exception processing command ({cmd}) for channel '{guild.name}' (id={context.channel}) -"
+        embed.add_field(
+            name=localized_string(lang, "marketTrader"),
+            value=price.traderName,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "marketTraderPrice"),
+            value=format(int(price.traderPrice), ","),
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "marketSlot"),
+            value=format(round((price.price / price.slots)), ","),
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "market7dAvg"),
+            value=format(int(price.avg7daysPrice), ","),
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "market24hAvg"),
+            value=format(int(price.avg24hPrice), ","),
+            inline=True,
+        )
+        embed.set_footer(
+            text=localized_string(lang, "marketUpdated")
+            + maya.MayaDT.from_datetime(price.updated).slang_time()
+            + " - Data provided by Tarkov-Market"
+        )
+        await interaction.response.send_message(embed=embed) 
+    except:
+        embed = discord.Embed(
+                    title="LogicEFTBot - Error",
+                    color=0x780A81,
+                )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid item ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
+@tree.command(name = 'ammo', description='Check the stat of an ammo via Tarkov-Changes API') #guild specific slash command
+async def ammo(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        astat = EFT.check_astat(lang, data)
+        name = astat.name
+        newname = name.replace(" ", "%20")
+        embed = discord.Embed(
+            title=astat.name,
+            url=f"https://tarkov-changes.com/item/{newname}",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+                astat.bsgID
             )
-            log.error(e)
-            traceback.print_exc()
-
-
-def signal_handler(sig, frame):
-    log.info("Received request to kill bot.")
-    os._exit(0)
-
-
-# Install Ctrl+C handler.
-signal.signal(signal.SIGINT, signal_handler)
-
-
-def main():
-    token = os.environ.get("LOGIC_DISCORD_TOKEN")
-    if not token:
-        print(
-            "Error: Please set `export LOGIC_DISCORD_TOKEN=<token>` and re-run the bot.\n"
         )
-        return
-    client = DiscordClient()
-    client.run(token)
+        embed.add_field(
+            name=localized_string(lang, "ammoFlesh"),
+            value=astat.damage,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "ammoPen"),
+            value=astat.penetration,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "ammoArmor"),
+            value=astat.armorDamage,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "ammoAccuracy"),
+            value=astat.accuracy,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "ammoRecoil"),
+            value=astat.recoil,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "ammoFrag"),
+            value=astat.fragmentation,
+            inline=True,
+        )
+        print(astat)
+        await interaction.response.send_message(embed=embed) 
+    except Exception as e:
+        embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid ammo item ; please try again.",
+            inline=True,
+        )
+        print(e)
+        await interaction.response.send_message(embed=embed) 
 
+@tree.command(name = 'armor', description='Check the stat of an armor via Tarkov-Changes API') #guild specific slash command
+async def armor(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        armor = EFT.check_armor(lang, data)
+        embed = discord.Embed(
+            title=armor.armorName,
+            url=armor.wikiLink,
+            description=localized_string(lang, "armorZones") + armor.armorZones,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+                armor.bsgID
+            )
+        )
+        embed.add_field(
+            name=localized_string(lang, "armorClass"),
+            value=armor.armorClass,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "armorMaterial"),
+            value=armor.armorMaterial,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "armorDurability"),
+            value=armor.armorDurability,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "armorMoveSpeed"),
+            value=armor.armorMoveSpeed,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "armorTurnSpeed"),
+            value=armor.armorTurnSpeed,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "armorErgo"),
+            value=armor.armorErgo,
+            inline=True,
+        )
+        embed.set_footer(
+            text=localized_string(lang, "armorEffectiveDurability")
+            + armor.armorEffectiveDurability
+            + " - Data provided by Tarkov-Changes"
+        )
+        await interaction.response.send_message(embed=embed)
+    except Exception as e:
+        embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid armor item ; please try again.",
+            inline=True,
+        )
+        print(e)
+        await interaction.response.send_message(embed=embed)
 
-if __name__ == "__main__":
-    main()
+@tree.command(name = 'helmet', description='Check the stat of a helmet via Tarkov-Changes API') #guild specific slash command
+async def helmet(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        helmet = EFT.check_helmets(lang, data)
+        embed = discord.Embed(
+            title=helmet.name,
+            url=helmet.wikiLink,
+            description=helmet.description,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+                helmet.bsgID
+            )
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetZones"),
+            value=helmet.armorZones,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetClass"),
+            value=helmet.armorClass,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetDurability"),
+            value=helmet.armorDurability,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetRicochet"),
+            value=helmet.armorRico,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetMoveSpeed"),
+            value=helmet.armorMoveSpeed,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetTurnSpeed"),
+            value=helmet.armorTurnSpeed,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetErgo"),
+            value=helmet.armorErgo,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetSoundReduc"),
+            value=helmet.helmetSoundReduc,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "helmetBlocksHeadset"),
+            value=helmet.helmetBlocksHeadset,
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid helmet item ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
+@tree.command(name = 'meds', description='Check the stat of a med item via Tarkov-Changes API') #guild specific slash command
+async def meds(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        medical = EFT.check_medical(lang, data)
+        embed = discord.Embed(
+            title=medical.name,
+            url=medical.wikiLink,
+            description=medical.description,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://storage.tarkov-database.com/assets/icons/1-1/{0}.png".format(
+                medical.bsgID
+            )
+        )
+        embed.add_field(
+            name=localized_string(lang, "medUseTime"),
+            value=medical.useTime,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "maxItemHP"),
+            value=medical.resources,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "maxHealPerUse"),
+            value=medical.resourceRate,
+            inline=True,
+        )
+
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid medical item ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
+@tree.command(name = 'maps', description='Check the details of a map via Tarkov-Changes API') #guild specific slash command
+async def maps(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        maps = EFT.check_maps(lang, data)
+        embed = discord.Embed(
+            title=maps.name,
+            url=maps.wikiLink,
+            description=maps.features,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://eft.bot/images/wiki/{0}.png".format(maps.shortName)
+        )
+        embed.add_field(
+            name=localized_string(lang, "mapPlayers"),
+            value=maps.players,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "mapDuration"),
+            value=maps.duration,
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "mapEnemies"),
+            value=maps.enemies,
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid map name ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
+@tree.command(name = 'tax', description='Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard') #guild specific slash command
+async def tax(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        USAGE = localized_string(lang, "taxUsage")
+        if not data:
+            return USAGE
+        parts = data.split()
+        if len(parts) < 2:
+            return localized_string(lang, "taxUsage")
+        amount = safe_int(parts[0], 0)
+        if amount == 0:
+            return USAGE
+        query = " ".join(parts[1:])
+        tax_amount = EFT.check_tax(lang, amount, query)
+        if not tax_amount:
+            return USAGE
+        (tax, model) = tax_amount
+        profit = amount - tax
+        embed = discord.Embed(
+            title=model.name,
+            url=model.wikiLink,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url=model.img)
+        embed.add_field(
+            name=localized_string(lang, "taxBasePrice"),
+            value=format(int(model.basePrice), ",") + " ₽",
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "taxBaseTax"),
+            value=format(int(tax), ",") + " ₽",
+            inline=True,
+        )
+        embed.add_field(
+            name=localized_string(lang, "taxProfit"),
+            value=format(int(profit), ",") + " ₽",
+            inline=True,
+        )
+        embed.set_footer(
+            text=localized_string(lang, "marketUpdated")
+            + maya.MayaDT.from_datetime(model.updated).slang_time()
+            + " - Data provided by Tarkov-Market"
+        )
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="LogicEFTBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid map name ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
+dcToken = os.environ.get("LOGIC_DISCORD_TOKEN")
+client.run(dcToken)
