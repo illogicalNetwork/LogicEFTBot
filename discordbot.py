@@ -19,8 +19,9 @@ class LogicEFTClient(discord.AutoShardedClient):
         stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/logiceftbot")
         await client.change_presence(activity=stream)
         await self.wait_until_ready()
+        await tree.sync(guild=discord.Object(id=589883759692611614))
         if not self.synced: #check if slash commands have been synced 
-            await tree.sync() #guild specific: leave blank if global (global registration can take 1-24 hours)
+            await tree.sync(guild=discord.Object(id=589883759692611614)) #guild specific: leave blank if global (global registration can take 1-24 hours)
             self.synced = True
         print(f"We have logged in as {self.user}.")
         
@@ -99,7 +100,7 @@ async def ammo(interaction: discord.Interaction, data: str):
         embed = discord.Embed(
             title=astat.name,
             url=f"https://tarkov-changes.com/item/{newname}",
-            description=astat.description,
+            description=astat.description[0:240],
             color=0x780A81,
         )
         embed.set_thumbnail(
@@ -137,7 +138,6 @@ async def ammo(interaction: discord.Interaction, data: str):
             value=astat.fragmentation,
             inline=True,
         )
-        print(astat)
         await interaction.response.send_message(embed=embed) 
     except Exception as e:
         embed = discord.Embed(
