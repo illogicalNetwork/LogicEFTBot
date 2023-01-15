@@ -19,9 +19,8 @@ class LogicEFTClient(discord.AutoShardedClient):
         stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/TarkovChangesBot")
         await client.change_presence(activity=stream)
         await self.wait_until_ready()
-        await tree.sync(guild=discord.Object(id=589883759692611614))
         if not self.synced: #check if slash commands have been synced 
-            await tree.sync(guild=discord.Object(id=589883759692611614)) #guild specific: leave blank if global (global registration can take 1-24 hours)
+            await tree.sync() #guild specific: leave blank if global (global registration can take 1-24 hours)
             self.synced = True
         print(f"We have logged in as {self.user}.")
         
