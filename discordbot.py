@@ -19,6 +19,7 @@ class LogicEFTClient(discord.AutoShardedClient):
         stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/TarkovChangesBot")
         await client.change_presence(activity=stream)
         await self.wait_until_ready()
+        await tree.sync(guild=discord.Object(id=864750816082657301)) #force sync with tarkov-changes discord 
         if not self.synced: #check if slash commands have been synced 
             await tree.sync() #guild specific: leave blank if global (global registration can take 1-24 hours)
             self.synced = True
@@ -351,7 +352,7 @@ async def maps(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://eft.bot/images/wiki/{0}.png".format(maps.shortName)
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(maps.shortName)
         )
         embed.add_field(
             name=localized_string(lang, "mapPlayers"),
@@ -440,6 +441,38 @@ async def tax(interaction: discord.Interaction, data: str):
             inline=True,
         )
         await interaction.response.send_message(embed=embed)
+
+@tree.command(name = 'banned', description='Check if an item is banned from being sold on the flea-market') #guild specific slash command
+async def banned(interaction: discord.Interaction, data: str):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        banned = EFT.check_banned(lang, data)
+        embed = discord.Embed(
+            title=banned.name,
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(banned.bsgID)
+        )
+        embed.add_field(
+            name=localized_string(lang, "bannedItem"),
+            value=banned.banned,
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="TarkovChangesBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid map name ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
 
 dcToken = os.environ.get("LOGIC_DISCORD_TOKEN")
 client.run(dcToken)

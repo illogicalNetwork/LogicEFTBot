@@ -257,3 +257,17 @@ class TarkovTimeModel:
             left=object.get("left"),
             right=object.get("right"),
         )
+
+@dataclass
+class TarkovChangesBanned:
+    bsgID: str
+    name: str
+    banned: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> TarkovChangesBanned:
+        return TarkovChangesBanned(
+            bsgID=object.get("bsgID"),
+            name=object.get("Name"),
+            banned=object.get("Can Sell On Flea"),
+        )

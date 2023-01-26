@@ -16,6 +16,7 @@ from bot.models import (
     TarkovTimeModel,
     TraderResetsModel,
     TarkovChangesAmmoModel,
+    TarkovChangesBanned,
 )
 from dataclasses import dataclass
 import datetime
@@ -183,3 +184,14 @@ class EFT:
         crafted_url = tarkovTime_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return TarkovTimeModel.fromJSONObj(response)
+
+    @staticmethod
+    def check_banned(lang: str, query: str) -> TarkovChangesBanned:
+        banned_link = (
+            settings["banned_link"][lang] if lang in settings["banned_link"] else None
+        )
+        if not banned_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = banned_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return LogicalMapsModel.fromJSONObj(response)

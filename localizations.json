@@ -16,6 +16,7 @@
       "armorMoveSpeed":"Move Speed Modifier",
       "armorTurnSpeed":"Turn Speed Modifier",
       "armorZones":"This armor protects:",
+      "bannedItem":"Can item be sold on flea?",
       "botHelp":"Please visit https://eft.bot/ for a full list of commands.",
       "botChanges":"Curious in the silent changes or updates in Tarkov? Check em here ->  https://tarkov-changes.com/changes/",
       "helmetBlocksHeadset":"Helmet Blocks Headsets",
