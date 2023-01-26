@@ -19,9 +19,8 @@ class LogicEFTClient(discord.AutoShardedClient):
         stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/TarkovChangesBot")
         await client.change_presence(activity=stream)
         await self.wait_until_ready()
-        await tree.sync(guild=discord.Object(id=864750816082657301)) #force sync with tarkov-changes discord 
         if not self.synced: #check if slash commands have been synced 
-            await tree.sync() #guild specific: leave blank if global (global registration can take 1-24 hours)
+            await tree.sync()
             self.synced = True
         print(f"We have logged in as {self.user}.")
         
@@ -460,7 +459,7 @@ async def banned(interaction: discord.Interaction, data: str):
             inline=True,
         )
         await interaction.response.send_message(embed=embed)
-    except:
+    except Exception as e:
         embed = discord.Embed(
             title="TarkovChangesBot - Error",
             color=0x780A81,
@@ -472,6 +471,7 @@ async def banned(interaction: discord.Interaction, data: str):
             inline=True,
         )
         await interaction.response.send_message(embed=embed)
+        print(str(e))
 
 
 dcToken = os.environ.get("LOGIC_DISCORD_TOKEN")
