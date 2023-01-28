@@ -17,6 +17,7 @@ from bot.models import (
     TraderResetsModel,
     TarkovChangesAmmoModel,
     TarkovChangesBanned,
+    TarkovChangesMaps
 )
 from dataclasses import dataclass
 import datetime
@@ -106,7 +107,7 @@ class EFT:
         return TarkovStatusModel.fromJSONObj(response)
 
     @staticmethod
-    def check_maps(lang: str, query: str) -> LogicalMapsModel:
+    def check_maps(lang: str, query: str) -> TarkovChangesMaps:
         maps_link = (
             settings["maps_link"][lang] if lang in settings["maps_link"] else None
         )
@@ -114,7 +115,7 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = maps_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
-        return LogicalMapsModel.fromJSONObj(response)
+        return TarkovChangesMaps.fromJSONObj(response)
 
     @staticmethod
     def check_medical(lang: str, query: str) -> MedicalModel:

@@ -212,9 +212,9 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "twitch_maps",
                 maps.name,
-                maps.players,
+                maps.minCount,
+                maps.maxCount,
                 maps.duration,
-                maps.enemies,
             )
         except Exception as e:
             print("There was a search type error in a channel")
@@ -236,22 +236,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 medical.useTime,
                 medical.resources,
                 medical.resourceRate,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
-    @command("profit")
-    def bot_profit(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            return localized_string(
-                lang,
-                "twitch_profit",
             )
         except Exception as e:
             print("There was a search type error in a channel")

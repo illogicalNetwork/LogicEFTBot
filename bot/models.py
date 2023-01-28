@@ -275,3 +275,21 @@ class TarkovChangesBanned:
             name=object.get("Name"),
             banned=object.get("Can Sell on Flea"),
         )
+
+@dataclass
+class TarkovChangesMaps:
+    name: str
+    duration: str
+    minCount: str
+    maxCount: str
+    shortName: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> TarkovChangesMaps:
+        return TarkovChangesMaps(
+            name=object.get("Name"),
+            duration=object.get("Raid Timer"),
+            minCount=object.get("Min Players"),
+            maxCount=object.get("Max Players"),
+            shortName=object.get("Map Internal Name"),
+        )

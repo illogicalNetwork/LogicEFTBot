@@ -60,7 +60,7 @@
        "twitch_kappaItems":"You need a total of {0} - {1} to obtain Kappa-Container.",
        "twitch_notKappaItem":"You do not need the item you searched for Kappa-Container.",
        "twitch_kappaQuests":"{0}, {1} is on the list of quests required to obtain your Kappa-Container.",
-       "twitch_maps":"{0} has a player count of {1} and the raid is for {2}.",
+       "twitch_maps":"{0} has a player count of {1}-{2} and the raid is for {3} minutes.",
        "twitch_medical":"{0} has a usage time of {1} seconds. It has a max item health of {2} and uses at most {3} durability per use.",
        "twitch_price": "The price of {0} is {1} roubles. Price last updated {2}.",
        "twitch_profit":"This command is being re-worked at the moment.",
