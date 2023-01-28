@@ -69,6 +69,8 @@ class LogicEFTBot(LogicEFTBotBase):
                 astat.name,
                 astat.damage,
                 astat.penetration,
+                astat.recoil,
+                astat.accuracy,
             )
         except Exception as e:
             print("There was a search type error in a channel")
@@ -363,12 +365,7 @@ class LogicEFTBot(LogicEFTBotBase):
         lang = self.db.get_lang(ctx.channel)
         try:
             status = EFT.tarkovStatus(lang, data)
-            return localized_string(
-                lang,
-                "tarkovStatus",
-                status.name,
-                status.status
-            )
+            return localized_string(lang, "tarkovStatus", status.name, status.status)
         except Exception as e:
             print("There was a search type error in a channel")
             return localized_string(
@@ -397,10 +394,7 @@ class LogicEFTBot(LogicEFTBotBase):
         try:
             tarkovTime = EFT.tarkovTime(lang, data)
             return localized_string(
-                lang,
-                "tarkovTime",
-                tarkovTime.left,
-                tarkovTime.right
+                lang, "tarkovTime", tarkovTime.left, tarkovTime.right
             )
         except Exception as e:
             print("There was a search type error in a channel")
@@ -457,12 +451,7 @@ class LogicEFTBot(LogicEFTBotBase):
         lang = self.db.get_lang(ctx.channel)
         try:
             resets = EFT.traderResets(lang, data)
-            return localized_string(
-                lang,
-                "traderReset",
-                resets.name,
-                resets.resetTimer
-            )
+            return localized_string(lang, "traderReset", resets.name, resets.resetTimer)
         except Exception as e:
             print("There was a search type error in a channel")
             return localized_string(

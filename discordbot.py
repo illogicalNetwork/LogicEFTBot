@@ -10,26 +10,36 @@ from bot.models import (
 import maya
 import os
 
+
 class LogicEFTClient(discord.AutoShardedClient):
     def __init__(self):
-        super().__init__(intents = discord.Intents.default())
-        self.synced = False #we use this so the bot doesn't sync commands more than once
+        super().__init__(intents=discord.Intents.default())
+        self.synced = (
+            False  # we use this so the bot doesn't sync commands more than once
+        )
 
     async def on_ready(self):
-        stream = discord.Streaming(platform="Twitch", name="/price & /tax » https://eft.bot", url="https://twitch.tv/TarkovChangesBot")
+        stream = discord.Streaming(
+            platform="Twitch",
+            name="/price & /tax » https://eft.bot",
+            url="https://twitch.tv/TarkovChangesBot",
+        )
         await client.change_presence(activity=stream)
         await self.wait_until_ready()
-        if not self.synced: #check if slash commands have been synced 
+        if not self.synced:  # check if slash commands have been synced
             await tree.sync()
             self.synced = True
         print(f"We have logged in as {self.user}.")
-        
+
 
 client = LogicEFTClient()
 tree = app_commands.CommandTree(client)
 db = Database()
 
-@tree.command(name = 'price', description='Check the price of an item via Tarkov-Market API') #guild specific slash command
+
+@tree.command(
+    name="price", description="Check the price of an item via Tarkov-Market API"
+)  # guild specific slash command
 async def price(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -75,12 +85,12 @@ async def price(interaction: discord.Interaction, data: str):
             + maya.MayaDT.from_datetime(price.updated).slang_time()
             + " - Data provided by Tarkov-Market"
         )
-        await interaction.response.send_message(embed=embed) 
+        await interaction.response.send_message(embed=embed)
     except:
         embed = discord.Embed(
-                    title="TarkovChangesBot - Error",
-                    color=0x780A81,
-                )
+            title="TarkovChangesBot - Error",
+            color=0x780A81,
+        )
         embed.set_thumbnail(url="https://illogical.network/api/error.png")
         embed.add_field(
             name="Invalid Item Search",
@@ -89,7 +99,10 @@ async def price(interaction: discord.Interaction, data: str):
         )
         await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'ammo', description='Check the stat of an ammo via Tarkov-Changes API') #guild specific slash command
+
+@tree.command(
+    name="ammo", description="Check the stat of an ammo via Tarkov-Changes API"
+)  # guild specific slash command
 async def ammo(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -103,9 +116,7 @@ async def ammo(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
-                astat.bsgID
-            )
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(astat.bsgID)
         )
         embed.add_field(
             name=localized_string(lang, "ammoFlesh"),
@@ -137,7 +148,7 @@ async def ammo(interaction: discord.Interaction, data: str):
             value=astat.fragmentation,
             inline=True,
         )
-        await interaction.response.send_message(embed=embed) 
+        await interaction.response.send_message(embed=embed)
     except Exception as e:
         embed = discord.Embed(
             title="TarkovChangesBot - Error",
@@ -150,9 +161,12 @@ async def ammo(interaction: discord.Interaction, data: str):
             inline=True,
         )
         print(e)
-        await interaction.response.send_message(embed=embed) 
+        await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'armor', description='Check the stat of an armor via Tarkov-Changes API') #guild specific slash command
+
+@tree.command(
+    name="armor", description="Check the stat of an armor via Tarkov-Changes API"
+)  # guild specific slash command
 async def armor(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -164,9 +178,7 @@ async def armor(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
-                armor.bsgID
-            )
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(armor.bsgID)
         )
         embed.add_field(
             name=localized_string(lang, "armorClass"),
@@ -218,7 +230,10 @@ async def armor(interaction: discord.Interaction, data: str):
         print(e)
         await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'helmet', description='Check the stat of a helmet via Tarkov-Changes API') #guild specific slash command
+
+@tree.command(
+    name="helmet", description="Check the stat of a helmet via Tarkov-Changes API"
+)  # guild specific slash command
 async def helmet(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -230,9 +245,7 @@ async def helmet(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
-                helmet.bsgID
-            )
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(helmet.bsgID)
         )
         embed.add_field(
             name=localized_string(lang, "helmetZones"),
@@ -293,7 +306,10 @@ async def helmet(interaction: discord.Interaction, data: str):
         )
         await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'meds', description='Check the stat of a med item via Tarkov-Changes API') #guild specific slash command
+
+@tree.command(
+    name="meds", description="Check the stat of a med item via Tarkov-Changes API"
+)  # guild specific slash command
 async def meds(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -305,9 +321,7 @@ async def meds(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
-                medical.bsgID
-            )
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(medical.bsgID)
         )
         embed.add_field(
             name=localized_string(lang, "medUseTime"),
@@ -339,7 +353,10 @@ async def meds(interaction: discord.Interaction, data: str):
         )
         await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'maps', description='Check the details of a map via Tarkov-Changes API') #guild specific slash command
+
+@tree.command(
+    name="maps", description="Check the details of a map via Tarkov-Changes API"
+)  # guild specific slash command
 async def maps(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -351,7 +368,9 @@ async def maps(interaction: discord.Interaction, data: str):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://tarkov-changes.com/img/items/128/{0}.png".format(maps.shortName)
+            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
+                maps.shortName
+            )
         )
         embed.add_field(
             name=localized_string(lang, "mapPlayers"),
@@ -382,7 +401,11 @@ async def maps(interaction: discord.Interaction, data: str):
         )
         await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'tax', description='Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard') #guild specific slash command
+
+@tree.command(
+    name="tax",
+    description="Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard",
+)  # guild specific slash command
 async def tax(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -441,7 +464,11 @@ async def tax(interaction: discord.Interaction, data: str):
         )
         await interaction.response.send_message(embed=embed)
 
-@tree.command(name = 'banned', description='Check if an item is banned from being sold on the flea-market') #guild specific slash command
+
+@tree.command(
+    name="banned",
+    description="Check if an item is banned from being sold on the flea-market",
+)  # guild specific slash command
 async def banned(interaction: discord.Interaction, data: str):
     lang = db.get_lang(interaction.guild_id)
     try:

@@ -205,7 +205,7 @@ class TarkovChangesAmmoModel:
     fragmentation: str
     accuracy: str
     recoil: str
-    #wikiLink: str
+    # wikiLink: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TarkovChangesAmmoModel:
@@ -219,8 +219,9 @@ class TarkovChangesAmmoModel:
             fragmentation=object.get("Frag Chance"),
             accuracy=object.get("Accuracy"),
             recoil=object.get("Recoil"),
-            #wikiLink=object.get("wikiLink"),
+            # wikiLink=object.get("wikiLink"),
         )
+
 
 @dataclass
 class TarkovStatusModel:
@@ -234,6 +235,7 @@ class TarkovStatusModel:
             status=object.get("status"),
         )
 
+
 @dataclass
 class TraderResetsModel:
     name: str
@@ -245,6 +247,7 @@ class TraderResetsModel:
             name=object.get("name"),
             resetTimer=object.get("resetTimer"),
         )
+
 
 @dataclass
 class TarkovTimeModel:
@@ -258,6 +261,7 @@ class TarkovTimeModel:
             right=object.get("right"),
         )
 
+
 @dataclass
 class TarkovChangesBanned:
     bsgID: str
@@ -269,5 +273,5 @@ class TarkovChangesBanned:
         return TarkovChangesBanned(
             bsgID=object.get("bsgID"),
             name=object.get("Name"),
-            banned=object.get("Can Sell On Flea"),
+            banned=object.get("Can Sell on Flea"),
         )

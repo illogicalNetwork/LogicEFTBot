@@ -194,4 +194,4 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = banned_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
-        return LogicalMapsModel.fromJSONObj(response)
+        return TarkovChangesBanned.fromJSONObj(response)

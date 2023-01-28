@@ -8,8 +8,6 @@ import datetime
 import json
 
 
-
-
 class Database:
     singleton = None
 
@@ -33,7 +31,7 @@ class Database:
         db.commit()
         self.db = db
         self.sql = sql
-    
+
     def auto_reconnect_if_needed(self) -> None:
         # attempt to reconnect 3 times.
         self.db.ping(True, 3)
