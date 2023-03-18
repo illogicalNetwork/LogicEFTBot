@@ -1,5 +1,6 @@
 import discord
 from discord import app_commands
+from discord.ext import tasks
 from bot.config import settings, localized_string
 from bot.database import Database
 from bot.eft import EFT
@@ -9,7 +10,62 @@ from bot.models import (
 )
 import maya
 import os
+import time
+import requests
+import asyncio
 
+CHANNEL_ID = 1086442564686721085
+
+def get_trader_resets():
+    url = 'http://api.tarkov-changes.com/v1/traderResets'
+    headers = {'AUTH-TOKEN': 'redacted'}
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        return response.json()['results']
+    else:
+        return []
+
+def create_trader_embed(trader_name, next_resupply):
+    embed = discord.Embed(
+        title=f"{trader_name} resupply incoming!",
+        description=f"{trader_name} resupply - <t:{int(next_resupply)}:R>.",
+    )
+    base_url = "https://tarkov-changes.com/img/traders/"
+    if trader_name == "Prapor":
+        embed.color = discord.Color.purple()
+        embed.set_thumbnail(url=f"{base_url}/prapor-portrait.png")
+        content = "<@&1086442704201859142>"
+    elif trader_name == "Therapist":
+        embed.color = discord.Color.purple()
+        content = "<@&1086442647570350270>"
+        embed.set_thumbnail(url=f"{base_url}/therapist-portrait.png")
+    elif trader_name == "Skier":
+        embed.color = discord.Color.purple()
+        content = "<@&1086442718370205867>"
+        embed.set_thumbnail(url=f"{base_url}/skier-portrait.png")
+    elif trader_name == "Peacekeeper":
+        embed.color = discord.Color.purple()
+        content = "<@&1086442736531542066>"
+        embed.set_thumbnail(url=f"{base_url}/peacekeeper-portrait.png")
+    elif trader_name == "Mechanic":
+        embed.color = discord.Color.purple()
+        content = "<@&1086442774334820423>"
+        embed.set_thumbnail(url=f"{base_url}/mechanic-portrait.png")
+    elif trader_name == "Ragman":
+        embed.color = discord.Color.purple()
+        content = "<@&1086442756911665233>"
+        embed.set_thumbnail(url=f"{base_url}/ragman-portrait.png")
+    elif trader_name == "Jaeger":
+        embed.color = discord.Color.purple()
+        content = "<@&1086442804600905861>"
+        embed.set_thumbnail(url=f"{base_url}/jeager-portrait.png")
+    else: 
+        pass
+    return embed, content
+
+async def delete_message_after_delay(message, delay):
+    await asyncio.sleep(delay)
+    await message.delete()
 
 class LogicEFTClient(discord.AutoShardedClient):
     def __init__(self):
@@ -17,6 +73,36 @@ class LogicEFTClient(discord.AutoShardedClient):
         self.synced = (
             False  # we use this so the bot doesn't sync commands more than once
         )
+
+    @tasks.loop(seconds=60)
+    async def check_resupply(self):
+        channel = self.get_channel(CHANNEL_ID)
+        trader_resets = get_trader_resets()
+        current_time = time.time()
+
+        # Initialize the last_posted_times dictionary if it doesn't exist
+        if not hasattr(self, 'last_posted_times'):
+            self.last_posted_times = {}
+
+        for trader in trader_resets:
+            trader_id = trader['_id']
+            time_remaining = trader['nextResupply'] - current_time
+
+            # Check if we've posted about this trader before
+            last_posted_time = self.last_posted_times.get(trader_id, 0)
+            time_since_last_post = current_time - last_posted_time
+
+            if 0 <= time_remaining <= 300 and time_since_last_post > 300:  # Within 5 minutes and at least 5 minutes since the last post
+                if trader_id == "Fence":
+                    print("Fence - Passed")
+                elif trader_id == "Lightkeeper":
+                    print("Lightkeeper - Passed")
+                else:
+                    embed, content = create_trader_embed(trader_id, trader['nextResupply'])
+                    sent_message = await channel.send(content=content, embed=embed)
+                    self.last_posted_times[trader_id] = current_time  # Update the last posted time for this trader
+                    # Call the delete_message_after_delay function
+                    asyncio.create_task(delete_message_after_delay(sent_message, 600))
 
     async def on_ready(self):
         stream = discord.Streaming(
@@ -30,12 +116,11 @@ class LogicEFTClient(discord.AutoShardedClient):
             await tree.sync()
             self.synced = True
         print(f"We have logged in as {self.user}.")
-
+        client.check_resupply.start()
 
 client = LogicEFTClient()
 tree = app_commands.CommandTree(client)
 db = Database()
-
 
 @tree.command(
     name="price", description="Check the price of an item via Tarkov-Market API"
@@ -500,6 +585,4 @@ async def banned(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
         print(str(e))
 
-
-dcToken = os.environ.get("LOGIC_DISCORD_TOKEN")
-client.run(dcToken)
+client.run("redacted")
