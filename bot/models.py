@@ -297,7 +297,7 @@ class TarkovChangesMaps:
 @dataclass
 class EFTLiveStats:
     eft_version: str
-    avgLevlobby_averageel: str
+    lobby_average: str
     highest_level_region: str
     highest_level_name: str
     highest_level: str

@@ -649,17 +649,17 @@ async def tarvkoStatus(interaction: discord.Interaction):
         )
         embed.add_field(
             name="",
-            value=status.lobby_average,
+            value="",
             inline=False,
         )
         embed.add_field(
             name="Highest Level Player",
-            value=status.highest_level_name,
+            value=f"`{status.highest_level_name}`",
             inline=True,
         )
         embed.add_field(
             name="Highest Level & Region",
-            value=f"{status.highest_level} | {status.highest_level_region}",
+            value=f"`{status.highest_level}` | `{status.highest_level_region}`",
             inline=True,
         )
         await interaction.response.send_message(embed=embed)
