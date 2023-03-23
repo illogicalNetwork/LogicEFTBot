@@ -5,6 +5,7 @@ from requests.utils import quote  # type: ignore
 from typing import Optional, Any, Tuple
 from bot.config import settings
 from bot.models import (
+    EFTLiveStats,
     KappaItemsModel,
     KappaQuestsModel,
     LogicalArmorModel,
@@ -196,3 +197,14 @@ class EFT:
         crafted_url = banned_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url).json()
         return TarkovChangesBanned.fromJSONObj(response)
+
+    @staticmethod
+    def check_status(lang: str, query: str) -> EFTLiveStats:
+        banned_link = (
+            settings["eft_link"][lang] if lang in settings["eft_link"] else None
+        )
+        if not banned_link:
+            raise InvalidLocaleError(lang)
+        crafted_url = banned_link.format(quote(query), quote(lang))
+        response = requests.get(crafted_url).json()
+        return EFTLiveStats.fromJSONObj(response)

@@ -622,6 +622,59 @@ async def tarkovTime(interaction: discord.Interaction):
         )
         await interaction.response.send_message(embed=embed)
 
+@tree.command(
+    name="status", description="Check data from the Tarkov-Changes datamine tool"
+)  # guild specific slash command
+async def tarvkoStatus(interaction: discord.Interaction):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        status = EFT.check_status(lang, "")
+        embed = discord.Embed(
+            title="Data Mine - Status Check",
+            description="This data is aggregated around every 10-15 minutes. The average level is compiled based off the users \"Looking for group\" in all lobbies.",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://i.imgur.com/JZ9Aoll.png"
+        )
+        embed.add_field(
+            name="EFT Game Version",
+            value=status.eft_version,
+            inline=True,
+        )
+        embed.add_field(
+            name="Lobby Average LVL",
+            value=status.lobby_average,
+            inline=True,
+        )
+        embed.add_field(
+            name="",
+            value=status.lobby_average,
+            inline=False,
+        )
+        embed.add_field(
+            name="Highest Level Player",
+            value=status.highest_level_name,
+            inline=True,
+        )
+        embed.add_field(
+            name="Highest Level & Region",
+            value=f"{status.highest_level} | {status.highest_level_region}",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="TarkovChangesBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid medical item ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
 
 
 client.run("redacted")

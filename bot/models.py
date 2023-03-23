@@ -293,3 +293,21 @@ class TarkovChangesMaps:
             maxCount=object.get("Max Players"),
             shortName=object.get("Map Internal Name"),
         )
+    
+@dataclass
+class EFTLiveStats:
+    eft_version: str
+    avgLevlobby_averageel: str
+    highest_level_region: str
+    highest_level_name: str
+    highest_level: str
+
+    @classmethod
+    def fromJSONObj(cls, object: Any) -> EFTLiveStats:
+        return EFTLiveStats(
+            eft_version=object.get("eft_version"),
+            lobby_average=object.get("lobby_average"),
+            highest_level_region=object.get("highest_level_region"),
+            highest_level_name=object.get("highest_level_name"),
+            highest_level=object.get("highest_level"),
+        )
