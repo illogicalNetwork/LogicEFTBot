@@ -585,4 +585,43 @@ async def banned(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
         print(str(e))
 
+@tree.command(
+    name="tarkovtime", description="Check the time of current Tarkov Raids"
+)  # guild specific slash command
+async def tarkovTime(interaction: discord.Interaction):
+    lang = db.get_lang(interaction.guild_id)
+    try:
+        tarkovTime = EFT.tarkovTime(lang, "")
+        embed = discord.Embed(
+            color=0x780A81,
+        )
+        embed.set_thumbnail(
+            url="https://i.imgur.com/k3yvPND.png"
+        )
+        embed.add_field(
+            name="Tarkov Time - Left Side",
+            value=tarkovTime.left,
+            inline=False,
+        )
+        embed.add_field(
+            name="Tarkov Time - Right Side",
+            value=tarkovTime.right,
+            inline=False,
+        )
+        await interaction.response.send_message(embed=embed)
+    except:
+        embed = discord.Embed(
+            title="TarkovChangesBot - Error",
+            color=0x780A81,
+        )
+        embed.set_thumbnail(url="https://illogical.network/api/error.png")
+        embed.add_field(
+            name="Invalid Item Search",
+            value="You've entered in an invalid medical item ; please try again.",
+            inline=True,
+        )
+        await interaction.response.send_message(embed=embed)
+
+
+
 client.run("redacted")
