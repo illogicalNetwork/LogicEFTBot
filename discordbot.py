@@ -13,8 +13,34 @@ import os
 import time
 import requests
 import asyncio
+from datetime import datetime, timedelta
+
+tarkov_ratio = 7
 
 CHANNEL_ID = 1086442564686721085
+
+def hrs(num):
+    return 1000 * 60 * 60 * num
+
+def real_time_to_tarkov_time(time, left):
+    one_day = hrs(24)
+    russia = hrs(3)
+    offset = russia + (0 if left else hrs(12))
+    tarkov_time = datetime.utcfromtimestamp(((offset + time.timestamp() * 1000 * tarkov_ratio) % one_day) / 1000)
+    return tarkov_time
+
+def format_hms(date):
+    return f'{date.hour:02d}:{date.minute:02d}:{date.second:02d}'
+
+def get_tarkov_time(minutes):
+    now = datetime.utcnow()
+    time_to_add = timedelta(minutes=minutes)
+    left_time = real_time_to_tarkov_time(now + time_to_add, True)
+    right_time = real_time_to_tarkov_time(now + time_to_add, False)
+    return {
+        'left': format_hms(left_time),
+        'right': format_hms(right_time)
+    }
 
 def get_trader_resets():
     url = 'http://api.tarkov-changes.com/v1/traderResets'
@@ -122,13 +148,12 @@ client = LogicEFTClient()
 tree = app_commands.CommandTree(client)
 db = Database()
 
-@tree.command(
-    name="price", description="Check the price of an item via Tarkov-Market API"
-)  # guild specific slash command
-async def price(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the price of an item via Tarkov-Market API")
+@app_commands.describe(item="Please enter in an item name.")
+async def price(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        price = EFT.check_price(lang, data)
+        price = EFT.check_price(lang, item)
         embed = discord.Embed(
             title=price.name,
             url=price.wikiLink,
@@ -185,13 +210,12 @@ async def price(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="ammo", description="Check the stat of an ammo via Tarkov-Changes API"
-)  # guild specific slash command
-async def ammo(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the stat of an ammo via Tarkov-Changes API")  
+@app_commands.describe(ammo="Please enter in an ammo name.")
+async def ammo(interaction: discord.Interaction, ammo: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        astat = EFT.check_astat(lang, data)
+        astat = EFT.check_astat(lang, ammo)
         name = astat.name
         newname = name.replace(" ", "%20")
         embed = discord.Embed(
@@ -249,13 +273,12 @@ async def ammo(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="armor", description="Check the stat of an armor via Tarkov-Changes API"
-)  # guild specific slash command
-async def armor(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the stat of an armor via Tarkov-Changes API")  
+@app_commands.describe(item="Please enter in an armor name.")
+async def armor(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        armor = EFT.check_armor(lang, data)
+        armor = EFT.check_armor(lang, item)
         embed = discord.Embed(
             title=armor.armorName,
             url=armor.wikiLink,
@@ -316,13 +339,12 @@ async def armor(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="helmet", description="Check the stat of a helmet via Tarkov-Changes API"
-)  # guild specific slash command
-async def helmet(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the stat of a helmet via Tarkov-Changes API") 
+@app_commands.describe(item="Please enter in a helmet name.")
+async def helmet(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        helmet = EFT.check_helmets(lang, data)
+        helmet = EFT.check_helmets(lang, item)
         embed = discord.Embed(
             title=helmet.name,
             url=helmet.wikiLink,
@@ -392,13 +414,12 @@ async def helmet(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="meds", description="Check the stat of a med item via Tarkov-Changes API"
-)  # guild specific slash command
-async def meds(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the stat of a med item via Tarkov-Changes API")
+@app_commands.describe(item="Please enter in an medical item name.")
+async def meds(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        medical = EFT.check_medical(lang, data)
+        medical = EFT.check_medical(lang, item)
         embed = discord.Embed(
             title=medical.name,
             url=medical.wikiLink,
@@ -439,41 +460,31 @@ async def meds(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="maps", description="Check the details of a map via Tarkov-Changes API"
-)  # guild specific slash command
-async def maps(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the details of a map via Tarkov-Changes API")
+@app_commands.describe(map="Please enter in a valid map name.")
+async def maps(interaction: discord.Interaction, map: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        maps = EFT.check_maps(lang, data)
+        maps = EFT.check_maps(lang, map)
         embed = discord.Embed(
             title=maps.name,
-            url=maps.wikiLink,
-            description=maps.features,
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://tarkov-changes.com/img/items/128/{0}.png".format(
-                maps.shortName
-            )
+            url="https://tarkov-changes.com/img/maps/{0}.png".format(maps.name).lower()
         )
         embed.add_field(
-            name=localized_string(lang, "mapPlayers"),
-            value=maps.players,
-            inline=True,
+            name="Player Count",
+            value=f"`{maps.minCount} - {maps.maxCount}`",
+            inline=False,
         )
         embed.add_field(
-            name=localized_string(lang, "mapDuration"),
-            value=maps.duration,
-            inline=True,
-        )
-        embed.add_field(
-            name=localized_string(lang, "mapEnemies"),
-            value=maps.enemies,
-            inline=True,
+            name="Raid Duration",
+            value=f"`{maps.duration}`",
+            inline=False,
         )
         await interaction.response.send_message(embed=embed)
-    except:
+    except Exception as e:
         embed = discord.Embed(
             title="TarkovChangesBot - Error",
             color=0x780A81,
@@ -484,20 +495,19 @@ async def maps(interaction: discord.Interaction, data: str):
             value="You've entered in an invalid map name ; please try again.",
             inline=True,
         )
+        print(e)
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="tax",
-    description="Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard",
-)  # guild specific slash command
-async def tax(interaction: discord.Interaction, data: str):
+@tree.command(description="Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard",)
+@app_commands.describe(item="Usage: <amount> <item>")
+async def tax(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
     try:
         USAGE = localized_string(lang, "taxUsage")
-        if not data:
+        if not item:
             return USAGE
-        parts = data.split()
+        parts = item.split()
         if len(parts) < 2:
             return localized_string(lang, "taxUsage")
         amount = safe_int(parts[0], 0)
@@ -550,14 +560,12 @@ async def tax(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(
-    name="banned",
-    description="Check if an item is banned from being sold on the flea-market",
-)  # guild specific slash command
-async def banned(interaction: discord.Interaction, data: str):
+@tree.command(description="Check if an item is banned from being sold on the flea-market")  
+@app_commands.describe(item="Please enter in an item name.")
+async def banned(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
     try:
-        banned = EFT.check_banned(lang, data)
+        banned = EFT.check_banned(lang, item)
         embed = discord.Embed(
             title=banned.name,
             color=0x780A81,
@@ -585,46 +593,70 @@ async def banned(interaction: discord.Interaction, data: str):
         await interaction.response.send_message(embed=embed)
         print(str(e))
 
-@tree.command(
-    name="tarkovtime", description="Check the time of current Tarkov Raids"
-)  # guild specific slash command
-async def tarkovTime(interaction: discord.Interaction):
-    lang = db.get_lang(interaction.guild_id)
-    try:
-        tarkovTime = EFT.tarkovTime(lang, "")
-        embed = discord.Embed(
-            color=0x780A81,
-        )
-        embed.set_thumbnail(
-            url="https://i.imgur.com/k3yvPND.png"
-        )
-        embed.add_field(
-            name="Tarkov Time - Left Side",
-            value=tarkovTime.left,
-            inline=False,
-        )
-        embed.add_field(
-            name="Tarkov Time - Right Side",
-            value=tarkovTime.right,
-            inline=False,
-        )
-        await interaction.response.send_message(embed=embed)
-    except:
-        embed = discord.Embed(
-            title="TarkovChangesBot - Error",
-            color=0x780A81,
-        )
-        embed.set_thumbnail(url="https://illogical.network/api/error.png")
-        embed.add_field(
-            name="Invalid Item Search",
-            value="You've entered in an invalid medical item ; please try again.",
-            inline=True,
-        )
-        await interaction.response.send_message(embed=embed)
+@tree.command(description="Check the time of current Tarkov Raids. Optional: See future raid time.")
+@app_commands.describe(usertime="Enter time in minutes. Displays future raid time.")
+async def tarkovtime(interaction: discord.Interaction, usertime:int=None):
+    if usertime is None:
+        lang = db.get_lang(interaction.guild_id)
+        try:
+            tarkovTime = EFT.tarkovTime(lang, "")
+            embed = discord.Embed(
+                color=0x780A81,
+            )
+            embed.set_thumbnail(
+                url="https://i.imgur.com/k3yvPND.png"
+            )
+            embed.add_field(
+                name="Tarkov Time - Left Side",
+                value=tarkovTime.left,
+                inline=False,
+            )
+            embed.add_field(
+                name="Tarkov Time - Right Side",
+                value=tarkovTime.right,
+                inline=False,
+            )
+            await interaction.response.send_message(embed=embed)
+        except:
+            embed = discord.Embed(
+                title="TarkovChangesBot - Error",
+                color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
+            await interaction.response.send_message(embed=embed)
+    if usertime:
+        try:
+            fTime = get_tarkov_time(usertime)
+            embed = discord.Embed(
+                title="Future Raid Time",
+                color=0x780A81,
+            )
+            embed.set_thumbnail(
+                url="https://i.imgur.com/k3yvPND.png"
+            )
+            embed.add_field(
+                name="Future Tarkov Time - Left",
+                value=fTime['left'],
+                inline=False,
+            )
+            embed.add_field(
+                name="Future Tarkov Time - Right",
+                value=fTime['right'],
+                inline=True,
+            )
+            await interaction.response.send_message(embed=embed)
+        except Exception as e:
+            embed = discord.Embed(
+                title="TarkovChangesBot - Error",
+                description=str(e),
+                color=0x780A81,
+            )
+            embed.set_thumbnail(url="https://illogical.network/api/error.png")
+            await interaction.response.send_message(embed=embed)
 
 @tree.command(
     name="status", description="Check data from the Tarkov-Changes datamine tool"
-)  # guild specific slash command
+)  
 async def tarvkoStatus(interaction: discord.Interaction):
     lang = db.get_lang(interaction.guild_id)
     try:
@@ -675,6 +707,5 @@ async def tarvkoStatus(interaction: discord.Interaction):
             inline=True,
         )
         await interaction.response.send_message(embed=embed)
-
 
 client.run("redacted")
