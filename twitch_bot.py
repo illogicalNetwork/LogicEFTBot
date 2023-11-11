@@ -46,6 +46,8 @@ class TwitchIrcBot(SingleServerIRCBot):
         self.is_welcome = True  # we've received welcome.
         self.message = "Running"
 
+        log.info("Received welcome!")
+
         if self.enqueued_channels:
             log.info("Joining %d channels", len(self.enqueued_channels))
             for chan in self.enqueued_channels:

@@ -129,6 +129,9 @@ class Database:
         self.db.commit()
         return list(map(lambda row: str(row[0]), channels))
 
+    def shutdown(self) -> None:
+        self.db.close()
+
 
 def check_lang(channel_name: str) -> str:
     return Database.get().get_lang(channel_name)
