@@ -1,11 +1,7 @@
-from __future__ import annotations  # type: ignore
-import requests
+from __future__ import annotations
 import requests
 import requests.utils
-import requests.utils
-from requests.utils import quote  # type: ignore
-from requests.utils import quote  # type: ignore
-from typing import Optional
+from requests.utils import quote
 from typing import Optional, Any
 from bot.config import settings
 from dataclasses import dataclass
@@ -20,63 +16,35 @@ def safe_int(value: Any, fallback: int) -> int:
     except:
         return fallback
 
-
-@dataclass
-class KappaItemsModel:
-    name: str
-    quantity: int
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> KappaItemsModel:
-        return KappaItemsModel(
-            name=object.get("name"),
-            quantity=object.get("itemQTY"),
-        )
-
-
-@dataclass
-class KappaQuestsModel:
-    name: str
-    isReq: int
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> KappaQuestsModel:
-        return KappaQuestsModel(
-            name=object.get("name"),
-            isReq=object.get("kappaReq"),
-        )
-
-
 @dataclass
 class LogicalArmorModel:
     bsgID: str
     armorName: str
     armorZones: str
     armorClass: str
+    armorType: str
     armorMaterial: str
     armorDurability: str
     armorMoveSpeed: str
     armorTurnSpeed: str
     armorErgo: str
     armorEffectiveDurability: str
-    wikiLink: str
     description: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
         return LogicalArmorModel(
-            bsgID=object.get("bsgID"),
-            armorName=object.get("name"),
-            armorZones=object.get("zones"),
-            armorClass=object.get("armorclass"),
-            armorMaterial=object.get("materials"),
-            armorDurability=object.get("dura"),
-            armorMoveSpeed=object.get("moveSpeed"),
-            armorTurnSpeed=object.get("turnSpeed"),
-            armorErgo=object.get("ergo"),
-            armorEffectiveDurability=object.get("effective"),
-            wikiLink=object.get("wikiLink"),
-            description=object.get("description"),
+            bsgID=object.get("Item ID"),
+            armorName=object.get("Name"),
+            armorClass=object.get("Armor Class"),
+            armorType=object.get("Armor Type"),
+            armorMaterial=object.get("Materials"),
+            armorDurability=object.get("Max Durability"),
+            armorMoveSpeed=object.get("Movement Speed Penalty"),
+            armorTurnSpeed=object.get("Turn Speed Penalty"),
+            armorErgo=object.get("Ergonomics Penalty"),
+            armorEffectiveDurability=object.get("Effective Durability"),
+            description=object.get("Description"),
         )
 
 
@@ -85,58 +53,24 @@ class LogicalHelmetModel:
     bsgID: str
     name: str
     armorClass: str
-    armorZones: str
-    armorDurability: str
-    armorRico: str
     armorMoveSpeed: str
     armorTurnSpeed: str
     armorErgo: str
-    helmetSoundReduc: str
     helmetBlocksHeadset: str
-    wikiLink: str
     description: str
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> LogicalHelmetModel:
         return LogicalHelmetModel(
             bsgID=object.get("bsgID"),
-            name=object.get("name"),
-            armorClass=object.get("armorClass"),
-            armorZones=object.get("armorZones"),
-            armorDurability=object.get("dura"),
-            armorRico=object.get("rico"),
-            armorMoveSpeed=object.get("moveSpeed"),
-            armorTurnSpeed=object.get("turnSpeed"),
-            armorErgo=object.get("ergo"),
-            helmetSoundReduc=object.get("soundsReduc"),
-            helmetBlocksHeadset=object.get("blocksHeadset"),
-            wikiLink=object.get("wikiLink"),
-            description=object.get("description"),
+            name=object.get("Name"),
+            armorClass=object.get("Armor Class"),
+            armorMoveSpeed=object.get("Movement Speed Penalty"),
+            armorTurnSpeed=object.get("Turn Speed Penalty"),
+            armorErgo=object.get("Ergonomics Penalty"),
+            helmetBlocksHeadset=object.get("Blocks Earpiece"),
+            description=object.get("Description"),
         )
-
-
-@dataclass
-class LogicalMapsModel:
-    name: str
-    features: str
-    duration: str
-    players: str
-    enemies: str
-    wikiLink: str
-    shortName: str
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalMapsModel:
-        return LogicalMapsModel(
-            name=object.get("name"),
-            features=object.get("features"),
-            duration=object.get("duration"),
-            players=object.get("players"),
-            enemies=object.get("enemies"),
-            wikiLink=object.get("wikiLink"),
-            shortName=object.get("shortName"),
-        )
-
 
 @dataclass
 class MedicalModel:
@@ -178,6 +112,7 @@ class TarkovMarketModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TarkovMarketModel:
+        print(object)
         return TarkovMarketModel(
             name=object.get("name"),
             shortName=object.get("shortName"),
@@ -234,20 +169,6 @@ class TarkovStatusModel:
             name=object.get("name"),
             status=object.get("status"),
         )
-
-
-@dataclass
-class TraderResetsModel:
-    name: str
-    resetTimer: str
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> TraderResetsModel:
-        return TraderResetsModel(
-            name=object.get("name"),
-            resetTimer=object.get("resetTimer"),
-        )
-
 
 @dataclass
 class TarkovTimeModel:

@@ -93,6 +93,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
         except Exception as e:
+            print(e)
             print("There was a search type error in a channel")
             return localized_string(
                 lang,
@@ -164,44 +165,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
-    @command("kappaitem")
-    def bot_kappaitem(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            kappa = EFT.check_kappaitem(lang, data)
-            return localized_string(
-                lang,
-                "twitch_kappaItems",
-                kappa.quantity,
-                kappa.name,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "twitch_notKappaItem",
-            )
-
-    @command("kappaquest")
-    def bot_kappaquest(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            kappa = EFT.check_kappaquests(lang, data)
-            return localized_string(
-                lang,
-                "twitch_kappaQuests",
-                kappa.isReq,
-                kappa.name,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
     @command("maps")
     def bot_maps(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -258,7 +221,10 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(price.updated).slang_time(),
             )
         except Exception as e:
-            print("There was a search type error in a channel")
+            print(ctx)
+            print(data)
+            print(e)
+            print("There was a search type error in a channel - price")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -426,22 +392,6 @@ class LogicEFTBot(LogicEFTBotBase):
             return "You ain't a mod you dingus!"
         self.db.update_lang(ctx.channel, lang, ctx.channel)
         return "@" + ctx.author.name + " - Language has been set to {}".format(lang)
-
-    @command("reset")
-    def bot_reset(self, ctx: CommandContext, data: str) -> str:
-        if not ctx.author.is_mod:
-            return "You ain't a mod you dingus!"
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            resets = EFT.traderResets(lang, data)
-            return localized_string(lang, "traderReset", resets.name, resets.resetTimer)
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
 
     @command("alias")
     def bot_alias(self, ctx: CommandContext, data: str) -> str:

@@ -667,7 +667,7 @@ async def tarvkoStatus(interaction: discord.Interaction):
             color=0x780A81,
         )
         embed.set_thumbnail(
-            url="https://i.imgur.com/JZ9Aoll.png"
+            url="https://i.imgur.com/sDW5405.png"
         )
         embed.add_field(
             name="EFT Game Version",

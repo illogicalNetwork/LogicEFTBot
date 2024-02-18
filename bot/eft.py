@@ -10,7 +10,6 @@ from bot.models import (
     KappaQuestsModel,
     LogicalArmorModel,
     LogicalHelmetModel,
-    LogicalMapsModel,
     MedicalModel,
     TarkovMarketModel,
     TarkovStatusModel,
@@ -35,6 +34,12 @@ class InvalidLocaleError(Exception):
 
 # utility class for interfacing with EFT's data.
 class EFT:
+    
+    headers = {
+    'User-Agent': 'TarkovChangesBot Twitch Bot v420.69',
+    'AUTH-TOKEN': 'df33029b84de078c8b16',
+    }
+    
     @staticmethod
     def check_armor(lang: str, query: str) -> LogicalArmorModel:
         armor_link = (
@@ -43,7 +48,7 @@ class EFT:
         if not armor_link:
             raise InvalidLocaleError(lang)
         crafted_url = armor_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return LogicalArmorModel.fromJSONObj(response)
 
     @staticmethod
@@ -54,7 +59,7 @@ class EFT:
         if not astat_link:
             raise InvalidLocaleError(lang)
         crafted_url = astat_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return TarkovChangesAmmoModel.fromJSONObj(response)
 
     @staticmethod
@@ -65,34 +70,8 @@ class EFT:
         if not helmet_link:
             raise InvalidLocaleError(lang)
         crafted_url = helmet_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return LogicalHelmetModel.fromJSONObj(response)
-
-    @staticmethod
-    def check_kappaquests(lang: str, query: str) -> KappaQuestsModel:
-        kappaquests_link = (
-            settings["kappaquests_link"][lang]
-            if lang in settings["kappaquests_link"]
-            else None
-        )
-        if not kappaquests_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = kappaquests_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
-        return KappaQuestsModel.fromJSONObj(response)
-
-    @staticmethod
-    def check_kappaitem(lang: str, query: str) -> KappaItemsModel:
-        kappaitem_link = (
-            settings["kappaitem_link"][lang]
-            if lang in settings["kappaitem_link"]
-            else None
-        )
-        if not kappaitem_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = kappaitem_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
-        return KappaItemsModel.fromJSONObj(response)
 
     @staticmethod
     def tarkovStatus(lang: str, query: str) -> TarkovStatusModel:
@@ -104,7 +83,7 @@ class EFT:
         if not tarkovStatus_link:
             raise InvalidLocaleError(lang)
         crafted_url = tarkovStatus_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return TarkovStatusModel.fromJSONObj(response)
 
     @staticmethod
@@ -115,7 +94,7 @@ class EFT:
         if not maps_link:
             raise InvalidLocaleError(lang)
         crafted_url = maps_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return TarkovChangesMaps.fromJSONObj(response)
 
     @staticmethod
@@ -126,7 +105,7 @@ class EFT:
         if not medical_link:
             raise InvalidLocaleError(lang)
         crafted_url = medical_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return MedicalModel.fromJSONObj(response)
 
     @staticmethod
@@ -137,7 +116,8 @@ class EFT:
         if not price_link:
             raise InvalidLocaleError(lang)
         crafted_url = price_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
+        print(response)
         return TarkovMarketModel.fromJSONObj(response)
 
     @staticmethod
@@ -162,19 +142,6 @@ class EFT:
         return (math.floor(tax), price)
 
     @staticmethod
-    def traderResets(lang: str, query: str) -> TraderResetsModel:
-        traderResets_link = (
-            settings["tarkovtraders_link"][lang]
-            if lang in settings["tarkovtraders_link"]
-            else None
-        )
-        if not traderResets_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = traderResets_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
-        return TraderResetsModel.fromJSONObj(response)
-
-    @staticmethod
     def tarkovTime(lang: str, query: str) -> TarkovTimeModel:
         tarkovTime_link = (
             settings["tarkovTime_link"][lang]
@@ -184,7 +151,7 @@ class EFT:
         if not tarkovTime_link:
             raise InvalidLocaleError(lang)
         crafted_url = tarkovTime_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return TarkovTimeModel.fromJSONObj(response)
 
     @staticmethod
@@ -195,7 +162,7 @@ class EFT:
         if not banned_link:
             raise InvalidLocaleError(lang)
         crafted_url = banned_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return TarkovChangesBanned.fromJSONObj(response)
 
     @staticmethod
@@ -206,5 +173,5 @@ class EFT:
         if not banned_link:
             raise InvalidLocaleError(lang)
         crafted_url = banned_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url).json()
+        response = requests.get(crafted_url, headers=EFT.headers).json()
         return EFTLiveStats.fromJSONObj(response)
