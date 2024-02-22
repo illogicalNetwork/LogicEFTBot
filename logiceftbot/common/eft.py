@@ -3,8 +3,8 @@ import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Any, Tuple
-from bot.config import settings
-from bot.models import (
+from common.config import settings
+from common.models import (
     EFTLiveStats,
     KappaItemsModel,
     KappaQuestsModel,
@@ -18,7 +18,7 @@ from bot.models import (
     TraderResetsModel,
     TarkovChangesAmmoModel,
     TarkovChangesBanned,
-    TarkovChangesMaps
+    TarkovChangesMaps,
 )
 from dataclasses import dataclass
 import datetime

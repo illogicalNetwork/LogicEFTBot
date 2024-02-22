@@ -7,7 +7,7 @@ from requests.utils import quote  # type: ignore
 from requests.utils import quote  # type: ignore
 from typing import Optional
 from typing import Optional, Any
-from bot.config import settings
+from common.config import settings
 from dataclasses import dataclass
 import datetime
 import maya
@@ -276,6 +276,7 @@ class TarkovChangesBanned:
             banned=object.get("Can Sell on Flea"),
         )
 
+
 @dataclass
 class TarkovChangesMaps:
     name: str
@@ -293,7 +294,8 @@ class TarkovChangesMaps:
             maxCount=object.get("Max Players"),
             shortName=object.get("Map Internal Name"),
         )
-    
+
+
 @dataclass
 class EFTLiveStats:
     eft_version: str

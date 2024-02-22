@@ -1,11 +1,11 @@
 import discord
 from discord import app_commands
 from discord.ext import tasks
-from bot.config import settings, localized_string
-from bot.database import Database
-from bot.eft import EFT
-from bot.log import log
-from bot.models import (
+from common.config import settings, localized_string
+from common.database import Database
+from common.eft import EFT
+from common.log import log
+from common.models import (
     safe_int,
 )
 import maya
@@ -19,37 +19,42 @@ tarkov_ratio = 7
 
 CHANNEL_ID = 1086442564686721085
 
+
 def hrs(num):
     return 1000 * 60 * 60 * num
+
 
 def real_time_to_tarkov_time(time, left):
     one_day = hrs(24)
     russia = hrs(3)
     offset = russia + (0 if left else hrs(12))
-    tarkov_time = datetime.utcfromtimestamp(((offset + time.timestamp() * 1000 * tarkov_ratio) % one_day) / 1000)
+    tarkov_time = datetime.utcfromtimestamp(
+        ((offset + time.timestamp() * 1000 * tarkov_ratio) % one_day) / 1000
+    )
     return tarkov_time
 
+
 def format_hms(date):
-    return f'{date.hour:02d}:{date.minute:02d}:{date.second:02d}'
+    return f"{date.hour:02d}:{date.minute:02d}:{date.second:02d}"
+
 
 def get_tarkov_time(minutes):
     now = datetime.utcnow()
     time_to_add = timedelta(minutes=minutes)
     left_time = real_time_to_tarkov_time(now + time_to_add, True)
     right_time = real_time_to_tarkov_time(now + time_to_add, False)
-    return {
-        'left': format_hms(left_time),
-        'right': format_hms(right_time)
-    }
+    return {"left": format_hms(left_time), "right": format_hms(right_time)}
+
 
 def get_trader_resets():
-    url = 'http://api.tarkov-changes.com/v1/traderResets'
-    headers = {'AUTH-TOKEN': 'redacted'}
+    url = "http://api.tarkov-changes.com/v1/traderResets"
+    headers = {"AUTH-TOKEN": "redacted"}
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
-        return response.json()['results']
+        return response.json()["results"]
     else:
         return []
+
 
 def create_trader_embed(trader_name, next_resupply):
     embed = discord.Embed(
@@ -85,13 +90,15 @@ def create_trader_embed(trader_name, next_resupply):
         embed.color = discord.Color.purple()
         content = "<@&1086442804600905861>"
         embed.set_thumbnail(url=f"{base_url}/jeager-portrait.png")
-    else: 
+    else:
         pass
     return embed, content
+
 
 async def delete_message_after_delay(message, delay):
     await asyncio.sleep(delay)
     await message.delete()
+
 
 class LogicEFTClient(discord.AutoShardedClient):
     def __init__(self):
@@ -107,26 +114,32 @@ class LogicEFTClient(discord.AutoShardedClient):
         current_time = time.time()
 
         # Initialize the last_posted_times dictionary if it doesn't exist
-        if not hasattr(self, 'last_posted_times'):
+        if not hasattr(self, "last_posted_times"):
             self.last_posted_times = {}
 
         for trader in trader_resets:
-            trader_id = trader['_id']
-            time_remaining = trader['nextResupply'] - current_time
+            trader_id = trader["_id"]
+            time_remaining = trader["nextResupply"] - current_time
 
             # Check if we've posted about this trader before
             last_posted_time = self.last_posted_times.get(trader_id, 0)
             time_since_last_post = current_time - last_posted_time
 
-            if 0 <= time_remaining <= 300 and time_since_last_post > 300:  # Within 5 minutes and at least 5 minutes since the last post
+            if (
+                0 <= time_remaining <= 300 and time_since_last_post > 300
+            ):  # Within 5 minutes and at least 5 minutes since the last post
                 if trader_id == "Fence":
                     print("Fence - Passed")
                 elif trader_id == "Lightkeeper":
                     print("Lightkeeper - Passed")
                 else:
-                    embed, content = create_trader_embed(trader_id, trader['nextResupply'])
+                    embed, content = create_trader_embed(
+                        trader_id, trader["nextResupply"]
+                    )
                     sent_message = await channel.send(content=content, embed=embed)
-                    self.last_posted_times[trader_id] = current_time  # Update the last posted time for this trader
+                    self.last_posted_times[trader_id] = (
+                        current_time  # Update the last posted time for this trader
+                    )
                     # Call the delete_message_after_delay function
                     asyncio.create_task(delete_message_after_delay(sent_message, 600))
 
@@ -144,9 +157,11 @@ class LogicEFTClient(discord.AutoShardedClient):
         print(f"We have logged in as {self.user}.")
         client.check_resupply.start()
 
+
 client = LogicEFTClient()
 tree = app_commands.CommandTree(client)
 db = Database()
+
 
 @tree.command(description="Check the price of an item via Tarkov-Market API")
 @app_commands.describe(item="Please enter in an item name.")
@@ -210,7 +225,7 @@ async def price(interaction: discord.Interaction, item: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(description="Check the stat of an ammo via Tarkov-Changes API")  
+@tree.command(description="Check the stat of an ammo via Tarkov-Changes API")
 @app_commands.describe(ammo="Please enter in an ammo name.")
 async def ammo(interaction: discord.Interaction, ammo: str):
     lang = db.get_lang(interaction.guild_id)
@@ -273,7 +288,7 @@ async def ammo(interaction: discord.Interaction, ammo: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(description="Check the stat of an armor via Tarkov-Changes API")  
+@tree.command(description="Check the stat of an armor via Tarkov-Changes API")
 @app_commands.describe(item="Please enter in an armor name.")
 async def armor(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
@@ -339,7 +354,7 @@ async def armor(interaction: discord.Interaction, item: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(description="Check the stat of a helmet via Tarkov-Changes API") 
+@tree.command(description="Check the stat of a helmet via Tarkov-Changes API")
 @app_commands.describe(item="Please enter in a helmet name.")
 async def helmet(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
@@ -499,7 +514,9 @@ async def maps(interaction: discord.Interaction, map: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(description="Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard",)
+@tree.command(
+    description="Check the flea market tax of an item via Tarkov-Changes API. EX: /tax 7500000 red keycard",
+)
 @app_commands.describe(item="Usage: <amount> <item>")
 async def tax(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
@@ -560,7 +577,9 @@ async def tax(interaction: discord.Interaction, item: str):
         await interaction.response.send_message(embed=embed)
 
 
-@tree.command(description="Check if an item is banned from being sold on the flea-market")  
+@tree.command(
+    description="Check if an item is banned from being sold on the flea-market"
+)
 @app_commands.describe(item="Please enter in an item name.")
 async def banned(interaction: discord.Interaction, item: str):
     lang = db.get_lang(interaction.guild_id)
@@ -593,9 +612,12 @@ async def banned(interaction: discord.Interaction, item: str):
         await interaction.response.send_message(embed=embed)
         print(str(e))
 
-@tree.command(description="Check the time of current Tarkov Raids. Optional: See future raid time.")
+
+@tree.command(
+    description="Check the time of current Tarkov Raids. Optional: See future raid time."
+)
 @app_commands.describe(usertime="Enter time in minutes. Displays future raid time.")
-async def tarkovtime(interaction: discord.Interaction, usertime:int=None):
+async def tarkovtime(interaction: discord.Interaction, usertime: int = None):
     if usertime is None:
         lang = db.get_lang(interaction.guild_id)
         try:
@@ -603,9 +625,7 @@ async def tarkovtime(interaction: discord.Interaction, usertime:int=None):
             embed = discord.Embed(
                 color=0x780A81,
             )
-            embed.set_thumbnail(
-                url="https://i.imgur.com/k3yvPND.png"
-            )
+            embed.set_thumbnail(url="https://i.imgur.com/k3yvPND.png")
             embed.add_field(
                 name="Tarkov Time - Left Side",
                 value=tarkovTime.left,
@@ -631,17 +651,15 @@ async def tarkovtime(interaction: discord.Interaction, usertime:int=None):
                 title="Future Raid Time",
                 color=0x780A81,
             )
-            embed.set_thumbnail(
-                url="https://i.imgur.com/k3yvPND.png"
-            )
+            embed.set_thumbnail(url="https://i.imgur.com/k3yvPND.png")
             embed.add_field(
                 name="Future Tarkov Time - Left",
-                value=fTime['left'],
+                value=fTime["left"],
                 inline=False,
             )
             embed.add_field(
                 name="Future Tarkov Time - Right",
-                value=fTime['right'],
+                value=fTime["right"],
                 inline=True,
             )
             await interaction.response.send_message(embed=embed)
@@ -654,21 +672,20 @@ async def tarkovtime(interaction: discord.Interaction, usertime:int=None):
             embed.set_thumbnail(url="https://illogical.network/api/error.png")
             await interaction.response.send_message(embed=embed)
 
+
 @tree.command(
     name="status", description="Check data from the Tarkov-Changes datamine tool"
-)  
+)
 async def tarvkoStatus(interaction: discord.Interaction):
     lang = db.get_lang(interaction.guild_id)
     try:
         status = EFT.check_status(lang, "")
         embed = discord.Embed(
             title="Data Mine - Status Check",
-            description="This data is aggregated around every 10-15 minutes. The average level is compiled based off the users \"Looking for group\" in all lobbies.",
+            description='This data is aggregated around every 10-15 minutes. The average level is compiled based off the users "Looking for group" in all lobbies.',
             color=0x780A81,
         )
-        embed.set_thumbnail(
-            url="https://i.imgur.com/JZ9Aoll.png"
-        )
+        embed.set_thumbnail(url="https://i.imgur.com/JZ9Aoll.png")
         embed.add_field(
             name="EFT Game Version",
             value=status.eft_version,
@@ -707,5 +724,6 @@ async def tarvkoStatus(interaction: discord.Interaction):
             inline=True,
         )
         await interaction.response.send_message(embed=embed)
+
 
 client.run("redacted")

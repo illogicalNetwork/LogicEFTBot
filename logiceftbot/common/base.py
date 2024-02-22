@@ -2,8 +2,8 @@ from multiprocessing import Queue
 from typing import Optional, Any, Callable, Dict, List
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
-from bot.log import log
-from bot.database import Database
+from common.log import log
+from common.database import Database
 
 """
 This is the python implementation of the commands

@@ -7,14 +7,14 @@ from irc.bot import SingleServerIRCBot
 import time
 import requests
 from multiprocessing import Queue
-from bot.database import Database, check_lang
-from bot.config import settings
-from bot.base import CommandNotFoundException
+from common.database import Database, check_lang
+from common.config import settings
+from common.base import CommandNotFoundException
 from cooldown import check_cooldown, reset_cooldown
 from typing import Optional
-from bot.base import CommandContext, AuthorInfo
-from bot.bot import LogicEFTBot
-from bot.log import log
+from common.base import CommandContext, AuthorInfo
+from common.bot import LogicEFTBot
+from common.log import log
 from typing import Any, Callable, List, Set
 import traceback
 

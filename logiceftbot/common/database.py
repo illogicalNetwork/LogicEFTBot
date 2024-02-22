@@ -1,8 +1,8 @@
 from __future__ import annotations  # type: ignore
 import mysql.connector as mysql
 from mysql.connector import pooling
-from bot.config import settings
-from bot.log import log
+from common.config import settings
+from common.log import log
 from typing import List, Optional, Dict, cast
 import datetime
 import json

@@ -1,15 +1,15 @@
 from typing import Optional, Any, Callable
 import requests
 from inspect import signature
-from bot.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
-from bot.eft import EFT
-from bot.models import (
+from common.base import LogicEFTBotBase, command, CommandContext, AuthorInfo
+from common.eft import EFT
+from common.models import (
     safe_int,
 )
-from bot.database import Database
-from bot.log import log
-from bot.config import settings, localized_string
-from bot.shardupdate import ShardUpdate
+from common.database import Database
+from common.log import log
+from common.config import settings, localized_string
+from common.shardupdate import ShardUpdate
 import maya
 
 
