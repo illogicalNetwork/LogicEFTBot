@@ -1,13 +1,7 @@
 #!/usr/bin/python3
-import asyncio
-import os
-import threading
-import irc
 from irc.bot import SingleServerIRCBot
-import time
-import requests
 from multiprocessing import Queue
-from common.database import Database, check_lang
+from common.database import Database
 from common.config import settings
 from common.base import CommandNotFoundException
 from cooldown import check_cooldown, reset_cooldown

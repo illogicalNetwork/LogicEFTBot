@@ -5,8 +5,7 @@ import time
 import threading
 import math
 import os
-import json
-from typing import Callable, List, Any, List, Dict, Optional, Union
+from typing import List, List, Dict, Optional, Union
 from threading import RLock
 from dataclasses import dataclass
 from queue import Empty
@@ -218,7 +217,7 @@ def observe_db():
             continue
         ALL_SHARDS_INFO["db"] = ShardUpdate(status="Sleeping", message="")
         SHUTDOWN_INITIATED.wait(int(settings["db_observe_frequency"]))
-    ALL_SHARDS_INFO["db"] = ShardUpdate(status="Exited", message=f"Shutdown complete.")
+    ALL_SHARDS_INFO["db"] = ShardUpdate(status="Exited", message="Shutdown complete.")
     log.info("Stopped DB observer.")
 
 

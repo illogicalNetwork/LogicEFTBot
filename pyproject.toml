@@ -10,6 +10,7 @@ python = "^3.12"
 requests = "^2.31.0"
 irc = "^20.3.1"
 rich = "^13.7.0"
+discord = "^2.3.2"
 
 
 [tool.poetry.group.dev.dependencies]

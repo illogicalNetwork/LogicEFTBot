@@ -1,15 +1,13 @@
 import discord
 from discord import app_commands
 from discord.ext import tasks
-from common.config import settings, localized_string
+from common.config import localized_string
 from common.database import Database
 from common.eft import EFT
-from common.log import log
 from common.models import (
     safe_int,
 )
 import maya
-import os
 import time
 import requests
 import asyncio

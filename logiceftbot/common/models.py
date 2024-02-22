@@ -1,17 +1,8 @@
 from __future__ import annotations  # type: ignore
-import requests
-import requests
-import requests.utils
-import requests.utils
-from requests.utils import quote  # type: ignore
-from requests.utils import quote  # type: ignore
-from typing import Optional
-from typing import Optional, Any
-from common.config import settings
+from typing import Any
 from dataclasses import dataclass
 import datetime
 import maya
-import json
 
 
 def safe_int(value: Any, fallback: int) -> int:

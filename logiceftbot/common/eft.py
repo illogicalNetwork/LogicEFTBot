@@ -2,7 +2,7 @@ from __future__ import annotations  # type: ignore
 import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
-from typing import Optional, Any, Tuple
+from typing import Optional, Tuple
 from common.config import settings
 from common.models import (
     EFTLiveStats,
@@ -10,7 +10,6 @@ from common.models import (
     KappaQuestsModel,
     LogicalArmorModel,
     LogicalHelmetModel,
-    LogicalMapsModel,
     MedicalModel,
     TarkovMarketModel,
     TarkovStatusModel,
@@ -20,10 +19,6 @@ from common.models import (
     TarkovChangesBanned,
     TarkovChangesMaps,
 )
-from dataclasses import dataclass
-import datetime
-import maya
-import json
 import math
 
 
