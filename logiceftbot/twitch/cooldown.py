@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 from typing import Dict
-from bot.database import Database
+from logiceftbot.common.database import Database
 import datetime
 from datetime import timedelta
-from bot.config import settings
-from bot.log import log
+from logiceftbot.common.config import settings
+from logiceftbot.common.log import log
 
 # A map of Channel Name => Cooldown counter.
 # The cooldown itself is the last-use timestamp from the

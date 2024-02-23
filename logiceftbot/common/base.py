@@ -1,9 +1,8 @@
 from multiprocessing import Queue
-from typing import Optional, Any, Callable, Dict, List
+from typing import Optional, Any, Callable, Dict
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
-from bot.log import log
-from bot.database import Database
+from logiceftbot.common.database import Database
 
 """
 This is the python implementation of the commands
@@ -110,7 +109,7 @@ class LogicEFTBotBase:
             if command in aliases:
                 command = aliases[command]  # resolve the alias
         # search for command
-        if not command in self.commands:
+        if command not in self.commands:
             raise CommandNotFoundException(command)
         fn = self.commands[command]
         # if data is not "":

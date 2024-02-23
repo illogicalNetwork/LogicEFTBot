@@ -5,17 +5,16 @@ import time
 import threading
 import math
 import os
-import json
-from typing import Callable, List, Any, List, Dict, Optional, Union
+from typing import List, List, Dict, Optional, Union
 from threading import RLock
 from dataclasses import dataclass
 from queue import Empty
 from multiprocessing import Queue, Process
-from twitch import TwitchIrcBot
-from bot.database import Database
-from bot.config import settings, BOT_UI_ENABLED
-from bot.shardupdate import ShardUpdate
-from bot.log import log
+from logiceftbot.twitch.twitch import TwitchIrcBot
+from logiceftbot.common.database import Database
+from logiceftbot.common.config import settings, BOT_UI_ENABLED
+from logiceftbot.common.shardupdate import ShardUpdate
+from logiceftbot.common.log import log
 from rich.table import Table
 from rich.live import Live
 
@@ -79,6 +78,7 @@ def run_bot(queue: Queue, feedbackQueue: Queue) -> None:
     Represents one of the running bot connections.
     We also provide a periodic callback to listen to newly appearing channels.
     """
+
     # This is a fork. reset all copied signal handlers.
     def noop_signal_handler(sig, frame):
         # ignore signals
@@ -217,7 +217,7 @@ def observe_db():
             continue
         ALL_SHARDS_INFO["db"] = ShardUpdate(status="Sleeping", message="")
         SHUTDOWN_INITIATED.wait(int(settings["db_observe_frequency"]))
-    ALL_SHARDS_INFO["db"] = ShardUpdate(status="Exited", message=f"Shutdown complete.")
+    ALL_SHARDS_INFO["db"] = ShardUpdate(status="Exited", message="Shutdown complete.")
     log.info("Stopped DB observer.")
 
 
