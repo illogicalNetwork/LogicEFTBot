@@ -2,7 +2,7 @@ from multiprocessing import Queue
 from typing import Optional, Any, Callable, Dict
 from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
-from common.database import Database
+from logiceftbot.common.database import Database
 
 """
 This is the python implementation of the commands

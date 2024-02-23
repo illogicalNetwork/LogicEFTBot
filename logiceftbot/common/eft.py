@@ -3,8 +3,8 @@ import requests
 import requests.utils
 from requests.utils import quote  # type: ignore
 from typing import Optional, Tuple
-from common.config import settings
-from common.models import (
+from logiceftbot.common.config import settings
+from logiceftbot.common.models import (
     EFTLiveStats,
     KappaItemsModel,
     KappaQuestsModel,

@@ -1,11 +1,11 @@
-from common.base import LogicEFTBotBase, command, CommandContext
-from common.eft import EFT
-from common.models import (
+from logiceftbot.common.base import LogicEFTBotBase, command, CommandContext
+from logiceftbot.common.eft import EFT
+from logiceftbot.common.models import (
     safe_int,
 )
-from common.log import log
-from common.config import settings, localized_string
-from common.shardupdate import ShardUpdate
+from logiceftbot.common.log import log
+from logiceftbot.common.config import settings, localized_string
+from logiceftbot.common.shardupdate import ShardUpdate
 import maya
 
 

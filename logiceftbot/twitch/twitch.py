@@ -1,23 +1,29 @@
 #!/usr/bin/python3
 from irc.bot import SingleServerIRCBot
 from multiprocessing import Queue
-from common.database import Database
-from common.config import settings
-from common.base import CommandNotFoundException
-from cooldown import check_cooldown, reset_cooldown
+from logiceftbot.common.database import Database
+from logiceftbot.common.config import settings
+from logiceftbot.common.base import CommandNotFoundException
+from logiceftbot.twitch.cooldown import check_cooldown, reset_cooldown
 from typing import Optional
-from common.base import CommandContext, AuthorInfo
-from common.bot import LogicEFTBot
-from common.log import log
+from logiceftbot.common.base import CommandContext, AuthorInfo
+from logiceftbot.common.bot import LogicEFTBot
+from logiceftbot.common.log import log
 from typing import Any, Callable, List, Set
 import traceback
 
-################ Globals
 IRC_SPEC = (settings["irc_server"], int(settings["irc_port"]), settings["irc_token"])
-################
 
 
 class TwitchIrcBot(SingleServerIRCBot):
+    """_summary_
+
+    Args:
+        SingleServerIRCBot (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     APPROVED_ADMINS = ["LogicalSolutions"]
 
@@ -33,36 +39,45 @@ class TwitchIrcBot(SingleServerIRCBot):
         self.processed_commands = 0
 
     def on_welcome(self, connection, event):
-        # Request specific capabilities before you can use them
+        """_summary_
+
+        Args:
+            connection (_type_): _description_
+            event (_type_): _description_
+        """
         connection.cap("REQ", ":twitch.tv/membership")
         connection.cap("REQ", ":twitch.tv/tags")
         connection.cap("REQ", ":twitch.tv/commands")
-        self.is_welcome = True  # we've received welcome.
+        self.is_welcome = True
         self.message = "Running"
 
         if self.enqueued_channels:
             log.info("Joining %d channels", len(self.enqueued_channels))
             for chan in self.enqueued_channels:
                 self.do_join(chan)
-        self.enqueued_channels = []
-
-    """
-    Send a broadcasted message to every channel we're connected to.
-    """
+        self.enqueued_channels.clear()
 
     def do_broadcast(self, message: str) -> None:
-        log.info(f"Broadcast: {message}")
+        """_summary_
+
+        Args:
+            message (str): _description_
+        """
+        log.info("Broadcast: %s", message)
         recently_active_channels = self.db.get_recently_active_channels()
         for channel in self.joined_channels:
             if channel in recently_active_channels:
                 self.do_send_msg(channel, message)
 
     def do_join(self, channel: str) -> None:
+        """_summary_
+
+        Args:
+            channel (str): _description_
+        """
         if channel in self.joined_channels:
-            # already joined
             return
         if not self.connection.connected:
-            # save this for later, when we actually connect
             if self.is_welcome:
                 log.info(
                     "ERROR: We've been rate limited. ------------------------------------"
@@ -70,7 +85,6 @@ class TwitchIrcBot(SingleServerIRCBot):
                 return
             self.enqueued_channels.append(channel)
         else:
-            # join immediately
             log.info("Joining '#%s'", channel)
 
             self.status = ":rocket: Joining"
@@ -81,6 +95,14 @@ class TwitchIrcBot(SingleServerIRCBot):
             self.message = "Connected"
 
     def get_command_context(self, event):
+        """_summary_
+
+        Args:
+            event (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
         tags = event.tags
         display_name = None
         is_mod = False
@@ -129,7 +151,6 @@ class TwitchIrcBot(SingleServerIRCBot):
 
     def on_pubmsg(self, connection, event):
         msg = event.arguments[0]
-        c = self.connection
         if msg:
             if msg[:1] == settings["prefix"]:
                 parts = event.arguments[0].lower()
@@ -154,13 +175,10 @@ class TwitchIrcBot(SingleServerIRCBot):
     def do_command(
         self, context: CommandContext, event: Any, command: str, content: Optional[str]
     ):
-        c = self.connection
         try:
             resp = self.logic.exec(context, command, content)
             if resp:
-                self.do_send_msg(
-                    context.channel, "{}: {}".format(context.author.name, resp)
-                )
+                self.do_send_msg(context.channel, f"{context.author.name}: {resp}")
                 reset_cooldown(context.channel)
         except CommandNotFoundException:
             # just be silent if we don't know the command.

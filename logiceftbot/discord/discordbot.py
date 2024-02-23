@@ -1,10 +1,10 @@
 import discord
 from discord import app_commands
 from discord.ext import tasks
-from common.config import localized_string
-from common.database import Database
-from common.eft import EFT
-from common.models import (
+from logiceftbot.common.config import localized_string
+from logiceftbot.common.database import Database
+from logiceftbot.common.eft import EFT
+from logiceftbot.common.models import (
     safe_int,
 )
 import maya

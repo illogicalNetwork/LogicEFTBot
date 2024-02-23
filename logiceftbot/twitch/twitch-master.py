@@ -11,10 +11,10 @@ from dataclasses import dataclass
 from queue import Empty
 from multiprocessing import Queue, Process
 from logiceftbot.twitch.twitch import TwitchIrcBot
-from common.database import Database
-from common.config import settings, BOT_UI_ENABLED
-from common.shardupdate import ShardUpdate
-from common.log import log
+from logiceftbot.common.database import Database
+from logiceftbot.common.config import settings, BOT_UI_ENABLED
+from logiceftbot.common.shardupdate import ShardUpdate
+from logiceftbot.common.log import log
 from rich.table import Table
 from rich.live import Live
 
