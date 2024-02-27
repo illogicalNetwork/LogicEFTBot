@@ -1,11 +1,7 @@
-from __future__ import annotations  # type: ignore
-import requests
+from __future__ import annotations
 import requests
 import requests.utils
-import requests.utils
-from requests.utils import quote  # type: ignore
-from requests.utils import quote  # type: ignore
-from typing import Optional
+from requests.utils import quote
 from typing import Optional, Any
 from bot.config import settings
 from dataclasses import dataclass
@@ -20,146 +16,63 @@ def safe_int(value: Any, fallback: int) -> int:
     except:
         return fallback
 
-
 @dataclass
-class KappaItemsModel:
-    name: str
-    quantity: int
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> KappaItemsModel:
-        return KappaItemsModel(
-            name=object.get("name"),
-            quantity=object.get("itemQTY"),
-        )
-
-
-@dataclass
-class KappaQuestsModel:
-    name: str
-    isReq: int
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> KappaQuestsModel:
-        return KappaQuestsModel(
-            name=object.get("name"),
-            isReq=object.get("kappaReq"),
-        )
-
-
-@dataclass
-class LogicalArmorModel:
+class TCArmorModel:
     bsgID: str
     armorName: str
     armorZones: str
     armorClass: str
+    armorType: str
     armorMaterial: str
     armorDurability: str
     armorMoveSpeed: str
     armorTurnSpeed: str
     armorErgo: str
     armorEffectiveDurability: str
-    wikiLink: str
     description: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
-        return LogicalArmorModel(
-            bsgID=object.get("bsgID"),
-            armorName=object.get("name"),
-            armorZones=object.get("zones"),
-            armorClass=object.get("armorclass"),
-            armorMaterial=object.get("materials"),
-            armorDurability=object.get("dura"),
-            armorMoveSpeed=object.get("moveSpeed"),
-            armorTurnSpeed=object.get("turnSpeed"),
-            armorErgo=object.get("ergo"),
-            armorEffectiveDurability=object.get("effective"),
-            wikiLink=object.get("wikiLink"),
-            description=object.get("description"),
+    def fromJSONObj(cls, object: Any) -> TCArmorModel:
+        item = object['results'][0]
+        return TCArmorModel(
+            bsgID=item.get("Item ID"),
+            armorName=item.get("Name"),
+            armorClass=item.get("Armor Class"),
+            armorType=item.get("Armor Type"),
+            armorMaterial=item.get("Materials"),
+            armorDurability=item.get("Max Durability"),
+            armorMoveSpeed=item.get("Movement Speed Penalty"),
+            armorTurnSpeed=item.get("Turn Speed Penalty"),
+            armorErgo=item.get("Ergonomics Penalty"),
+            armorEffectiveDurability=item.get("Effective Durability"),
+            description=item.get("Description"),
         )
 
 
 @dataclass
-class LogicalHelmetModel:
+class TCHelmetModel:
     bsgID: str
     name: str
     armorClass: str
-    armorZones: str
-    armorDurability: str
-    armorRico: str
     armorMoveSpeed: str
     armorTurnSpeed: str
     armorErgo: str
-    helmetSoundReduc: str
     helmetBlocksHeadset: str
-    wikiLink: str
     description: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalHelmetModel:
-        return LogicalHelmetModel(
-            bsgID=object.get("bsgID"),
-            name=object.get("name"),
-            armorClass=object.get("armorClass"),
-            armorZones=object.get("armorZones"),
-            armorDurability=object.get("dura"),
-            armorRico=object.get("rico"),
-            armorMoveSpeed=object.get("moveSpeed"),
-            armorTurnSpeed=object.get("turnSpeed"),
-            armorErgo=object.get("ergo"),
-            helmetSoundReduc=object.get("soundsReduc"),
-            helmetBlocksHeadset=object.get("blocksHeadset"),
-            wikiLink=object.get("wikiLink"),
-            description=object.get("description"),
+    def fromJSONObj(cls, object: Any) -> TCHelmetModel:
+        item = object['results'][0]
+        return TCHelmetModel(
+            bsgID=item.get("bsgID"),
+            name=item.get("Name"),
+            armorClass=item.get("Armor Class"),
+            armorMoveSpeed=item.get("Movement Speed Penalty"),
+            armorTurnSpeed=item.get("Turn Speed Penalty"),
+            armorErgo=item.get("Ergonomics Penalty"),
+            helmetBlocksHeadset=item.get("Blocks Earpiece"),
+            description=item.get("Description"),
         )
-
-
-@dataclass
-class LogicalMapsModel:
-    name: str
-    features: str
-    duration: str
-    players: str
-    enemies: str
-    wikiLink: str
-    shortName: str
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalMapsModel:
-        return LogicalMapsModel(
-            name=object.get("name"),
-            features=object.get("features"),
-            duration=object.get("duration"),
-            players=object.get("players"),
-            enemies=object.get("enemies"),
-            wikiLink=object.get("wikiLink"),
-            shortName=object.get("shortName"),
-        )
-
-
-@dataclass
-class MedicalModel:
-    bsgID: str
-    name: str
-    description: str
-    useTime: int
-    resources: int
-    resourceRate: int
-    wikiLink: str
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> MedicalModel:
-        return MedicalModel(
-            bsgID=object.get("bsgId"),
-            name=object.get("name"),
-            description=object.get("description"),
-            useTime=object.get("useTime"),
-            resources=object.get("resources"),
-            resourceRate=object.get("resourceRate"),
-            wikiLink=object.get("wikiLink"),
-        )
-
 
 @dataclass
 class TarkovMarketModel:
@@ -178,24 +91,25 @@ class TarkovMarketModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TarkovMarketModel:
+        item = object['results'][0]
         return TarkovMarketModel(
-            name=object.get("name"),
-            shortName=object.get("shortName"),
-            price=object.get("price"),
-            basePrice=object.get("basePrice"),
-            avg24hPrice=object.get("avg24hPrice"),
-            avg7daysPrice=object.get("avg7daysPrice"),
-            traderName=object.get("traderName"),
-            traderPrice=object.get("traderPrice"),
-            updated=maya.parse(object.get("updated")).datetime(),
-            slots=object.get("slots"),
-            img=object.get("img"),
-            wikiLink=object.get("wikiLink"),
+            name=item.get("name"),
+            shortName=item.get("shortName"),
+            price=item.get("price"),
+            basePrice=item.get("basePrice"),
+            avg24hPrice=item.get("avg24hPrice"),
+            avg7daysPrice=item.get("avg7daysPrice"),
+            traderName=item.get("traderName"),
+            traderPrice=item.get("traderPrice"),
+            updated=maya.parse(item.get("updated")).datetime(),
+            slots=item.get("slots"),
+            img=item.get("img"),
+            wikiLink=item.get("wikiLink"),
         )
 
 
 @dataclass
-class TarkovChangesAmmoModel:
+class TCAmmoModel:
     bsgID: str
     name: str
     description: str
@@ -208,18 +122,18 @@ class TarkovChangesAmmoModel:
     # wikiLink: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> TarkovChangesAmmoModel:
-        return TarkovChangesAmmoModel(
-            bsgID=object.get("Item ID"),
-            name=object.get("Name"),
-            description=object.get("Description"),
-            damage=object.get("Flesh Damage"),
-            penetration=object.get("Penetration Power"),
-            armorDamage=object.get("Armor Damage"),
-            fragmentation=object.get("Frag Chance"),
-            accuracy=object.get("Accuracy"),
-            recoil=object.get("Recoil"),
-            # wikiLink=object.get("wikiLink"),
+    def fromJSONObj(cls, object: Any) -> TCAmmoModel:
+        item = object['results'][0]
+        return TCAmmoModel(
+            bsgID=item.get("Item ID"),
+            name=item.get("Name"),
+            description=item.get("Description"),
+            damage=item.get("Flesh Damage"),
+            penetration=item.get("Penetration Power"),
+            armorDamage=item.get("Armor Damage"),
+            fragmentation=item.get("Frag Chance"),
+            accuracy=item.get("Accuracy"),
+            recoil=item.get("Recoil"),
         )
 
 
@@ -234,20 +148,6 @@ class TarkovStatusModel:
             name=object.get("name"),
             status=object.get("status"),
         )
-
-
-@dataclass
-class TraderResetsModel:
-    name: str
-    resetTimer: str
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> TraderResetsModel:
-        return TraderResetsModel(
-            name=object.get("name"),
-            resetTimer=object.get("resetTimer"),
-        )
-
 
 @dataclass
 class TarkovTimeModel:
@@ -277,7 +177,7 @@ class TarkovChangesBanned:
         )
 
 @dataclass
-class TarkovChangesMaps:
+class TCMapsModel:
     name: str
     duration: str
     minCount: str
@@ -285,13 +185,14 @@ class TarkovChangesMaps:
     shortName: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> TarkovChangesMaps:
-        return TarkovChangesMaps(
+    def fromJSONObj(cls, object: Any) -> TCMapsModel:
+        item = object['results'][0]
+        return TCMapsModel(
             name=object.get("Name"),
-            duration=object.get("Raid Timer"),
-            minCount=object.get("Min Players"),
-            maxCount=object.get("Max Players"),
-            shortName=object.get("Map Internal Name"),
+            duration=item.get("Raid Timer"),
+            minCount=item.get("Min Players"),
+            maxCount=item.get("Max Players"),
+            shortName=item.get("Map Internal Name"),
         )
     
 @dataclass

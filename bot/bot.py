@@ -93,6 +93,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(avg7d.updated).slang_time(),
             )
         except Exception as e:
+            print(e)
             print("There was a search type error in a channel")
             return localized_string(
                 lang,
@@ -130,9 +131,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 "twitch_helmet",
                 helmet.name,
                 helmet.armorClass,
-                helmet.armorDurability,
-                helmet.armorRico,
-                helmet.armorZones,
             )
         except Exception as e:
             print("There was a search type error in a channel")
@@ -154,46 +152,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 helmet.armorMoveSpeed,
                 helmet.armorTurnSpeed,
                 helmet.armorErgo,
-                helmet.helmetSoundReduc,
                 helmet.helmetBlocksHeadset,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
-    @command("kappaitem")
-    def bot_kappaitem(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            kappa = EFT.check_kappaitem(lang, data)
-            return localized_string(
-                lang,
-                "twitch_kappaItems",
-                kappa.quantity,
-                kappa.name,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "twitch_notKappaItem",
-            )
-
-    @command("kappaquest")
-    def bot_kappaquest(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            kappa = EFT.check_kappaquests(lang, data)
-            return localized_string(
-                lang,
-                "twitch_kappaQuests",
-                kappa.isReq,
-                kappa.name,
             )
         except Exception as e:
             print("There was a search type error in a channel")
@@ -222,28 +181,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "searchFailed",
             )
-
-    @command("medical")
-    def bot_medical(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            medical = EFT.check_medical(lang, data)
-            return localized_string(
-                lang,
-                "twitch_medical",
-                medical.name,
-                medical.useTime,
-                medical.resources,
-                medical.resourceRate,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
+            
     @command("price", "p")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -258,7 +196,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(price.updated).slang_time(),
             )
         except Exception as e:
-            print("There was a search type error in a channel")
+            print("There was a search type error in a channel - price")
             return localized_string(
                 lang,
                 "searchFailed",
@@ -357,20 +295,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
-    @command("wiki")
-    def bot_wiki(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            wiki = EFT.check_price(lang, data)
-            return localized_string(lang, "twitch_wiki", wiki.name, wiki.wikiLink)
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
     @command("tarkovtime")
     def bot_time(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -393,11 +317,11 @@ class LogicEFTBot(LogicEFTBotBase):
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
 
-    @command("help")
+    @command("tarkovhelp")
     def bot_help(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
 
-    @command("news", "changes")
+    @command("changes")
     def bot_changes(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botChanges")
 
@@ -426,22 +350,6 @@ class LogicEFTBot(LogicEFTBotBase):
             return "You ain't a mod you dingus!"
         self.db.update_lang(ctx.channel, lang, ctx.channel)
         return "@" + ctx.author.name + " - Language has been set to {}".format(lang)
-
-    @command("reset")
-    def bot_reset(self, ctx: CommandContext, data: str) -> str:
-        if not ctx.author.is_mod:
-            return "You ain't a mod you dingus!"
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            resets = EFT.traderResets(lang, data)
-            return localized_string(lang, "traderReset", resets.name, resets.resetTimer)
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
 
     @command("alias")
     def bot_alias(self, ctx: CommandContext, data: str) -> str:

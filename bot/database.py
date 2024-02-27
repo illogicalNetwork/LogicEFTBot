@@ -39,18 +39,18 @@ class Database:
     def update_cooldown(self, name: str, cooldown: int) -> None:
         self.auto_reconnect_if_needed()
         self.sql.execute(
-            "UPDATE users SET cooldown=%s WHERE username=%s", (int(cooldown), name)
+            "UPDATE bot_users SET cooldown=%s WHERE username=%s", (int(cooldown), name)
         )
         self.db.commit()
 
     def update_lang(self, name: str, lang: str, uname: str) -> None:
         self.auto_reconnect_if_needed()
-        self.sql.execute("UPDATE users SET lang=%s WHERE username=%s", (lang, uname))
+        self.sql.execute("UPDATE bot_users SET lang=%s WHERE username=%s", (lang, uname))
         self.db.commit()
 
     def get_cd(self, name: str) -> int:
         self.auto_reconnect_if_needed()
-        self.sql.execute("SELECT cooldown FROM users WHERE username=%s", (name,))
+        self.sql.execute("SELECT cooldown FROM bot_users WHERE username=%s", (name,))
         cd = self.sql.fetchone()
         return int(cd[0]) if cd else int(settings["default_cooldown"])
 
@@ -59,7 +59,7 @@ class Database:
         Returns all of the aliases set for this channel (or None.)
         """
         self.auto_reconnect_if_needed()
-        self.sql.execute("SELECT aliases FROM users WHERE username=%s", (channel,))
+        self.sql.execute("SELECT aliases FROM bot_users WHERE username=%s", (channel,))
         aliases = self.sql.fetchone()
         if aliases:
             aliases = aliases[0]
@@ -90,20 +90,20 @@ class Database:
         aliases_json = json.dumps(aliases)
         self.auto_reconnect_if_needed()
         self.sql.execute(
-            "UPDATE users SET aliases=%s WHERE username=%s", (aliases_json, channel)
+            "UPDATE bot_users SET aliases=%s WHERE username=%s", (aliases_json, channel)
         )
         self.db.commit()
 
     def get_lang(self, name: str) -> str:
         self.auto_reconnect_if_needed()
-        self.sql.execute("SELECT lang FROM users WHERE username = %s", (name,))
+        self.sql.execute("SELECT lang FROM bot_users WHERE username = %s", (name,))
         lang = self.sql.fetchone()
         return str(lang[0]) if lang else str(settings["default_lang"])
 
     def get_channels(self) -> List[str]:
         self.db.commit()
         self.auto_reconnect_if_needed()
-        self.sql.execute("SELECT username from users ORDER BY username ASC")
+        self.sql.execute("SELECT username from bot_users ORDER BY username ASC")
         return [i[0] for i in self.sql.fetchall()]
 
     def sql_log(
