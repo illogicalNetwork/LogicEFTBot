@@ -6,14 +6,11 @@ from typing import Optional, Any, Tuple
 from bot.config import settings
 from bot.models import (
     EFTLiveStats,
-    KappaItemsModel,
-    KappaQuestsModel,
     TCArmorModel,
     TCHelmetModel,
     TarkovMarketModel,
     TarkovStatusModel,
     TarkovTimeModel,
-    TraderResetsModel,
     TCAmmoModel,
     TarkovChangesBanned,
     TCMapsModel
@@ -36,7 +33,7 @@ class EFT:
     
     headers = {
     'User-Agent': 'TarkovChangesBot Twitch Bot v420.69',
-    'AUTH-TOKEN': 'df33029b84de078c8b16',
+    'AUTH-TOKEN': settings["tarkov-changes-api-key"],
     }
     
     @staticmethod
