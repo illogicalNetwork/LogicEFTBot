@@ -8,16 +8,15 @@ from bot.models import (
     EFTLiveStats,
     KappaItemsModel,
     KappaQuestsModel,
-    LogicalArmorModel,
-    LogicalHelmetModel,
-    MedicalModel,
+    TCArmorModel,
+    TCHelmetModel,
     TarkovMarketModel,
     TarkovStatusModel,
     TarkovTimeModel,
     TraderResetsModel,
-    TarkovChangesAmmoModel,
+    TCAmmoModel,
     TarkovChangesBanned,
-    TarkovChangesMaps
+    TCMapsModel
 )
 from dataclasses import dataclass
 import datetime
@@ -41,7 +40,7 @@ class EFT:
     }
     
     @staticmethod
-    def check_armor(lang: str, query: str) -> LogicalArmorModel:
+    def check_armor(lang: str, query: str) -> TCArmorModel:
         armor_link = (
             settings["armor_link"][lang] if lang in settings["armor_link"] else None
         )
@@ -49,10 +48,10 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = armor_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url, headers=EFT.headers).json()
-        return LogicalArmorModel.fromJSONObj(response)
+        return TCArmorModel.fromJSONObj(response)
 
     @staticmethod
-    def check_astat(lang: str, query: str) -> TarkovChangesAmmoModel:
+    def check_astat(lang: str, query: str) -> TCAmmoModel:
         astat_link = (
             settings["astat_link"][lang] if lang in settings["astat_link"] else None
         )
@@ -60,10 +59,10 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = astat_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url, headers=EFT.headers).json()
-        return TarkovChangesAmmoModel.fromJSONObj(response)
+        return TCAmmoModel.fromJSONObj(response)
 
     @staticmethod
-    def check_helmets(lang: str, query: str) -> LogicalHelmetModel:
+    def check_helmets(lang: str, query: str) -> TCHelmetModel:
         helmet_link = (
             settings["helmet_link"][lang] if lang in settings["helmet_link"] else None
         )
@@ -71,7 +70,7 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = helmet_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url, headers=EFT.headers).json()
-        return LogicalHelmetModel.fromJSONObj(response)
+        return TCHelmetModel.fromJSONObj(response)
 
     @staticmethod
     def tarkovStatus(lang: str, query: str) -> TarkovStatusModel:
@@ -87,7 +86,7 @@ class EFT:
         return TarkovStatusModel.fromJSONObj(response)
 
     @staticmethod
-    def check_maps(lang: str, query: str) -> TarkovChangesMaps:
+    def check_maps(lang: str, query: str) -> TCMapsModel:
         maps_link = (
             settings["maps_link"][lang] if lang in settings["maps_link"] else None
         )
@@ -95,18 +94,7 @@ class EFT:
             raise InvalidLocaleError(lang)
         crafted_url = maps_link.format(quote(query), quote(lang))
         response = requests.get(crafted_url, headers=EFT.headers).json()
-        return TarkovChangesMaps.fromJSONObj(response)
-
-    @staticmethod
-    def check_medical(lang: str, query: str) -> MedicalModel:
-        medical_link = (
-            settings["medical_link"][lang] if lang in settings["medical_link"] else None
-        )
-        if not medical_link:
-            raise InvalidLocaleError(lang)
-        crafted_url = medical_link.format(quote(query), quote(lang))
-        response = requests.get(crafted_url, headers=EFT.headers).json()
-        return MedicalModel.fromJSONObj(response)
+        return TCMapsModel.fromJSONObj(response)
 
     @staticmethod
     def check_price(lang: str, query: str) -> TarkovMarketModel:

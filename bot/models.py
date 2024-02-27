@@ -17,7 +17,7 @@ def safe_int(value: Any, fallback: int) -> int:
         return fallback
 
 @dataclass
-class LogicalArmorModel:
+class TCArmorModel:
     bsgID: str
     armorName: str
     armorZones: str
@@ -32,8 +32,8 @@ class LogicalArmorModel:
     description: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalArmorModel:
-        return LogicalArmorModel(
+    def fromJSONObj(cls, object: Any) -> TCArmorModel:
+        return TCArmorModel(
             bsgID=object.get("Item ID"),
             armorName=object.get("Name"),
             armorClass=object.get("Armor Class"),
@@ -49,7 +49,7 @@ class LogicalArmorModel:
 
 
 @dataclass
-class LogicalHelmetModel:
+class TCHelmetModel:
     bsgID: str
     name: str
     armorClass: str
@@ -60,8 +60,8 @@ class LogicalHelmetModel:
     description: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> LogicalHelmetModel:
-        return LogicalHelmetModel(
+    def fromJSONObj(cls, object: Any) -> TCHelmetModel:
+        return TCHelmetModel(
             bsgID=object.get("bsgID"),
             name=object.get("Name"),
             armorClass=object.get("Armor Class"),
@@ -71,29 +71,6 @@ class LogicalHelmetModel:
             helmetBlocksHeadset=object.get("Blocks Earpiece"),
             description=object.get("Description"),
         )
-
-@dataclass
-class MedicalModel:
-    bsgID: str
-    name: str
-    description: str
-    useTime: int
-    resources: int
-    resourceRate: int
-    wikiLink: str
-
-    @classmethod
-    def fromJSONObj(cls, object: Any) -> MedicalModel:
-        return MedicalModel(
-            bsgID=object.get("bsgId"),
-            name=object.get("name"),
-            description=object.get("description"),
-            useTime=object.get("useTime"),
-            resources=object.get("resources"),
-            resourceRate=object.get("resourceRate"),
-            wikiLink=object.get("wikiLink"),
-        )
-
 
 @dataclass
 class TarkovMarketModel:
@@ -130,7 +107,7 @@ class TarkovMarketModel:
 
 
 @dataclass
-class TarkovChangesAmmoModel:
+class TCAmmoModel:
     bsgID: str
     name: str
     description: str
@@ -143,8 +120,8 @@ class TarkovChangesAmmoModel:
     # wikiLink: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> TarkovChangesAmmoModel:
-        return TarkovChangesAmmoModel(
+    def fromJSONObj(cls, object: Any) -> TCAmmoModel:
+        return TCAmmoModel(
             bsgID=object.get("Item ID"),
             name=object.get("Name"),
             description=object.get("Description"),
@@ -198,7 +175,7 @@ class TarkovChangesBanned:
         )
 
 @dataclass
-class TarkovChangesMaps:
+class TCMapsModel:
     name: str
     duration: str
     minCount: str
@@ -206,8 +183,8 @@ class TarkovChangesMaps:
     shortName: str
 
     @classmethod
-    def fromJSONObj(cls, object: Any) -> TarkovChangesMaps:
-        return TarkovChangesMaps(
+    def fromJSONObj(cls, object: Any) -> TCMapsModel:
+        return TCMapsModel(
             name=object.get("Name"),
             duration=object.get("Raid Timer"),
             minCount=object.get("Min Players"),

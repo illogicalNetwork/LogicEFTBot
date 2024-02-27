@@ -181,28 +181,7 @@ class LogicEFTBot(LogicEFTBotBase):
                 lang,
                 "searchFailed",
             )
-
-    @command("medical")
-    def bot_medical(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            medical = EFT.check_medical(lang, data)
-            return localized_string(
-                lang,
-                "twitch_medical",
-                medical.name,
-                medical.useTime,
-                medical.resources,
-                medical.resourceRate,
-            )
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
+            
     @command("price", "p")
     def bot_price(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
