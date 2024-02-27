@@ -33,18 +33,19 @@ class TCArmorModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TCArmorModel:
+        item = object['results'][0]
         return TCArmorModel(
-            bsgID=object.get("Item ID"),
-            armorName=object.get("Name"),
-            armorClass=object.get("Armor Class"),
-            armorType=object.get("Armor Type"),
-            armorMaterial=object.get("Materials"),
-            armorDurability=object.get("Max Durability"),
-            armorMoveSpeed=object.get("Movement Speed Penalty"),
-            armorTurnSpeed=object.get("Turn Speed Penalty"),
-            armorErgo=object.get("Ergonomics Penalty"),
-            armorEffectiveDurability=object.get("Effective Durability"),
-            description=object.get("Description"),
+            bsgID=item.get("Item ID"),
+            armorName=item.get("Name"),
+            armorClass=item.get("Armor Class"),
+            armorType=item.get("Armor Type"),
+            armorMaterial=item.get("Materials"),
+            armorDurability=item.get("Max Durability"),
+            armorMoveSpeed=item.get("Movement Speed Penalty"),
+            armorTurnSpeed=item.get("Turn Speed Penalty"),
+            armorErgo=item.get("Ergonomics Penalty"),
+            armorEffectiveDurability=item.get("Effective Durability"),
+            description=item.get("Description"),
         )
 
 
@@ -61,15 +62,16 @@ class TCHelmetModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TCHelmetModel:
+        item = object['results'][0]
         return TCHelmetModel(
-            bsgID=object.get("bsgID"),
-            name=object.get("Name"),
-            armorClass=object.get("Armor Class"),
-            armorMoveSpeed=object.get("Movement Speed Penalty"),
-            armorTurnSpeed=object.get("Turn Speed Penalty"),
-            armorErgo=object.get("Ergonomics Penalty"),
-            helmetBlocksHeadset=object.get("Blocks Earpiece"),
-            description=object.get("Description"),
+            bsgID=item.get("bsgID"),
+            name=item.get("Name"),
+            armorClass=item.get("Armor Class"),
+            armorMoveSpeed=item.get("Movement Speed Penalty"),
+            armorTurnSpeed=item.get("Turn Speed Penalty"),
+            armorErgo=item.get("Ergonomics Penalty"),
+            helmetBlocksHeadset=item.get("Blocks Earpiece"),
+            description=item.get("Description"),
         )
 
 @dataclass
@@ -89,20 +91,20 @@ class TarkovMarketModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TarkovMarketModel:
-        print(object)
+        item = object['results'][0]
         return TarkovMarketModel(
-            name=object.get("name"),
-            shortName=object.get("shortName"),
-            price=object.get("price"),
-            basePrice=object.get("basePrice"),
-            avg24hPrice=object.get("avg24hPrice"),
-            avg7daysPrice=object.get("avg7daysPrice"),
-            traderName=object.get("traderName"),
-            traderPrice=object.get("traderPrice"),
-            updated=maya.parse(object.get("updated")).datetime(),
-            slots=object.get("slots"),
-            img=object.get("img"),
-            wikiLink=object.get("wikiLink"),
+            name=item.get("name"),
+            shortName=item.get("shortName"),
+            price=item.get("price"),
+            basePrice=item.get("basePrice"),
+            avg24hPrice=item.get("avg24hPrice"),
+            avg7daysPrice=item.get("avg7daysPrice"),
+            traderName=item.get("traderName"),
+            traderPrice=item.get("traderPrice"),
+            updated=maya.parse(item.get("updated")).datetime(),
+            slots=item.get("slots"),
+            img=item.get("img"),
+            wikiLink=item.get("wikiLink"),
         )
 
 
@@ -121,17 +123,17 @@ class TCAmmoModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TCAmmoModel:
+        item = object['results'][0]
         return TCAmmoModel(
-            bsgID=object.get("Item ID"),
-            name=object.get("Name"),
-            description=object.get("Description"),
-            damage=object.get("Flesh Damage"),
-            penetration=object.get("Penetration Power"),
-            armorDamage=object.get("Armor Damage"),
-            fragmentation=object.get("Frag Chance"),
-            accuracy=object.get("Accuracy"),
-            recoil=object.get("Recoil"),
-            # wikiLink=object.get("wikiLink"),
+            bsgID=item.get("Item ID"),
+            name=item.get("Name"),
+            description=item.get("Description"),
+            damage=item.get("Flesh Damage"),
+            penetration=item.get("Penetration Power"),
+            armorDamage=item.get("Armor Damage"),
+            fragmentation=item.get("Frag Chance"),
+            accuracy=item.get("Accuracy"),
+            recoil=item.get("Recoil"),
         )
 
 
@@ -184,12 +186,13 @@ class TCMapsModel:
 
     @classmethod
     def fromJSONObj(cls, object: Any) -> TCMapsModel:
+        item = object['results'][0]
         return TCMapsModel(
             name=object.get("Name"),
-            duration=object.get("Raid Timer"),
-            minCount=object.get("Min Players"),
-            maxCount=object.get("Max Players"),
-            shortName=object.get("Map Internal Name"),
+            duration=item.get("Raid Timer"),
+            minCount=item.get("Min Players"),
+            maxCount=item.get("Max Players"),
+            shortName=item.get("Map Internal Name"),
         )
     
 @dataclass
