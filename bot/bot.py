@@ -131,9 +131,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 "twitch_helmet",
                 helmet.name,
                 helmet.armorClass,
-                helmet.armorDurability,
-                helmet.armorRico,
-                helmet.armorZones,
             )
         except Exception as e:
             print("There was a search type error in a channel")
@@ -155,7 +152,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 helmet.armorMoveSpeed,
                 helmet.armorTurnSpeed,
                 helmet.armorErgo,
-                helmet.helmetSoundReduc,
                 helmet.helmetBlocksHeadset,
             )
         except Exception as e:
@@ -221,9 +217,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 maya.MayaDT.from_datetime(price.updated).slang_time(),
             )
         except Exception as e:
-            print(ctx)
-            print(data)
-            print(e)
             print("There was a search type error in a channel - price")
             return localized_string(
                 lang,
@@ -323,20 +316,6 @@ class LogicEFTBot(LogicEFTBotBase):
                 "searchFailed",
             )
 
-    @command("wiki")
-    def bot_wiki(self, ctx: CommandContext, data: str) -> str:
-        log.info("%s - searching for %s\n", ctx.channel, data)
-        lang = self.db.get_lang(ctx.channel)
-        try:
-            wiki = EFT.check_price(lang, data)
-            return localized_string(lang, "twitch_wiki", wiki.name, wiki.wikiLink)
-        except Exception as e:
-            print("There was a search type error in a channel")
-            return localized_string(
-                lang,
-                "searchFailed",
-            )
-
     @command("tarkovtime")
     def bot_time(self, ctx: CommandContext, data: str) -> str:
         log.info("%s - searching for %s\n", ctx.channel, data)
@@ -359,11 +338,11 @@ class LogicEFTBot(LogicEFTBotBase):
     def eft_bot(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
 
-    @command("help")
+    @command("tarkovhelp")
     def bot_help(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botHelp")
 
-    @command("news", "changes")
+    @command("changes")
     def bot_changes(self, ctx: CommandContext, _=None) -> str:
         return localized_string(self.db.get_lang(ctx.channel), "botChanges")
 
