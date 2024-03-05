@@ -5,7 +5,6 @@ from logiceftbot.common.models import (
 )
 from logiceftbot.common.log import log
 from logiceftbot.common.config import settings, localized_string
-from logiceftbot.common.shardupdate import ShardUpdate
 import maya
 
 
@@ -468,10 +467,5 @@ class LogicEFTBot(LogicEFTBotBase):
             return "Usage: !alias <alias> <existingCommand>"
         # Communicate upward to the other nodes that we need
         # a broadcast.
-
-        # TODO: disable this on discord.
-        self.outputQueue.put(
-            ShardUpdate(status="", message="", requestedBroadcast=data)
-        )
 
         return "Broadcast sent!"

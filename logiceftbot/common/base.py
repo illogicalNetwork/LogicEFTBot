@@ -4,14 +4,6 @@ from inspect import signature, iscoroutinefunction
 from dataclasses import dataclass
 from logiceftbot.common.database import Database
 
-"""
-This is the python implementation of the commands
-of LogicEFT bot.
-
-This should be shared with any of the front-ends which use the bot
-(e.g twitch, discord).
-"""
-
 
 class CommandNotFoundException(Exception):
     def __init__(self, command: str) -> None:
