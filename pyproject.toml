@@ -8,14 +8,10 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 requests = "^2.31.0"
-irc = "^20.3.1"
 rich = "^13.7.0"
 discord = "^2.3.2"
 twitchio = "^2.8.2"
-mysqlclient = "^2.2.4"
-mysql = "^0.0.3"
 mysql-connector-python = "^8.3.0"
-maya = "^0.6.1"
 
 
 [tool.poetry.group.dev.dependencies]
